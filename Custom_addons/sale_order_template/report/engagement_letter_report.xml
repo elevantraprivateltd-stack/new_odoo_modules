@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="paperformat_engagement_letter" model="report.paperformat">
+        <field name="name">Engagement Letter Format</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">25</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_engagement_letter" model="ir.actions.report">
+        <field name="name">Engagement Letter</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_order_template.report_engagement_letter_template</field>
+        <field name="report_file">sale_order_template.report_engagement_letter_template</field>
+        <field name="print_report_name">'Engagement Letter - %s' % (object.name)</field>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_engagement_letter"/>
+    </record>
+
+    <template id="report_engagement_letter_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+
+                    <div class="header" style="padding: 0; margin: 0; width: 100%;">
+                        <img src="/sale_order_template/static/src/img/header.png"
+                             style="width: 100%; display: block; margin: 0; padding: 0; min-width: 100%;"/>
+                    </div>
+
+                    <div class="page" style="padding: 10px 45px 10px 45px; margin: 0;">
+                        <div style="font-size: 13px; line-height: 1.6; color: #333333; font-family: Arial, sans-serif;">
+                            <t t-out="doc.engagement_letter_html"/>
+                        </div>
+                    </div>
+
+                    <div class="footer" style="padding: 0; margin: 0; width: 100%;">
+                        <img src="/sale_order_template/static/src/img/footer.png"
+                             style="width: 100%; display: block; margin: 0; padding: 0; min-width: 100%;"/>
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

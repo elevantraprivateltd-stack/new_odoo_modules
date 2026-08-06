@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="account_asset_asset_view_form_inherit_custom" model="ir.ui.view">
+        <field name="name">account.asset.asset.view.form.inherit.custom</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="base_accounting_kit.account_asset_asset_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="sequence_no" readonly="1"/>
+                <field name="department_cost_centre_id"/>
+                <field name="location_id"/>
+                <field name="custodian"/>
+                <field name="remark"/>
+                <field name="po_no"/>
+                <field name="invoice_no"/>
+
+            </xpath>
+            <xpath expr="//field[@name='value_residual']" position="after">
+                <field name="impairment_amount"/>
+            </xpath>
+            <xpath expr="//page[1]" position="after">
+                <page string="Disposal / Revaluation Info" invisible="state not in ('close', 'open', 'paused')">
+                    <group>
+                        <group string="Disposal" invisible="state != 'close'">
+                            <field name="disposal_date" readonly="1"/>
+                            <field name="sale_proceeds" readonly="1"/>
+                            <field name="buyer_name" readonly="1"/>
+                        </group>
+                        <group string="Revaluation" invisible="not revaluation_date">
+                            <field name="revaluation_date" readonly="1"/>
+                            <field name="revaluation_adjustment" readonly="1"/>
+                            <field name="revalued_amount" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

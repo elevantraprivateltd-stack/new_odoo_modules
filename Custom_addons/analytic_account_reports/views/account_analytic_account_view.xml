@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_analytic_account_form_inherit_print_button" model="ir.ui.view">
+        <field name="name">account.analytic.account.form.inherit.print.button</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_print_analytic_pdf_report"
+                            type="object"
+                            string="Print PDF Report"
+                            class="btn-primary"/>
+                    <button name="action_export_analytic_excel_report"
+                            type="object"
+                            string="Export Excel Report"
+                            class="btn-secondary"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

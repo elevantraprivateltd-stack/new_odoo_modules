@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_lead_view_form_inherit_custom_fields" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.custom.fields</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='campaign_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='medium_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='source_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='referred']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='team_id']/parent::group" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!--  Contacts Page target  -->
+            <xpath expr="//page[@name='lead']" position="inside">
+                <group string="Others Information">
+                    <field name="zone"/>
+                    <field name="area"/>
+                    <field name="board_type"/>
+                    <field name="institute"/>
+                    <field name="size"/>
+                    <field name="customer_status"/>
+                    <field name="confirm_date"/>
+                </group>
+            </xpath>
+
+            <!-- Move the "Extra Contact Info" group to appear right before "Marketing" -->
+
+            <xpath expr="//page[@name='lead']//field[@name='campaign_id']/ancestor::group[1]" position="before">
+                <xpath expr="//group[./field[@name='zone']]" position="move"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!--    <record id="crm_lead_form_inherit_custom_strings" model="ir.ui.view">-->
+    <!--        <field name="name">crm.lead.form.inherit.custom.strings</field>-->
+    <!--        <field name="model">crm.lead</field>-->
+    <!--        <field name="inherit_id" ref="crm.crm_lead_view_form"/>-->
+    <!--        <field name="arch" type="xml">-->
+
+    <!--            &lt;!&ndash; Company Information -> Institute Information &ndash;&gt;-->
+    <!--            <xpath expr="//page[@name='lead']/group/group[1]" position="attributes">-->
+    <!--                <attribute name="string">Institute Information</attribute>-->
+    <!--            </xpath>-->
+
+    <!--            &lt;!&ndash; Contact Information -> POS Information &ndash;&gt;-->
+    <!--            <xpath expr="//page[@name='lead']/group/group[2]" position="attributes">-->
+    <!--                <attribute name="string">POS Information</attribute>-->
+    <!--            </xpath>-->
+
+    <!--        </field>-->
+    <!--    </record>-->
+
+</odoo>

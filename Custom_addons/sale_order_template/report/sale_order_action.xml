@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Report Action (Print Menu Button) -->
+<!--    <record id="action_report_saleorder_custom" model="ir.actions.report">-->
+<!--        <field name="name">Custom Sales Proposal</field>-->
+<!--        <field name="model">sale.order</field>-->
+<!--        <field name="report_type">qweb-pdf</field>-->
+<!--        <field name="report_name">your_module_name.report_saleorder_document_custom</field>-->
+<!--        <field name="report_file">your_module_name.report_saleorder_document_custom</field>-->
+<!--        <field name="binding_model_id" ref="sale.model_sale_order"/>-->
+<!--        <field name="binding_type">report</field>-->
+<!--    </record>-->
+
+</odoo>

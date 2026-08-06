@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_inherit_proposal_final" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.proposal.final</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="inside">
+                <button name="action_load_proposal_terms"
+                        string="Toggle Proposal Text"
+                        type="object"
+                        class="btn-primary"/>
+                <button name="action_print_engagement_letter"
+                        string="Print Engagement Letter"
+                        type="object"
+                        class="btn-primary"/>
+            </xpath>
+
+            <xpath expr="//div[hasclass('oe_title')]" position="replace">
+                <div class="d-flex justify-content-between align-items-center w-100 mb-3">
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <div class="oe_avatar">
+                        <field name="report_header_icon" widget="image" nolabel="1" class="oe_avatar m-0"/>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Engagement Letter" name="engagement_letter_tab">
+                    <group>
+                        <field name="engagement_letter_html" widget="html" nolabel="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_custom" inherit_id="sale.report_saleorder_document">
+
+        <xpath expr="//t[@t-call='web.external_layout']" position="before">
+            <t t-if="doc.report_header_icon">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="logo" t-value="image_data_uri(doc.report_header_icon)"/>
+            </t>
+        </xpath>
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+                <div class="mb-3" style="font-size: 13px; line-height: 1.4;">
+                    <strong t-field="doc.partner_id.name"/><br/>
+                    <span t-if="doc.partner_id.street" t-field="doc.partner_id.street"/><br t-if="doc.partner_id.street"/>
+                    <span t-if="doc.partner_id.city" t-field="doc.partner_id.city"/>
+                    <span t-if="doc.partner_id.state_id" t-field="doc.partner_id.state_id.name"/>
+                    <span t-if="doc.partner_id.zip" t-field="doc.partner_id.zip"/><br t-if="doc.partner_id.city or doc.partner_id.zip"/>
+                    <span t-if="doc.partner_id.country_id" t-field="doc.partner_id.country_id.name"/><br/>
+                    <span t-if="doc.partner_id.vat">
+                        NTN: <span t-field="doc.partner_id.vat"/>
+                    </span>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div id="informations" class="row mb-4" style="font-size: 13px;">
+                <div class="col-4">
+                    <span style="color: #4A709C; font-weight: bold;" t-if="doc.state not in ['draft', 'sent']">Order Date</span>
+                    <span style="color: #4A709C; font-weight: bold;" t-if="doc.state in ['draft', 'sent']">Quotation Date</span>
+                    <br/>
+                    <span t-field="doc.date_order" t-options="{'widget': 'date'}"/>
+                </div>
+
+                <div class="col-4 text-start" t-if="doc.user_id">
+                    <span style="color: #4A709C; font-weight: bold;">Salesperson</span>
+                    <br/>
+                    <span t-field="doc.user_id.name"/>
+                </div>
+
+                <div class="col-4"/>
+            </div>
+        </xpath>
+
+        <xpath expr="//*[contains(@t-field, 'payment_term_id') or contains(@t-out, 'payment_term_id') or contains(@t-if, 'payment_term')]" position="replace"/>
+
+    </template>
+</odoo>

@@ -1,0 +1,45 @@
+<odoo>
+
+    <record id="view_asset_disposal_report_wizard_form" model="ir.ui.view">
+        <field name="name">asset.disposal.report.wizard.form</field>
+        <field name="model">asset.disposal.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Asset Disposal Report">
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+
+                <footer>
+                    <button name="action_print_report"
+                            type="object"
+                            string="Print"
+                            class="btn-primary"/>
+
+                    <button string="Cancel"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_disposal_report_wizard"
+            model="ir.actions.act_window">
+
+        <field name="name">Asset Disposal Report</field>
+        <field name="res_model">asset.disposal.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+
+    </record>
+
+    <menuitem
+            id="menu_asset_disposal_report"
+            name="Asset Disposal Report"
+            parent="account.menu_finance_reports"
+            action="action_asset_disposal_report_wizard"
+            sequence="1"
+            groups="account.group_account_user"/>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_school_fields" model="ir.ui.view">
+        <field name="name">res.partner.form.school.fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_address_format')]" position="after">
+                <field name="zone" placeholder="Select Zone"/>
+                <field name="area" placeholder="Select Area"/>
+                <field name="board_type"/>
+                <field name="institute"/>
+                <field name="size"/>
+                <field name="customer_status"/>
+                <field name="confirm_date"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="School Details" name="school_details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <group>
+                                <field name="decision_maker"/>
+                                <field name="school_fee_structure"/>
+                                <field name="academic_year_starting"/>
+                                <field name="sample_drop_time"/>
+                                <field name="decision_time"/>
+                                <field name="primary_contact"/>
+                                <field name="designation"/>
+                                <field name="secondary_contact"/>
+                                <field name="designation_2nd"/>
+                            </group>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h3 class="o_horizontal_separator text-primary"
+                                style="font-size: 1.5rem; font-weight: 500; margin-bottom: 15px;">Representative
+                            </h3>
+                            <group>
+                                <field name="user_id" string="Salesperson" widget="many2one_avatar_user"/>
+                            </group>
+                        </div>
+                    </div>
+                </page>
+
+                <page string="Sections" name="sections">
+                    <group string="Section">
+                        <field name="section_details" placeholder="Add section notes here..."/>
+                    </group>
+                </page>
+
+                <page string="Partner Assignation" name="partner_assignation_tab">
+                    <group string="Partner Assignation Details">
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

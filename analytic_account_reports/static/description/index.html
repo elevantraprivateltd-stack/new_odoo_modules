@@ -1,72 +1,219 @@
-<section style="font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif; color:#333;">
+<section style="font-family: Georgia, 'Times New Roman', serif; color:#2B2B2B; background-color:#F7F5EF; padding:0; margin:0;">
 
-    <div style="background-color:#1F4E78; padding:40px 30px; border-radius:6px; text-align:center; color:#FFFFFF;">
-        <h1 style="margin:0; font-size:30px; font-weight:700;">Analytic Account Reports</h1>
-        <p style="margin:8px 0 0 0; font-size:16px; color:#DCE6EF;">
-            Print and export Analytic Account reports in PDF &amp; XLSX
-        </p>
+    <!-- ============ HERO: styled as an actual statement header ============ -->
+    <div style="background-color:#16324A; padding:48px 36px 0 36px;">
+        <div style="max-width:920px; margin:0 auto;">
+            <div style="display:inline-block; border:1px solid #4A6C87; color:#9FB8CC; font-family:'Courier New', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:4px 10px; margin-bottom:18px;">
+                Odoo 19 &middot; Accounting / Analytic
+            </div>
+            <h1 style="margin:0; font-size:36px; font-weight:400; color:#FFFFFF; line-height:1.2;">
+                Analytic Account Reports
+            </h1>
+            <p style="margin:10px 0 0 0; font-size:16px; color:#B9CBD9; font-family:Arial, Helvetica, sans-serif; max-width:520px; line-height:1.6;">
+                Every analytic account, printed as a real statement — PDF or Excel,
+                with the debits, credits, and balance already reconciled.
+            </p>
+
+            <!-- Mini ledger preview — the actual shape of the report this module produces -->
+            <div style="background-color:#FFFFFF; margin-top:28px; border-radius:3px 3px 0 0; overflow:hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.28);">
+                <table style="width:100%; border-collapse:collapse; font-family:'Courier New', monospace; font-size:12px;">
+                    <tr style="background-color:#1F4E78; color:#FFFFFF;">
+                        <td style="padding:9px 14px; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Date</td>
+                        <td style="padding:9px 14px; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Reference</td>
+                        <td style="padding:9px 14px; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">General Account</td>
+                        <td style="padding:9px 14px; text-align:right; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Debit</td>
+                        <td style="padding:9px 14px; text-align:right; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Credit</td>
+                        <td style="padding:9px 14px; text-align:right; font-family:Arial, sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">Balance</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #EDEBE3;">
+                        <td style="padding:8px 14px; color:#666;">03/01</td>
+                        <td style="padding:8px 14px;">Consulting — Phase 1</td>
+                        <td style="padding:8px 14px; color:#666;">700100 Revenue</td>
+                        <td style="padding:8px 14px; text-align:right;">&nbsp;</td>
+                        <td style="padding:8px 14px; text-align:right; color:#2F6F4E;">12,500.00</td>
+                        <td style="padding:8px 14px; text-align:right;">12,500.00</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #EDEBE3; background-color:#FAF9F5;">
+                        <td style="padding:8px 14px; color:#666;">03/14</td>
+                        <td style="padding:8px 14px;">Contractor Invoice #482</td>
+                        <td style="padding:8px 14px; color:#666;">600300 Subcontracting</td>
+                        <td style="padding:8px 14px; text-align:right; color:#A13E3E;">4,200.00</td>
+                        <td style="padding:8px 14px; text-align:right;">&nbsp;</td>
+                        <td style="padding:8px 14px; text-align:right;">8,300.00</td>
+                    </tr>
+                    <tr style="background-color:#EDF2F7;">
+                        <td colspan="3" style="padding:10px 14px; font-family:Arial, sans-serif; font-weight:700; color:#1F4E78;">Total</td>
+                        <td style="padding:10px 14px; text-align:right; font-weight:700; color:#1F4E78;">4,200.00</td>
+                        <td style="padding:10px 14px; text-align:right; font-weight:700; color:#1F4E78;">12,500.00</td>
+                        <td style="padding:10px 14px; text-align:right; font-weight:700; color:#1F4E78;">8,300.00</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="height:36px;"></div>
     </div>
 
-    <div style="max-width:900px; margin:30px auto;">
+    <div style="max-width:920px; margin:0 auto; padding:0 36px;">
 
-        <h2 style="color:#1F4E78; border-bottom:2px solid #1F4E78; padding-bottom:6px;">Overview</h2>
-        <p>
-            This module adds a reporting wizard and per-account print actions for
-            <strong>Analytic Accounts</strong> in Odoo. Generate clean, professional
-            PDF statements or export the same data to Excel, filtered by date range,
-            analytic plan, analytic account, company, and posted/all entries.
-        </p>
+        <!-- ============ WHAT IT DOES ============ -->
+        <div style="padding:44px 0 8px 0;">
+            <p style="font-family:'Courier New', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#B8860B; margin:0 0 10px 0;">
+                Overview
+            </p>
+            <p style="font-size:17px; line-height:1.7; color:#333; font-family:Arial, Helvetica, sans-serif; max-width:680px;">
+                This module adds a reporting wizard and per-account print actions for
+                <strong>Analytic Accounts</strong>. Filter by date range, analytic plan,
+                specific accounts, company, and posted vs. all entries — then generate a
+                formatted PDF statement or an Excel workbook, grouped and totaled per
+                account, ready to send or file.
+            </p>
+        </div>
 
-        <h2 style="color:#1F4E78; border-bottom:2px solid #1F4E78; padding-bottom:6px;">Key Features</h2>
-        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-            <tr>
-                <td style="width:33%; vertical-align:top; padding:12px;">
-                    <h4 style="color:#1F4E78; margin-bottom:4px;">📅 Flexible Filters</h4>
-                    <p style="font-size:13px; color:#555;">
-                        Filter by Date From / Date To, Analytic Plans, one or more
-                        Analytic Accounts, Company, and Posted vs. All entries.
-                    </p>
-                </td>
-                <td style="width:33%; vertical-align:top; padding:12px;">
-                    <h4 style="color:#1F4E78; margin-bottom:4px;">📄 PDF &amp; Excel Export</h4>
-                    <p style="font-size:13px; color:#555;">
-                        One click to print a polished PDF report or export the
-                        same dataset to a formatted XLSX workbook.
-                    </p>
-                </td>
-                <td style="width:33%; vertical-align:top; padding:12px;">
-                    <h4 style="color:#1F4E78; margin-bottom:4px;">📊 Per-Account Statement</h4>
-                    <p style="font-size:13px; color:#555;">
-                        Print or export a full statement — including a
-                        Profit &amp; Loss summary and Budget Items — directly
-                        from any Analytic Account record.
-                    </p>
-                </td>
-            </tr>
-        </table>
+        <!-- ============ FEATURE LEDGER ============ -->
+        <div style="margin-top:20px; border:1px solid #DCD7C9;">
+            <div style="background-color:#1F4E78; color:#FFFFFF; padding:10px 18px; font-family:Arial, Helvetica, sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase;">
+                What's included
+            </div>
 
-        <h2 style="color:#1F4E78; border-bottom:2px solid #1F4E78; padding-bottom:6px;">How It Works</h2>
-        <ol style="font-size:14px; line-height:1.7; color:#444;">
-            <li>Go to <strong>Accounting ▸ Reporting ▸ Analytic Account Report</strong>.</li>
-            <li>Set your Date From / Date To, choose analytic plans or accounts, and pick posted or all entries.</li>
-            <li>Click <strong>Print PDF</strong> or <strong>Export XLSX</strong>.</li>
-            <li>Alternatively, open any Analytic Account record and use the <strong>Print PDF Report</strong> /
-                <strong>Export Excel Report</strong> buttons for a complete, always-up-to-date statement of that
-                single account.</li>
-        </ol>
+            <div style="display:table; width:100%; border-collapse:collapse;">
 
-        <h2 style="color:#1F4E78; border-bottom:2px solid #1F4E78; padding-bottom:6px;">Requirements</h2>
-        <p style="font-size:14px; color:#444;">
-            Depends only on Odoo's standard <code>base</code>, <code>analytic</code> and
-            <code>account</code> apps, and the <code>xlsxwriter</code> Python library that
-            ships with Odoo. No other external dependency.
-        </p>
+                <div style="display:table-row; background-color:#FFFFFF;">
+                    <div style="display:table-cell; width:44px; text-align:center; padding:16px 0; border-bottom:1px solid #EDEBE3; vertical-align:top;">
+                        <span style="font-size:20px;">&#128197;</span>
+                    </div>
+                    <div style="display:table-cell; padding:16px 18px 16px 0; border-bottom:1px solid #EDEBE3;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; color:#1F4E78; font-size:14px;">Multi-criteria filtering</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Date From / Date To, one or more Analytic Plans, one or more Analytic Accounts,
+                            Company, and Posted-only or All entries — combine any of them.
+                        </div>
+                    </div>
+                </div>
 
-        <hr style="margin:30px 0; border:none; border-top:1px solid #E0E0E0;"/>
+                <div style="display:table-row; background-color:#FAF9F5;">
+                    <div style="display:table-cell; width:44px; text-align:center; padding:16px 0; border-bottom:1px solid #EDEBE3; vertical-align:top;">
+                        <span style="font-size:20px;">&#128196;</span>
+                    </div>
+                    <div style="display:table-cell; padding:16px 18px 16px 0; border-bottom:1px solid #EDEBE3;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; color:#1F4E78; font-size:14px;">PDF statements</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Each account prints as its own grouped, totaled section — clean enough to
+                            send straight to a client or file for audit.
+                        </div>
+                    </div>
+                </div>
 
-        <p style="text-align:center; font-size:12px; color:#999;">
-            Developed by <strong>Elevantra Private Limited</strong> — Licensed under LGPL-3
-        </p>
+                <div style="display:table-row; background-color:#FFFFFF;">
+                    <div style="display:table-cell; width:44px; text-align:center; padding:16px 0; border-bottom:1px solid #EDEBE3; vertical-align:top;">
+                        <span style="font-size:20px;">&#128202;</span>
+                    </div>
+                    <div style="display:table-cell; padding:16px 18px 16px 0; border-bottom:1px solid #EDEBE3;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; color:#1F4E78; font-size:14px;">Excel export</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            The same grouped data as a formatted <code>.xlsx</code> workbook — dates, currency
+                            formatting, and totals already applied, ready for further analysis.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:table-row; background-color:#FAF9F5;">
+                    <div style="display:table-cell; width:44px; text-align:center; padding:16px 0; border-bottom:1px solid #EDEBE3; vertical-align:top;">
+                        <span style="font-size:20px;">&#128188;</span>
+                    </div>
+                    <div style="display:table-cell; padding:16px 18px 16px 0; border-bottom:1px solid #EDEBE3;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; color:#1F4E78; font-size:14px;">One-click account statement</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Print PDF Report and Export Excel Report buttons live right on the Analytic
+                            Account form — no wizard needed for a single account's full history.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:table-row; background-color:#FFFFFF;">
+                    <div style="display:table-cell; width:44px; text-align:center; padding:16px 0; vertical-align:top;">
+                        <span style="font-size:20px;">&#128176;</span>
+                    </div>
+                    <div style="display:table-cell; padding:16px 18px 16px 0;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; color:#1F4E78; font-size:14px;">Profit &amp; Loss summary and Budget Items</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            The per-account statement rolls transactions up into a Revenue → Gross
+                            Profit → Operating Income → Net Profit flow, and lists any linked Budget
+                            Items automatically when Budget Management is installed.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============ HOW IT WORKS ============ -->
+        <div style="margin-top:44px;">
+            <p style="font-family:'Courier New', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#B8860B; margin:0 0 16px 0;">
+                How it works
+            </p>
+
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <td style="width:30px; vertical-align:top; padding:0 12px 26px 0; font-family:'Courier New', monospace; color:#1F4E78; font-size:15px; font-weight:700;">01</td>
+                    <td style="vertical-align:top; padding:0 0 26px 0; border-left:1px solid #DCD7C9; padding-left:18px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; font-size:14px; color:#222;">Open the wizard</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Accounting ▸ Reporting ▸ Analytic Account Report.
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:30px; vertical-align:top; padding:0 12px 26px 0; font-family:'Courier New', monospace; color:#1F4E78; font-size:15px; font-weight:700;">02</td>
+                    <td style="vertical-align:top; padding:0 0 26px 0; border-left:1px solid #DCD7C9; padding-left:18px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; font-size:14px; color:#222;">Set your filters</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Date range, analytic plans or accounts, company, and posted or all entries.
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:30px; vertical-align:top; padding:0 12px 26px 0; font-family:'Courier New', monospace; color:#1F4E78; font-size:15px; font-weight:700;">03</td>
+                    <td style="vertical-align:top; padding:0 0 26px 0; border-left:1px solid #DCD7C9; padding-left:18px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; font-size:14px; color:#222;">Print or export</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Click Print PDF or Export XLSX — the file is generated on the spot.
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:30px; vertical-align:top; padding:0 12px 0 0; font-family:'Courier New', monospace; color:#1F4E78; font-size:15px; font-weight:700;">04</td>
+                    <td style="vertical-align:top; padding:0; border-left:1px solid #DCD7C9; padding-left:18px;">
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; font-size:14px; color:#222;">Or skip the wizard entirely</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#5B5B5B; margin-top:3px;">
+                            Open any Analytic Account and use the buttons on the record itself for its
+                            complete, always up-to-date statement.
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ============ REQUIREMENTS ============ -->
+        <div style="margin-top:40px; padding:18px 20px; background-color:#EDF2F7; border-left:3px solid #1F4E78;">
+            <div style="font-family:Arial, Helvetica, sans-serif; font-weight:700; font-size:13px; color:#1F4E78; margin-bottom:4px;">
+                Requirements
+            </div>
+            <div style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#444; line-height:1.6;">
+                Depends only on Odoo's standard <code>base</code>, <code>analytic</code>, and
+                <code>account</code> apps, plus the <code>xlsxwriter</code> Python library that ships
+                with Odoo by default. No other external dependency.
+            </div>
+        </div>
+
+        <!-- ============ FOOTER ============ -->
+        <div style="margin-top:44px; padding:22px 0 40px 0; border-top:1px solid #DCD7C9; text-align:center;">
+            <div style="display:inline-block; border:1px solid #B8860B; color:#B8860B; font-family:'Courier New', monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; padding:5px 12px; margin-bottom:10px;">
+                LGPL-3 Licensed
+            </div>
+            <p style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#8A8A8A; margin:6px 0 0 0;">
+                Developed by <strong style="color:#5B5B5B;">Elevantra Private Limited</strong>
+            </p>
+        </div>
 
     </div>
 

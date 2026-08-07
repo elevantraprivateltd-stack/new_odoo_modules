@@ -2,7 +2,7 @@
 import base64
 import io
 
-from odoo import models, fields, _
+from odoo import models, fields,_
 from odoo.exceptions import UserError
 
 
@@ -275,7 +275,6 @@ class AccountAnalyticAccount(models.Model):
             row += 2
 
             # ---- Profit & Loss Summary (segment flow) ----
-            # ---- Profit & Loss Summary (segment flow) ----
             sheet.merge_range(
                 row, 0, row, 8,
                 'Profit & Loss Summary - %s' % (data['segment'],), account_fmt,
@@ -289,7 +288,6 @@ class AccountAnalyticAccount(models.Model):
                 row += 1
             row += 1
 
-            # ---- Budget Items (only shown when Budget Management data exists) ----
 
             # ---- Budget Items (only shown when Budget Management data exists) ----
             if data['budget_items']:

@@ -1,47 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- View for Server Model: account.recurring.template -->
-    <record id="view_account_recurring_template_form_inherit" model="ir.ui.view">
-        <field name="name">account.recurring.template.form.inherit</field>
-        <field name="model">account.recurring.template</field>
-        <field name="inherit_id" search="[('model', '=', 'account.recurring.template'), ('type', '=', 'form')]"/>
-        <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <notebook>
-                    <page string="Expense Items Breakdown">
-                        <field name="custom_line_ids">
-                            <list editable="bottom">
-                                <field name="name" string="Item / Expense Description"
-                                       placeholder="e.g. Payroll, Rent, Utility"/>
-                                <field name="account_id" string="Account"/>
-                                <field name="amount" string="Amount"/>
-                            </list>
-                        </field>
-                    </page>
-                </notebook>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- View for Payment Model -->
     <record id="view_account_recurring_payments_form_inherit_custom" model="ir.ui.view">
         <field name="name">account.recurring.payments.form.inherit.custom</field>
         <field name="model">account.recurring.payments</field>
-        <field name="inherit_id" search="[('model', '=', 'account.recurring.payments'), ('type', '=', 'form')]"/>
+        <field name="inherit_id" ref="base_accounting_kit.account_recurring_payments_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <notebook>
-                    <page string="Expense Items Breakdown">
-                        <field name="payment_line_ids">
-                            <list editable="bottom">
-                                <field name="name" string="Item / Expense Description"
-                                       placeholder="e.g. Payroll, Rent, Utility"/>
-                                <field name="account_id" string="Account"/>
-                                <field name="amount" string="Amount"/>
-                            </list>
-                        </field>
-                    </page>
-                </notebook>
+            <xpath expr="//notebook" position="inside">
+                <page name="expense_items_breakdown" string="Expense Items Breakdown">
+                    <field name="payment_line_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name" placeholder="e.g. Payroll, Rent, Utility"/>
+                            <field name="account_id"/>
+                            <field name="amount" sum="Total"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="company_id" column_invisible="True"/>
+                        </list>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>

@@ -1,55 +1,55 @@
-from odoo import models, fields, api
-
-# Server Model: account.recurring.template (Normal Model)
-class AccountRecurringTemplate(models.Model):
-    _inherit = 'account.recurring.template'
-
-    custom_line_ids = fields.One2many(
-        'account.recurring.template.custom.line',
-        'template_id',
-        string='Template Breakdown Items'
-    )
+# -*- coding: utf-8 -*-
+from odoo import fields, models
 
 
-class AccountRecurringTemplateCustomLine(models.Model):
-    _name = 'account.recurring.template.custom.line'
-    _description = 'Recurring Template Breakdown Item'
-
-    template_id = fields.Many2one('account.recurring.template', string='Template Ref', ondelete='cascade')
-    name = fields.Char(string='Item / Expense Description', required=True)
-    account_id = fields.Many2one('account.account', string='Account')
-    amount = fields.Float(string='Amount')
-
-
-# Payment Model Extension
 class AccountRecurringPayments(models.Model):
+    """Add an expense breakdown to recurring payment templates."""
+
     _inherit = 'account.recurring.payments'
 
     payment_line_ids = fields.One2many(
-        'account.recurring.payment.custom.line',
-        'payment_id',
-        string='Payment Expense Breakdown'
+        comodel_name='account.recurring.payment.custom.line',
+        inverse_name='payment_id',
+        string='Expense Items Breakdown',
+        copy=True,
     )
-
-    @api.onchange('recurring_template_id', 'template_id')
-    def _onchange_recurring_template_id_load_lines(self):
-        template = getattr(self, 'recurring_template_id', False) or getattr(self, 'template_id', False)
-        if template and hasattr(template, 'custom_line_ids'):
-            lines = []
-            for item in template.custom_line_ids:
-                lines.append((0, 0, {
-                    'name': item.name,
-                    'account_id': item.account_id.id if item.account_id else False,
-                    'amount': item.amount,
-                }))
-            self.payment_line_ids = [(5, 0, 0)] + lines
 
 
 class AccountRecurringPaymentCustomLine(models.Model):
+    """Individual expense/account lines attached to a recurring template."""
+
     _name = 'account.recurring.payment.custom.line'
     _description = 'Recurring Payment Breakdown Item'
+    _order = 'sequence, id'
 
-    payment_id = fields.Many2one('account.recurring.payments', string='Payment Ref', ondelete='cascade')
-    name = fields.Char(string='Item / Expense Description', required=True)
-    account_id = fields.Many2one('account.account', string='Account')
-    amount = fields.Float(string='Amount')
+    sequence = fields.Integer(default=10)
+    payment_id = fields.Many2one(
+        comodel_name='account.recurring.payments',
+        string='Recurring Template',
+        required=True,
+        ondelete='cascade',
+        index=True,
+    )
+    name = fields.Char(
+        string='Item / Expense Description',
+        required=True,
+    )
+    account_id = fields.Many2one(
+        comodel_name='account.account',
+        string='Account',
+        check_company=True,
+    )
+    amount = fields.Monetary(string='Amount')
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        related='payment_id.company_id.currency_id',
+        string='Currency',
+        readonly=True,
+    )
+    company_id = fields.Many2one(
+        comodel_name='res.company',
+        related='payment_id.company_id',
+        string='Company',
+        store=True,
+        readonly=True,
+    )

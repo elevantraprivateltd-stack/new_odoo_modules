@@ -32,6 +32,7 @@ library that ships with Odoo.
     ],
     'images': [
         'static/description/icon.png',
+        'static/description/banner.png',
     ],
     'installable': True,
     'application': False,

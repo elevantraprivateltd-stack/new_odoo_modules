@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!--  ================================================================
+             1. EMPLOYEE REPORT WIZARD
+             ================================================================  -->
+    <record id="view_planning_employee_report_wizard_form" model="ir.ui.view">
+        <field name="name">planning.employee.report.wizard.form</field>
+        <field name="model">planning.employee.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Employee Report">
+                <div class="alert alert-info" role="alert" style="margin-bottom: 12px;">
+                    <strong>Employee Report</strong>
+                    — Employee-centric view. See what a particular employee worked on, when, and for which Sale Order.
+                    All fields below are optional — leave blank to include everything.
+                </div>
+                <group>
+                    <group string="Selection Criteria">
+                        <field name="sale_order_id" string="SO" placeholder="Any Sale Order"
+                               options="{'no_create': True}"/>
+                        <label for="date_from" string="Date Range"/>
+                        <div class="o_row">
+                            <field name="date_from" nolabel="1" placeholder="From"/>
+                            <span>—</span>
+                            <field name="date_to" nolabel="1" placeholder="To"/>
+                        </div>
+                        <field name="employee_ids" string="Employee(s)" widget="many2many_tags"
+                               placeholder="All employees" options="{'no_create': True}"/>
+                    </group>
+                    <group string="Options">
+                        <field name="include_deleted" help="Also include assignments marked as Deleted"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary"
+                            icon="fa-table"/>
+                    <button name="action_print_pdf" string="Print PDF" type="object" class="btn-secondary"
+                            icon="fa-file-pdf-o"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_planning_employee_report_wizard" model="ir.actions.act_window">
+        <field name="name">Employee Report</field>
+        <field name="res_model">planning.employee.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <!--  ================================================================
+             2. SO EXECUTION REPORT WIZARD
+             ================================================================  -->
+    <record id="view_planning_so_execution_report_wizard_form" model="ir.ui.view">
+        <field name="name">planning.so.execution.report.wizard.form</field>
+        <field name="model">planning.so.execution.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="SO Execution Report">
+                <div class="alert alert-info" role="alert" style="margin-bottom: 12px;">
+                    <strong>SO Execution Report</strong>
+                    — Sale-Order-centric view. Track which Sale Orders are active, completed, or scheduled, and who is
+                    executing them.
+                </div>
+                <group string="Selection Criteria">
+                    <field name="criteria_type" widget="radio" nolabel="1"/>
+                </group>
+                <group invisible="criteria_type != 'date'">
+                    <field name="ongoing_date" string="Date"
+                           help="Shows assignments that were active/ongoing on this exact date"/>
+                </group>
+                <group invisible="criteria_type != 'so'">
+                    <field name="sale_order_id" string="SO" options="{'no_create': True}"/>
+                </group>
+                <group invisible="criteria_type != 'period'">
+                    <label for="period_start" string="Period"/>
+                    <div class="o_row">
+                        <field name="period_start" nolabel="1" placeholder="Start"/>
+                        <span>—</span>
+                        <field name="period_end" nolabel="1" placeholder="End"/>
+                    </div>
+                </group>
+                <group string="Options">
+                    <field name="include_deleted" help="Also include assignments marked as Deleted"/>
+                </group>
+                <footer>
+                    <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary"
+                            icon="fa-table"/>
+                    <button name="action_print_pdf" string="Print PDF" type="object" class="btn-secondary"
+                            icon="fa-file-pdf-o"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_planning_so_execution_report_wizard" model="ir.actions.act_window">
+        <field name="name">SO Execution Report</field>
+        <field name="res_model">planning.so.execution.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <!--  ================================================================
+             MENU ITEMS  (adjust parent menu id to match your existing module)
+             ================================================================  -->
+    <menuitem id="menu_planning_reporting_root" name="Reporting" parent="menu_planning_root_v5"
+              sequence="90"/>
+    <menuitem id="menu_planning_employee_report" name="Employee Report" parent="menu_planning_reporting_root"
+              action="action_planning_employee_report_wizard" sequence="10"/>
+    <menuitem id="menu_planning_so_execution_report" name="SO Execution Report" parent="menu_planning_reporting_root"
+              action="action_planning_so_execution_report_wizard" sequence="20"/>
+</odoo>

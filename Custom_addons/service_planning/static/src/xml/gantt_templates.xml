@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="custom_planning_management.PlanningGanttTemplate">
+        <div class="custom_gantt_container d-flex flex-column h-100 bg-white">
+            <!-- Control Panel Filters -->
+            <div class="o_control_panel d-flex align-items-center justify-content-between p-2 border-bottom bg-light-muted gap-2 flex-wrap">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-primary btn-sm fw-bold px-3" t-on-click="createNewAllocation">New</button>
+                    <button class="btn btn-outline-secondary btn-sm px-2" t-on-click="actionPublish">Publish</button>
+                    <div class="btn-group border rounded bg-white ms-2">
+                        <button class="btn btn-light btn-sm text-dark px-2 border-0"
+                                t-on-click="() => this.navigateTime(-1)">◀</button>
+                        <button class="btn btn-light btn-sm text-dark px-3 border-0 fw-bold small"
+                                t-on-click="jumpToToday">Today</button>
+                        <button class="btn btn-light btn-sm text-dark px-2 border-0"
+                                t-on-click="() => this.navigateTime(1)">▶</button>
+                    </div>
+                </div>
+                <!-- Search bar for Sale Orders -->
+                <div class="flex-grow-1 mx-3" style="max-width: 400px; min-width: 200px;">
+                    <div class="input-group input-group-sm border rounded bg-white shadow-sm">
+                        <span class="input-group-text bg-transparent border-0 text-muted ps-2 pe-1">🔍</span>
+                        <input type="text" class="form-control border-0 ps-1" placeholder="Search Sale Order..."
+                               t-model="state.searchQuery"/>
+                        <button t-if="state.searchQuery"
+                                class="btn btn-link btn-sm text-muted p-1 border-0 text-decoration-none"
+                                t-on-click="clearSearch">✕</button>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="btn-group border rounded bg-white overflow-hidden shadow-sm">
+                        <button t-attf-class="btn btn-sm py-1 #{state.scale == 'day' ? 'btn-secondary text-white' : 'btn-light text-dark'}"
+                                t-on-click="() => this.setTimeScale('day')">Day</button>
+                        <button t-attf-class="btn btn-sm py-1 #{state.scale == 'week' ? 'btn-secondary text-white' : 'btn-light text-dark'}"
+                                t-on-click="() => this.setTimeScale('week')">Week</button>
+                        <button t-attf-class="btn btn-sm py-1 #{state.scale == 'month' ? 'btn-secondary text-white' : 'btn-light text-dark'}"
+                                t-on-click="() => this.setTimeScale('month')">Month</button>
+                        <button t-attf-class="btn btn-sm py-1 #{state.scale == 'year' ? 'btn-secondary text-white' : 'btn-light text-dark'}"
+                                t-on-click="() => this.setTimeScale('year')">Year</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta Data Range Ribbon -->
+            <div class="px-3 py-2 bg-white border-bottom d-flex align-items-center justify-content-between layout-meta-bar">
+                <span class="text-dark fw-bold border-start border-primary border-3 ps-2" style="font-size: 14px;">
+                    <t t-esc="formatActiveRangeLabel()"/>
+                </span>
+                <span class="badge rounded-pill bg-light text-muted border px-3 py-1 font-weight-normal">
+                    <t t-esc="getTotalVisibleRecords()"/>
+                    active entries
+                </span>
+            </div>
+
+            <!-- Gantt Main Grid Table Wrapper -->
+            <div class="gantt_grid_wrapper flex-grow-1 overflow-auto m-2 border rounded bg-white position-relative shadow-sm">
+                <!-- Timeline Headers Row -->
+                <div class="gantt_header_row d-flex position-sticky top-0 bg-white border-bottom label-z-index">
+                    <div class="resource_header_cell px-3 py-3 border-end font-weight-bold bg-light text-muted small align-self-stretch d-flex align-items-center">ASSIGNMENT</div>
+                    <div class="timeline_header_cells d-flex flex-grow-1">
+                        <t t-foreach="state.activeGridPeriods" t-as="period" t-key="period.id">
+<div class="day_header_cell gantt_day_cell text-center py-2 border-end bg-light small d-flex flex-column justify-content-center">                                <div
+        class="fw-bold text-dark text-capitalize"><t t-esc="period.label"/></div>
+    <div class="text-muted extra-small-date" t-if="period.sublabel"><t t-esc="period.sublabel"/></div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Open Allocations Line Row -->
+                <div class="gantt_data_row d-flex border-bottom alignment-row">
+                    <div class="resource_cell px-3 py-3 border-end bg-light-muted font-weight-bold text-danger small d-flex align-items-center">Open Allocations</div>
+                    <div class="timeline_cell flex-grow-1 position-relative d-flex min-set-row-height"
+                         style="min-height: 65px;">
+                        <t t-foreach="state.activeGridPeriods" t-as="period" t-key="period.id">
+<div class="grid_column_bg gantt_day_cell border-end cursor-pointer-add"
+     t-on-click="() => this.cellClickAdd(false, period.start)">
+                                <span class="cell-add-icon" style="opacity: 0.3;">+</span>
+                            </div>
+                        </t>
+                        <t t-foreach="getOpenShifts() || []" t-as="rec" t-key="rec.id">
+<div class="task_bar position-absolute shadow-sm p-1 text-white text-truncate"
+     t-att-style="getTaskStyle(rec) + 'background-color:#714B67; border-radius:4px; font-size:11px; cursor:pointer; height:45px; top:10px;'"
+     t-on-click.stop="() => this.openAllocationForm(rec.id)">
+                                <div class="task_title fw-bold text-truncate"
+                                     style="line-height: 14px;">Unassigned</div>
+    <div class="task_time opacity-75 text-truncate" style="font-size: 9px;"><t t-esc="formatTimeRange(rec)"/></div>
+    <div class="fw-bold" style="font-size: 9.5px; color: #f1f5f9;"><t t-esc="rec.allocated_time_pct || 0"/>
+        Hrs</div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Grouped Sale Orders Main Iteration Loop -->
+                <t t-foreach="getGroupedSaleOrders() || []" t-as="order" t-key="order.id">
+                    <t t-if="order &amp;&amp; order.shifts">
+                        <div class="gantt_data_row d-flex border-bottom alignment-row">
+                            <div class="resource_cell px-3 py-3 border-end d-flex align-items-center bg-light-side">
+                                <span class="fw-bold text-dark text-truncate small" style="max-width: 180px;"
+                                      t-att-title="order.name">
+                                    <t t-esc="order.name"/>
+                                </span>
+                            </div>
+                            <div class="timeline_cell flex-grow-1 position-relative d-flex min-set-row-height"
+                                 style="min-height: 65px;">
+                                <t t-foreach="state.activeGridPeriods" t-as="period" t-key="period.id">
+                                <div class="grid_column_bg flex-fill border-end cursor-pointer-add"
+                                     t-on-click="() => this.cellClickAdd(order.id, period.start)">
+                                        <span class="cell-add-icon" style="opacity: 0.3;">+</span>
+                                    </div>
+                                </t>
+                                <t t-foreach="order.shifts" t-as="rec" t-key="rec.id">
+                                    <div class="task_bar position-absolute shadow-sm p-1 text-white text-truncate"
+                                         t-att-style="getTaskStyle(rec)"
+                                         t-on-click.stop="() => this.openAllocationForm(rec.id)"
+                                         style="background-color: #714B67; border-radius: 4px; font-size: 11px; cursor: pointer; height: 45px; top: 10px;">
+                                        <div class="task_title fw-bold text-truncate" style="line-height: 14px;">
+                                            <t t-if="rec.employee_ids &amp;&amp; rec.employee_ids.length &gt; 0">
+                                                <t t-esc="rec.employee_ids"/>
+                                                <t t-if="rec.employee_ids.length &gt; 1"> (+<t
+                                                        t-esc="rec.employee_ids.length - 1"/>)</t>
+                                            </t>
+                                            <t t-else="">Unassigned</t>
+                                        </div>
+                                        <div class="task_time opacity-75 text-truncate" style="font-size: 9px;"><t t-esc="formatTimeRange(rec)"/></div>
+                                        <div class="fw-bold" style="font-size: 9.5px; color: #f1f5f9;"><t t-esc="rec.allocated_time_pct || 0"/>
+                                            Hrs</div>
+                                    </div>
+
+
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>
+

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--  ================================================================
+             REPORT ACTIONS
+             ================================================================  -->
+    <record id="action_report_employee_report" model="ir.actions.report">
+        <field name="name">Employee Report</field>
+        <field name="model">planning.employee.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">service_planning.report_employee_report_document</field>
+        <field name="report_file">service_planning.report_employee_report_document</field>
+        <field name="print_report_name">'Employee Report'</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+    <record id="action_report_so_execution_report" model="ir.actions.report">
+        <field name="name">SO Execution Report</field>
+        <field name="model">planning.so.execution.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">service_planning.report_so_execution_report_document</field>
+        <field name="report_file">service_planning.report_so_execution_report_document</field>
+        <field name="print_report_name">'SO Execution Report'</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+    <!--  ================================================================
+             SHARED STYLES (used by both templates)
+             ================================================================  -->
+    <template id="report_planning_styles">
+        <style>.planning-report-title { font-size: 22px; font-weight: 700; color: #6b3fa0; margin-bottom: 2px; }
+            .planning-report-subtitle { font-size: 12px; color: #6b7280; margin-bottom: 18px; } .planning-filter-box {
+            background-color: #f7f5fb; border-left: 4px solid #6b3fa0; padding: 8px 14px; margin-bottom: 16px;
+            font-size: 12px; color: #333; } .planning-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+            .planning-table thead th { background-color: #6b3fa0; color: #ffffff; padding: 6px 8px; text-align: left;
+            font-weight: 600; } .planning-table tbody td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb;
+            vertical-align: top; } .planning-table tbody tr:nth-child(even) { background-color: #fafafa; }
+            .planning-status-open { color: #1a7f37; font-weight: 600; } .planning-status-cancelled { color: #b45309;
+            font-weight: 600; } .planning-status-deleted { color: #b91c1c; font-weight: 600; } .planning-empty-note {
+            text-align: center; padding: 20px; color: #9ca3af; font-style: italic; } .planning-footer-note { margin-top:
+            14px; font-size: 10px; color: #9ca3af; }
+        </style>
+    </template>
+    <!--  ================================================================
+             1. EMPLOYEE REPORT TEMPLATE
+             ================================================================  -->
+    <template id="report_employee_report_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="o" t-value="o.with_context(lang=o.env.user.lang)"/>
+                    <t t-call="service_planning.report_planning_styles"/>
+                    <div class="page">
+                        <div class="planning-report-title">Employee Report</div>
+                        <div class="planning-report-subtitle">
+                            Generated on
+                            <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%Y %H:%M')"/>
+                        </div>
+                        <div class="planning-filter-box">
+                            <strong>Filters applied:</strong>
+                            <span t-if="o.sale_order_id">
+                                SO:
+                                <t t-out="o.sale_order_id.name"/>
+                                |
+                            </span>
+                            <span t-if="o.date_from or o.date_to">
+                                Period:
+                                <t t-if="o.date_from" t-out="o.date_from"/>
+                                to
+                                <t t-if="o.date_to" t-out="o.date_to"/>
+                                |
+                            </span>
+                            <span t-if="o.employee_ids">
+                                Employee(s):
+                                <t t-out="', '.join(o.employee_ids.mapped('name'))"/>
+                            </span>
+                            <span t-if="not o.sale_order_id and not o.date_from and not o.date_to and not o.employee_ids">
+                                All records
+                            </span>
+                        </div>
+                        <table class="planning-table" t-if="o.result_ids">
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>SO</th>
+                                    <th>Resources</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Hours</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.result_ids" t-as="line">
+                                    <td t-out="line.name"/>
+                                    <td t-out="line.sale_order_id.name or ''"/>
+                                    <td t-out="', '.join(line.employee_ids.mapped('name'))"/>
+                                    <td t-out="line.start_date"/>
+                                    <td t-out="line.end_date"/>
+                                    <td t-out="'%.1f' % line.allocated_time_pct"/>
+                                    <td>
+                                        <span t-attf-class="planning-status-#{line.schedule_status}"
+                                              t-out="dict(line._fields['schedule_status'].selection).get(line.schedule_status)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="planning-empty-note" t-if="not o.result_ids">No matching records found for the
+                            selected
+                            criteria.
+                        </div>
+                        <div class="planning-footer-note">
+                            Total records:
+                            <t t-out="len(o.result_ids)"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    <!--  ================================================================
+             2. SO EXECUTION REPORT TEMPLATE
+             ================================================================  -->
+    <template id="report_so_execution_report_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="o" t-value="o.with_context(lang=o.env.user.lang)"/>
+                    <t t-call="service_planning.report_planning_styles"/>
+                    <div class="page">
+                        <div class="planning-report-title">SO Execution Report</div>
+                        <div class="planning-report-subtitle">
+                            Generated on
+                            <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d-%b-%Y %H:%M')"/>
+                        </div>
+                        <div class="planning-filter-box">
+                            <strong>Selection Criteria:</strong>
+                            <span t-if="o.criteria_type == 'date'">
+                                Ongoing on
+                                <t t-out="o.ongoing_date"/>
+                            </span>
+                            <span t-if="o.criteria_type == 'so'">
+                                SO:
+                                <t t-out="o.sale_order_id.name or ''"/>
+                            </span>
+                            <span t-if="o.criteria_type == 'period'">
+                                Period:
+                                <t t-out="o.period_start"/>
+                                to
+                                <t t-out="o.period_end"/>
+                            </span>
+                        </div>
+                        <table class="planning-table" t-if="o.result_ids">
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>SO</th>
+                                    <th>Resources</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Hours</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.result_ids" t-as="line">
+                                    <td t-out="line.name"/>
+                                    <td t-out="line.sale_order_id.name or ''"/>
+                                    <td t-out="', '.join(line.employee_ids.mapped('name'))"/>
+                                    <td t-out="line.start_date"/>
+                                    <td t-out="line.end_date"/>
+                                    <td t-out="'%.1f' % line.allocated_time_pct"/>
+                                    <td>
+                                        <span t-attf-class="planning-status-#{line.schedule_status}"
+                                              t-out="dict(line._fields['schedule_status'].selection).get(line.schedule_status)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="planning-empty-note" t-if="not o.result_ids">No matching records found for the
+                            selected
+                            criteria.
+                        </div>
+                        <div class="planning-footer-note">
+                            Total records:
+                            <t t-out="len(o.result_ids)"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

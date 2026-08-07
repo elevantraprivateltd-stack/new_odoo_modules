@@ -1,0 +1,168 @@
+.custom_gantt_container {
+    height: 100vh;
+}
+
+.resource_header_cell,
+.resource_cell {
+    flex: 0 0 240px;
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+    display: flex;
+    align-items: center;
+    z-index: 5;
+}
+
+.bg-light-end {
+    background-color: #fafafa;
+}
+
+.label-z-index {
+    z-index: 100 !important;
+}
+
+
+
+.min-set-row-height {
+    min-height: 80px;
+}
+
+.extra-small-date {
+    font-size: 10px;
+}
+
+/* Interactive Grid Cells Grid Cells */
+.grid_column_bg {
+    position: relative;
+    height: 100%;
+    transition: background-color 0.15s ease;
+}
+
+.grid_column_bg:hover {
+    background-color: rgba(135, 90, 123, 0.08) !important;
+}
+
+.cell-add-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #875A7B;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+}
+
+.grid_column_bg:hover .cell-add-icon {
+    opacity: 1;
+}
+
+/* Elegant Float Bars (کیلنڈر ٹائم لائن پر بننے والے پرپل بلاکس) */
+.task_bar {
+    background: linear-gradient(135deg, #9e6b93 0%, #875A7B 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    cursor: pointer;
+    border-left: 4px solid #4a2d43;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.task_bar:hover {
+    z-index: 30;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+    transform: translateY(-52%) scale(1.01);
+}
+
+.task_title {
+    font-size: 11px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.task_time {
+    font-size: 9.5px;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+
+.resource_row {
+    border-bottom: 1px solid #d9d9d9;
+}
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.gantt_day_cell {
+    flex: 1 0 0;
+    min-width: 0;
+    box-sizing: border-box;
+    border-right: 1px solid #dee2e6;
+}
+
+
+
+
+.day_header_cell,
+.grid_column_bg,
+.gantt_day_cell{
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    box-sizing: border-box;
+}
+
+
+.day_header_cell{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    min-height:80px;
+    padding:12px 8px;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+
+
+.timeline_header_cells,
+.timeline_cell{
+    display:flex;
+    flex:1 1 auto;
+    width:100%;
+    flex-wrap:nowrap;
+}
+
+
+
+.gantt_grid_wrapper{
+    overflow-x:auto;
+    overflow-y:auto;
+}
+.gantt_header_row,
+.gantt_data_row{
+    display: flex;
+    width: 100%;
+    min-width: 100%;
+}

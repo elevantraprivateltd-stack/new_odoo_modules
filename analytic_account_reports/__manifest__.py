@@ -27,6 +27,9 @@ library that ships with Odoo.
         'report/analytic_report_templates.xml',
         'views/account_analytic_account_view.xml',
     ],
+    'images': [
+        'images/cover.png',
+    ],
     'installable': True,
     'application': False,
     'auto_install': False,

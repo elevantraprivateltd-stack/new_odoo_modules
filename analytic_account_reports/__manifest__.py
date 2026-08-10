@@ -3,6 +3,7 @@
     'version': '19.0.1.0.0',
     'category': 'Accounting/Accounting',
     'summary': 'Print and export Analytic Account reports in PDF and XLSX format',
+
     'description': """
 Analytic Account Reports
 =========================
@@ -20,13 +21,14 @@ library that ships with Odoo.
 """,
     'author': 'Elevantra Private Limited',
     'license': 'LGPL-3',
-    'depends': ['base','analytic', 'account'],
+    'depends': ['base', 'analytic', 'account'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/analytic_report_wizard_views.xml',
         'report/analytic_report_templates.xml',
         'views/account_analytic_account_view.xml',
     ],
+    'images': ['static/description/analytic_account_reports_banner.png'],
     'installable': True,
     'application': False,
     'auto_install': False,

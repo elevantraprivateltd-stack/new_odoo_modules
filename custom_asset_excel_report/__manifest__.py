@@ -26,5 +26,5 @@ Provides Excel (XLSX) reporting capabilities for Asset Management:
     'images': ['static/description/custom_asset_excel_report_banner.png'],
     'installable': True,
     'application': False,
-    'license': 'LGPL-3',
+    'license': 'OPL-1',
 }

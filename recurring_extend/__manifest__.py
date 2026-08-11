@@ -28,8 +28,7 @@ This module extends the base accounting kit functionality:
     'images': ['static/description/banner.png'],
 =======
     'images': ['static/description/recurring_extend_banner.png'],
->>>>>>> 60ba4e1 (Updated custom module names and code)
-=======
+
     'images': ['static/description/recurring_extend_banner.png'],
 >>>>>>> 2ed8e4ca64924ae72e17bd413679bdc5df704d95
     'installable': True,

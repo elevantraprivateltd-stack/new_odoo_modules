@@ -24,6 +24,7 @@ Provides Excel (XLSX) reporting capabilities for Asset Management:
         'views/disposal_report_wizard.xml',
     ],
 <<<<<<< HEAD
+<<<<<<< HEAD
     'images': ['static/description/banner.png'],
     'installable': True,
     'application': False,
@@ -35,3 +36,10 @@ Provides Excel (XLSX) reporting capabilities for Asset Management:
     'license': 'LGPL-3',
 >>>>>>> 60ba4e1 (Updated custom module names and code)
 }
+=======
+    'images': ['static/description/custom_asset_excel_report_banner.png'],
+    'installable': True,
+    'application': False,
+    'license': 'OPL-1',
+}
+>>>>>>> 2ed8e4ca64924ae72e17bd413679bdc5df704d95

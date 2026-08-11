@@ -22,8 +22,7 @@ library that ships with Odoo.
     'author': 'Elevantra Private Limited',
     'website': 'https://www.elevantra.cloud',
     'license': 'LGPL-3',
-    'price': 99.00,
-    'currency': 'USD',
+    
     'depends': ['base', 'analytic', 'account'],
     'data': [
         'security/ir.model.access.csv',

@@ -1,5 +1,5 @@
 {
-    'name': 'Lead Custom Labels',
+    'name': 'lead assignment and management',
     'version': '19.0.1.0.0',
     'author': 'Elevantra Private Limited',
     'website': 'https://www.elevantra.cloud',
@@ -18,7 +18,7 @@ This module customizes Odoo CRM & Partner forms:
     'data': [
         'views/crm_lead.xml',
     ],
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/crm_lead_custom_labels_banner.png'],
     'installable': True,
     'application': False,
     'auto_install': False,

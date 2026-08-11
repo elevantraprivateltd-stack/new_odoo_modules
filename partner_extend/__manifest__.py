@@ -24,7 +24,11 @@ This module extends the res.partner and crm.lead models:
         'views/res_partner.xml',
         'views/crm_lead.xml',
     ],
+<<<<<<< HEAD
     'images': ['static/description/banner.png'],
+=======
+    'images': ['static/description/partner_extend_banner.png'],
+>>>>>>> 60ba4e1 (Updated custom module names and code)
     'installable': True,
     'application': False,
     'auto_install': False,

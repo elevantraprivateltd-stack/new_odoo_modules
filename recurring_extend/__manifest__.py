@@ -23,7 +23,11 @@ This module extends the base accounting kit functionality:
         'security/ir.model.access.csv',
         'views/recurring_template_views.xml',
     ],
+<<<<<<< HEAD
     'images': ['static/description/banner.png'],
+=======
+    'images': ['static/description/recurring_extend_banner.png'],
+>>>>>>> 60ba4e1 (Updated custom module names and code)
     'installable': True,
     'application': False,
     'auto_install': False,

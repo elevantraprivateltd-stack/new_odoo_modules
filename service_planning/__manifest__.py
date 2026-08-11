@@ -17,7 +17,7 @@ Key Features:
     'category': 'Services/Project',
     'author': 'Elevantra Private Limited',
     'website': 'https://Eleventra.cloud',
-    'images': ['static/description/icon.png'],
+    'images': ['static/description/service_planning_banner.png'],
     'depends': [
         'base',
         'web',

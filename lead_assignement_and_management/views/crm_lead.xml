@@ -23,12 +23,22 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
+
             <xpath expr="//page[@name='lead']" position="attributes">
                 <attribute name="string">Client Info</attribute>
             </xpath>
-            <xpath expr="//group[field[@name='campaign_id'] and field[@name='medium_id'] and field[@name='source_id']]"
-                   position="replace"/>
-            <xpath expr="//group[@name='Misc']" position="replace"/>
+
+            <xpath expr="//field[@name='campaign_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='medium_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='source_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
     </record>
     <record id="crm_lead_form_hide_marketing" model="ir.ui.view">

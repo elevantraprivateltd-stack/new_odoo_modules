@@ -23,23 +23,8 @@ Provides Excel (XLSX) reporting capabilities for Asset Management:
         'views/asset_wizard_view.xml',
         'views/disposal_report_wizard.xml',
     ],
-<<<<<<< HEAD
-<<<<<<< HEAD
-    'images': ['static/description/banner.png'],
-    'installable': True,
-    'application': False,
-    'license': 'AGPL-3',
-=======
     'images': ['static/description/custom_asset_excel_report_banner.png'],
     'installable': True,
     'application': False,
-    'license': 'LGPL-3',
-
+    'license': 'LGPL-3',   # <-- CONFIRM: AGPL-3, LGPL-3, or OPL-1?
 }
-=======
-    'images': ['static/description/custom_asset_excel_report_banner.png'],
-    'installable': True,
-    'application': False,
-    'license': 'OPL-1',
-}
->>>>>>> 2ed8e4ca64924ae72e17bd413679bdc5df704d95

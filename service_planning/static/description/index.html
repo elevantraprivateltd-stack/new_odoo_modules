@@ -1,694 +1,361 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Service Planning — Odoo 19</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+<section style="font-family:Arial, Helvetica, sans-serif; color:#242A6B; background-color:#FFFFFF; padding:0; margin:0;">
 
-  :root{
-    --void:      #05060f;
-    --deep:      #0a0d20;
-    --panel:     #10142c;
-    --panel-2:   #141a37;
-    --line:      rgba(124,137,245,0.16);
-    --line-soft: rgba(124,137,245,0.08);
-    --primary:   #4f5fd6;
-    --primary-2: #7c89f5;
-    --accent:    #4fe0d6;
-    --accent-2:  #8ff3ea;
-    --amber:     #f5b04f;
-    --ink:       #eef0fb;
-    --ink-dim:   #a7addd;
-    --ink-mute:  #6c7299;
-  }
+    <!-- ============ HERO ============ -->
+    <div style="padding:72px 32px 0 32px; max-width:1040px; margin:0 auto;">
+        <div style="display:table; width:100%; table-layout:fixed;">
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-
-  body{
-    background:var(--void);
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-
-  h1,h2,h3,h4{ font-family:'Space Grotesk',sans-serif; letter-spacing:-0.01em; }
-  .mono{ font-family:'JetBrains Mono',monospace; }
-  a{ color:inherit; text-decoration:none; }
-  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
-
-  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
-
-  .field{
-    position:fixed; inset:0; z-index:-1;
-    background:
-      radial-gradient(1100px 620px at 82% -8%, rgba(79,95,214,0.35), transparent 60%),
-      radial-gradient(900px 500px at -10% 30%, rgba(79,224,214,0.10), transparent 55%),
-      linear-gradient(180deg, #05060f 0%, #070919 40%, #05060f 100%);
-  }
-  .field::after{
-    content:""; position:absolute; inset:0;
-    background-image:
-      linear-gradient(var(--line-soft) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
-    background-size:64px 64px;
-    mask-image:radial-gradient(900px 500px at 78% 0%, #000 10%, transparent 72%);
-    opacity:.6;
-  }
-
-  /* ---------- nav ---------- */
-  header{
-    position:sticky; top:0; z-index:50;
-    background:rgba(5,6,15,0.72);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--line);
-  }
-  nav{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
-  .brand{ display:flex; align-items:center; gap:12px; }
-  .brand-mark{
-    width:34px; height:34px; border-radius:9px;
-    background:linear-gradient(135deg,var(--primary),var(--primary-2));
-    display:flex; align-items:center; justify-content:center; position:relative;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset, 0 6px 18px rgba(79,95,214,0.45);
-  }
-  .brand-mark svg{ width:18px; height:18px; }
-  .brand-text{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; }
-  .brand-text span{ color:var(--ink-mute); font-weight:500; }
-  .nav-links{ display:flex; gap:32px; }
-  .nav-links a{ font-size:14px; color:var(--ink-dim); font-weight:500; transition:color .2s ease; }
-  .nav-links a:hover{ color:var(--ink); }
-  .nav-tag{ font-size:11px; padding:6px 12px; border-radius:99px; border:1px solid var(--line); color:var(--accent-2); letter-spacing:.06em; }
-
-  /* ---------- hero ---------- */
-  .hero{ padding:96px 0 80px; display:grid; grid-template-columns:0.95fr 1.05fr; gap:56px; align-items:center; }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--accent-2); padding:7px 14px; border:1px solid var(--line); border-radius:99px;
-    background:rgba(79,224,214,0.05); margin-bottom:26px;
-  }
-  .eyebrow::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(79,224,214,0.18); }
-  .hero h1{
-    font-size:clamp(40px,5vw,60px); font-weight:700; line-height:1.04;
-    background:linear-gradient(180deg,#ffffff 10%, #b9c0f0 100%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .hero p.lede{ margin-top:22px; font-size:16.5px; color:var(--ink-dim); max-width:480px; line-height:1.7; }
-  .hero-actions{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
-  .btn{
-    display:inline-flex; align-items:center; gap:8px; padding:13px 22px; border-radius:10px;
-    font-size:14.5px; font-weight:600; transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
-    cursor:pointer; border:1px solid transparent;
-  }
-  .btn-primary{ background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:#fff; box-shadow:0 10px 30px rgba(79,95,214,0.35); }
-  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(79,95,214,0.5); }
-  .btn-ghost{ border-color:var(--line); color:var(--ink); background:rgba(255,255,255,0.02); }
-  .btn-ghost:hover{ border-color:var(--primary-2); background:rgba(124,137,245,0.08); }
-
-  .hero-meta{ display:flex; gap:26px; margin-top:40px; flex-wrap:wrap; }
-  .hero-meta div{ font-size:12px; color:var(--ink-mute); }
-  .hero-meta b{ display:block; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink); font-weight:500; margin-bottom:3px; }
-
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior:auto; }
-    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; }
-  }
-
-  /* ---------- app-shell mockups (mirror real screens) ---------- */
-  .shell{
-    position:relative;
-    background:linear-gradient(180deg,var(--panel),var(--deep));
-    border:1px solid var(--line);
-    border-radius:16px;
-    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
-    overflow:hidden;
-  }
-  .shell::before{
-    content:""; position:absolute; inset:0;
-    background:radial-gradient(340px 200px at 90% -10%, rgba(79,224,214,0.10), transparent 60%);
-    pointer-events:none;
-  }
-  .shell-topbar{
-    display:flex; align-items:center; gap:18px;
-    padding:12px 18px; border-bottom:1px solid var(--line-soft);
-    font-size:12.5px;
-  }
-  .shell-app{ display:flex; align-items:center; gap:8px; font-weight:600; color:var(--ink); }
-  .shell-app i{
-    width:18px; height:18px; border-radius:5px;
-    background:linear-gradient(135deg,var(--primary),var(--primary-2)); display:inline-block;
-  }
-  .shell-tabs{ display:flex; gap:18px; }
-  .shell-tabs span{ color:var(--ink-mute); }
-  .shell-tabs span.active{ color:var(--accent-2); position:relative; }
-  .shell-tabs span.active::after{
-    content:""; position:absolute; left:0; right:0; bottom:-13px; height:2px; background:var(--accent);
-  }
-
-  .shell-toolbar{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    padding:12px 18px; border-bottom:1px solid var(--line-soft);
-  }
-  .chip{
-    font-size:11.5px; padding:6px 12px; border-radius:7px; color:var(--ink-dim);
-    border:1px solid var(--line); background:rgba(255,255,255,0.02);
-  }
-  .chip.solid{ background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:#fff; border-color:transparent; }
-  .seg{ display:flex; border:1px solid var(--line); border-radius:7px; overflow:hidden; margin-left:auto; }
-  .seg span{ font-size:11px; padding:6px 11px; color:var(--ink-mute); }
-  .seg span.on{ background:rgba(124,137,245,0.18); color:var(--ink); }
-  .search-fake{
-    font-size:11.5px; color:var(--ink-mute); border:1px solid var(--line); border-radius:7px;
-    padding:6px 12px; flex:1; min-width:120px; max-width:220px;
-  }
-
-  .shell-subbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:12px 18px; font-size:12px; color:var(--ink-dim);
-  }
-  .pill-count{
-    font-size:11px; color:var(--accent-2); border:1px solid var(--line); border-radius:99px; padding:4px 11px;
-  }
-
-  .gantt-table{ padding:0 18px 18px; }
-  .gantt-head-row{
-    display:grid; grid-template-columns:120px repeat(7,1fr);
-    font-size:10px; color:var(--ink-mute); padding-bottom:8px; border-bottom:1px solid var(--line-soft);
-  }
-  .gantt-head-row span{ text-align:center; }
-  .gantt-head-row span:first-child{ text-align:left; }
-  .gantt-head-row span b{ display:block; color:var(--ink-dim); font-weight:600; font-size:11px; margin-top:2px; }
-
-  .gantt-body-row{
-    display:grid; grid-template-columns:120px repeat(7,1fr);
-    align-items:stretch;
-  }
-  .assignment-label{
-    display:flex; align-items:center; font-size:12px; color:#e0946b; padding:14px 0;
-    font-family:'JetBrains Mono',monospace;
-  }
-  .day-cell{
-    display:flex; align-items:center; justify-content:center;
-    border-left:1px solid var(--line-soft);
-    min-height:66px; position:relative;
-  }
-  .day-cell.today{ background:rgba(79,224,214,0.05); }
-  .add-dot{
-    width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center;
-    color:var(--ink-mute); font-size:15px; border:1px dashed var(--line);
-  }
-  .day-cell.today .add-dot{
-    color:var(--accent-2); border-color:rgba(79,224,214,0.5);
-    animation:pulse-add 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse-add{
-    0%,100%{ box-shadow:0 0 0 0 rgba(79,224,214,0.35); }
-    50%{ box-shadow:0 0 0 6px rgba(79,224,214,0); }
-  }
-
-  /* ---------- modal mockups ---------- */
-  .modal-mock{
-    background:linear-gradient(180deg,var(--panel),var(--deep));
-    border:1px solid var(--line); border-radius:16px;
-    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);
-    overflow:hidden;
-  }
-  .modal-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 20px; border-bottom:1px solid var(--line-soft);
-  }
-  .modal-head h4{ font-size:14px; font-weight:600; }
-  .modal-x{ color:var(--ink-mute); font-size:16px; }
-  .modal-body{ padding:20px; }
-  .modal-note{
-    font-size:12px; line-height:1.6; color:var(--ink-dim);
-    background:rgba(79,95,214,0.08); border:1px solid var(--line);
-    border-radius:10px; padding:12px 14px; margin-bottom:20px;
-  }
-  .modal-note b{ color:var(--accent-2); }
-  .grp{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:12px; border-bottom:1px solid var(--line-soft); padding-bottom:6px; }
-  .modal-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  .f-row{ margin-bottom:14px; }
-  .f-row label{ display:block; font-size:11.5px; color:var(--ink-mute); margin-bottom:6px; }
-  .f-val{
-    font-size:12.5px; color:var(--ink-dim);
-    border-bottom:1px solid var(--line-soft); padding:6px 2px;
-  }
-  .f-val.placeholder{ color:var(--ink-mute); }
-  .toggle-fake{ width:30px; height:16px; border-radius:99px; background:var(--line); position:relative; display:inline-block; vertical-align:middle; }
-  .toggle-fake::after{ content:""; position:absolute; width:12px; height:12px; border-radius:50%; background:var(--ink-mute); top:2px; left:2px; }
-  .check-fake{ width:14px; height:14px; border:1.5px solid var(--line); border-radius:4px; display:inline-block; vertical-align:middle; }
-  .modal-tabs{ display:flex; gap:18px; margin:18px 0 10px; font-size:12px; color:var(--ink-mute); border-bottom:1px solid var(--line-soft); }
-  .modal-tabs span{ padding-bottom:8px; }
-  .modal-tabs span.on{ color:var(--ink); border-bottom:2px solid var(--primary-2); }
-  .modal-foot{ display:flex; gap:10px; padding:16px 20px; border-top:1px solid var(--line-soft); }
-  .mini-btn{ font-size:12px; font-weight:600; padding:9px 16px; border-radius:8px; }
-  .mini-btn.primary{ background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:#fff; }
-  .mini-btn.ghost{ border:1px solid var(--line); color:var(--ink-dim); }
-
-  /* ---------- integration strip ---------- */
-  .strip{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,0.015); padding:22px 0; }
-  .strip .wrap{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
-  .strip-label{ font-size:11px; color:var(--ink-mute); letter-spacing:.1em; text-transform:uppercase; }
-  .strip-items{ display:flex; gap:28px; flex-wrap:wrap; }
-  .strip-items span{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-dim); }
-
-  /* ---------- section shell ---------- */
-  section{ padding:88px 0; position:relative; }
-  .section-head{ max-width:640px; margin-bottom:52px; }
-  .kicker{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent-2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; display:block; }
-  .section-head h2{ font-size:clamp(26px,3.2vw,36px); font-weight:600; }
-  .section-head p{ margin-top:14px; color:var(--ink-dim); font-size:15px; }
-
-  /* ---------- workflow ---------- */
-  .flow{ display:grid; grid-template-columns:repeat(5,1fr); gap:2px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
-  .flow-step{ background:var(--deep); padding:26px 20px 24px; position:relative; }
-  .flow-step .idx{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-mute); margin-bottom:18px; display:block; }
-  .flow-step h4{ font-size:14.5px; font-weight:600; margin-bottom:8px; }
-  .flow-step p{ font-size:12.5px; color:var(--ink-dim); line-height:1.55; }
-  .flow-step::after{ content:"→"; position:absolute; right:-13px; top:50%; transform:translateY(-50%); color:var(--ink-mute); font-size:14px; z-index:2; }
-  .flow-step:last-child::after{ display:none; }
-  @media (max-width:900px){ .flow{ grid-template-columns:1fr; } .flow-step::after{ content:"↓"; right:auto; left:20px; top:auto; bottom:-13px; transform:none; } }
-
-  /* ---------- features ---------- */
-  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
-  .card{ background:var(--deep); padding:26px 24px; transition:background .2s ease; }
-  .card:hover{ background:var(--panel); }
-  .card .tag{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-mute); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px; display:block; }
-  .card h4{ font-size:15px; font-weight:600; margin-bottom:10px; }
-  .card p{ font-size:12.5px; color:var(--ink-dim); line-height:1.6; }
-  .card .glyph{ width:34px; height:34px; border-radius:9px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; background:rgba(124,137,245,0.1); border:1px solid var(--line); }
-  .card .glyph svg{ width:16px; height:16px; stroke:var(--accent-2); }
-  @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
-  @media (max-width:600px){ .grid{ grid-template-columns:1fr; } }
-
-  /* ---------- calendar mock ---------- */
-  .cal-mock{ padding:16px 18px 18px; }
-  .cal-toolbar{ display:flex; align-items:center; gap:12px; font-size:12px; color:var(--ink-dim); margin-bottom:12px; }
-  .cal-toolbar .views{ margin-left:auto; display:flex; gap:8px; }
-  .cal-toolbar .views span{ width:22px; height:22px; border:1px solid var(--line); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--ink-mute); }
-  .cal-toolbar .views span.on{ color:var(--accent-2); border-color:rgba(79,224,214,0.4); }
-  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden; }
-  .cal-grid .dow{ background:var(--panel-2); font-size:10px; text-align:center; padding:6px 0; color:var(--ink-mute); }
-  .cal-grid .day{ background:var(--deep); min-height:44px; font-size:11px; color:var(--ink-mute); padding:6px; position:relative; }
-  .cal-grid .day.today{ color:var(--void); }
-  .cal-grid .day.today::before{
-    content:""; position:absolute; top:4px; left:4px; width:18px; height:18px; border-radius:50%;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
-  }
-  .cal-grid .day.today span{ position:relative; z-index:1; color:#05060f; font-weight:700; }
-
-  /* ---------- reports layout ---------- */
-  .reports-layout{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:24px; align-items:start; }
-  .reports-note{ font-size:13px; color:var(--ink-dim); line-height:1.7; }
-  .reports-note .kicker{ margin-top:26px; }
-  .reports-note ul{ margin-top:10px; padding-left:18px; }
-  .reports-note li{ margin-bottom:8px; }
-
-  /* ---------- status legend ---------- */
-  .status-strip{ display:flex; gap:28px; flex-wrap:wrap; margin-top:44px; padding:20px 24px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,0.015); }
-  .status-item{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-dim); }
-  .status-item b{ color:var(--ink); font-weight:500; }
-  .status-dot{ width:9px; height:9px; border-radius:50%; }
-  .status-dot.open{ background:var(--accent); box-shadow:0 0 10px rgba(79,224,214,0.6); }
-  .status-dot.cancelled{ background:var(--amber); box-shadow:0 0 10px rgba(245,176,79,0.5); }
-  .status-dot.deleted{ background:var(--ink-mute); }
-
-  /* ---------- CTA ---------- */
-  .cta{
-    text-align:center; border:1px solid var(--line); border-radius:20px; padding:64px 40px;
-    background:radial-gradient(600px 300px at 50% 0%, rgba(79,95,214,0.18), transparent 70%), var(--panel);
-    position:relative; overflow:hidden;
-  }
-  .cta h2{ font-size:clamp(24px,3.4vw,34px); margin-bottom:14px; }
-  .cta p{ color:var(--ink-dim); max-width:480px; margin:0 auto 30px; font-size:14.5px; }
-
-  /* ---------- footer ---------- */
-  footer{ border-top:1px solid var(--line); padding:40px 0; }
-  footer .wrap{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; }
-  .foot-left{ display:flex; align-items:center; gap:12px; }
-  .foot-left .brand-mark{ width:26px; height:26px; border-radius:7px; }
-  .foot-left .brand-mark svg{ width:13px; height:13px; }
-  footer .meta{ font-size:12px; color:var(--ink-mute); }
-  footer .meta b{ color:var(--ink-dim); font-weight:500; }
-  .foot-right{ display:flex; gap:18px; font-size:12px; color:var(--ink-mute); }
-
-  @media (max-width:960px){
-    .hero{ grid-template-columns:1fr; }
-    .nav-links{ display:none; }
-    .reports-layout{ grid-template-columns:1fr; }
-    .modal-grid{ grid-template-columns:1fr; gap:0; }
-    .shell-tabs{ display:none; }
-  }
-  @media (max-width:640px){
-    .gantt-head-row, .gantt-body-row{ grid-template-columns:80px repeat(7,minmax(28px,1fr)); }
-    .assignment-label{ font-size:10px; }
-  }
-</style>
-</head>
-<body>
-
-<div class="field"></div>
-
-<header>
-  <nav>
-    <div class="brand">
-      <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="5" width="18" height="16" rx="3" stroke="#fff" stroke-width="1.6"/>
-          <path d="M8 3v4M16 3v4M3 10h18" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
-          <circle cx="16.5" cy="16.5" r="3.4" fill="#0a0d20" stroke="#fff" stroke-width="1.3"/>
-          <path d="M16.5 15v1.7l1.1.9" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand-text">Service Planning <span>· Elevantra</span></div>
-    </div>
-    <div class="nav-links">
-      <a href="#workflow">Workflow</a>
-      <a href="#features">Features</a>
-      <a href="#reports">Reports</a>
-      <a href="#integrations">Integrations</a>
-    </div>
-    <div class="nav-tag mono">v19.0.1.0.0</div>
-  </nav>
-</header>
-
-<main>
-  <div class="wrap hero">
-    <div>
-      <div class="eyebrow">Field Service · Odoo 19 Community</div>
-      <h1>Service&nbsp;Planning</h1>
-      <p class="lede">
-        A Gantt board for allocating people to sale orders. Add an allocation by hand,
-        or let a confirmed sale order create one for you — either way it shows up on the
-        same board, with a status, a resource, and hours attached.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#workflow">See how it works</a>
-        <a class="btn btn-ghost" href="#reports">Explore the reports</a>
-      </div>
-      <div class="hero-meta">
-        <div><b>Gantt · Timeline</b>Two planning views</div>
-        <div><b>Open · Cancelled · Deleted</b>Schedule states</div>
-        <div><b>Employee Report</b>Print to PDF</div>
-      </div>
-    </div>
-
-    <div class="shell">
-      <div class="shell-topbar">
-        <div class="shell-app"><i></i>Service Planning</div>
-        <div class="shell-tabs">
-          <span class="active">Planning Gantt</span>
-          <span>Schedule Timeline</span>
-          <span>Reporting</span>
-        </div>
-      </div>
-      <div class="shell-toolbar">
-        <span class="chip solid">New</span>
-        <span class="chip">Publish</span>
-        <span class="chip">Today</span>
-        <span class="search-fake">Search Sale Order…</span>
-        <div class="seg">
-          <span>Day</span><span class="on">Week</span><span>Month</span><span>Year</span>
-        </div>
-      </div>
-      <div class="shell-subbar">
-        <span>Aug 9 – Aug 15, 2026</span>
-        <span class="pill-count mono">0 active entries</span>
-      </div>
-      <div class="gantt-table">
-        <div class="gantt-head-row">
-          <span></span>
-          <span>Sun<b>9</b></span><span>Mon<b>10</b></span><span>Tue<b>11</b></span>
-          <span>Wed<b>12</b></span><span>Thu<b>13</b></span><span>Fri<b>14</b></span><span>Sat<b>15</b></span>
-        </div>
-        <div class="gantt-body-row">
-          <div class="assignment-label">Open Allocations</div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-          <div class="day-cell today"><span class="add-dot">+</span></div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-          <div class="day-cell"><span class="add-dot">+</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="strip">
-    <div class="wrap">
-      <span class="strip-label">Depends on</span>
-      <div class="strip-items">
-        <span>hr</span><span>project</span><span>sale</span><span>calendar</span><span>mail</span><span>web</span>
-      </div>
-    </div>
-  </div>
-
-  <section id="workflow">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Workflow</span>
-        <h2>What actually happens, step by step</h2>
-        <p>Nothing hidden — this is the exact path from an empty board to a printed report.</p>
-      </div>
-
-      <div class="flow">
-        <div class="flow-step">
-          <span class="idx mono">01</span>
-          <h4>Open Planning Gantt</h4>
-          <p>Switch between Day, Week, Month, and Year, or search by sale order.</p>
-        </div>
-        <div class="flow-step">
-          <span class="idx mono">02</span>
-          <h4>Add an allocation</h4>
-          <p>Click "+" on a day, or let a confirmed sale order create one automatically.</p>
-        </div>
-        <div class="flow-step">
-          <span class="idx mono">03</span>
-          <h4>Fill it in</h4>
-          <p>Sale order, assignment name, dates, allocated hours, resources — then Check Validation.</p>
-        </div>
-        <div class="flow-step">
-          <span class="idx mono">04</span>
-          <h4>Track it</h4>
-          <p>The same allocation shows up on Schedule Timeline's calendar view.</p>
-        </div>
-        <div class="flow-step">
-          <span class="idx mono">05</span>
-          <h4>Report on it</h4>
-          <p>Run an Employee Report filtered by sale order, date, or person, and print it to PDF.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="features">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">The allocation form</span>
-        <h2>Every field, laid out the way it's built</h2>
-        <p>This is the exact dialog that opens when you click "+" on the Gantt.</p>
-      </div>
-
-      <div class="modal-mock">
-        <div class="modal-head">
-          <h4>Odoo</h4>
-          <span class="modal-x">✕</span>
-        </div>
-        <div class="modal-body">
-          <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
-            <span class="chip solid">Check Validation</span>
-          </div>
-          <div class="f-row">
-            <label>Sale Order</label>
-            <div class="f-val placeholder">Select Sale Order…</div>
-          </div>
-          <div class="modal-grid">
-            <div>
-              <div class="grp">Sale Order Allocation</div>
-              <div class="f-row"><label>Assignment Name</label><div class="f-val placeholder">—</div></div>
-              <div class="f-row"><label>Schedule Status</label><div class="f-val">Open</div></div>
-              <div class="f-row"><label>Recurrent</label><span class="toggle-fake"></span></div>
-            </div>
-            <div>
-              <div class="grp">Time &amp; Scale Metrics</div>
-              <div class="f-row"><label>Start Date</label><div class="f-val placeholder">—</div></div>
-              <div class="f-row"><label>End Date</label><div class="f-val placeholder">—</div></div>
-              <div class="f-row"><label>Allocated Hours</label><div class="f-val">0.00</div></div>
-            </div>
-          </div>
-          <div class="grp" style="margin-top:6px;">Allocation</div>
-          <div class="f-row"><label>Resources</label><div class="f-val placeholder">—</div></div>
-          <div class="modal-tabs"><span class="on">Employee Note</span></div>
-          <div class="f-val placeholder">Additional note…</div>
-        </div>
-        <div class="modal-foot">
-          <span class="mini-btn primary">Save</span>
-          <span class="mini-btn ghost">Discard</span>
-        </div>
-      </div>
-
-      <div class="section-head" style="margin-top:70px;">
-        <span class="kicker">Features</span>
-        <h2>What's actually in the module</h2>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h13" stroke-width="1.6" stroke-linecap="round"/></svg></div>
-          <span class="tag">Planning Gantt</span>
-          <h4>Day / Week / Month / Year</h4>
-          <p>One board, four zoom levels, a search box scoped to sale orders, and a Publish action.</p>
-        </div>
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4v16h16M8 15l3-4 3 3 4-6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <span class="tag">Automation</span>
-          <h4>Manual or automatic</h4>
-          <p>Add an allocation from the "+" on any day, or let a confirmed sale order create it for you.</p>
-        </div>
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke-width="1.6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 8h5M18.5 5.5v5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
-          <span class="tag">Assignment</span>
-          <h4>Resources &amp; hours</h4>
-          <p>Attach resources to the allocation and log allocated hours alongside start and end dates.</p>
-        </div>
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21a9 9 0 1 0-9-9" stroke-width="1.6" stroke-linecap="round"/><path d="M3 12h4M3 12l2-2M3 12l2 2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <span class="tag">Recurrence</span>
-          <h4>Recurrent toggle</h4>
-          <p>Flag an allocation as recurring right from the same form, no separate setup screen.</p>
-        </div>
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke-width="1.6"/><path d="M3 9h18M8 2v4M16 2v4" stroke-width="1.6" stroke-linecap="round"/></svg></div>
-          <span class="tag">Schedule Timeline</span>
-          <h4>Calendar, list &amp; kanban</h4>
-          <p>The same allocations, viewed as a month calendar with a mini date picker alongside it.</p>
-        </div>
-        <div class="card">
-          <div class="glyph"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke-width="1.6" stroke-linejoin="round"/><path d="M15 2v5h5M9 13h6M9 17h6" stroke-width="1.6" stroke-linecap="round"/></svg></div>
-          <span class="tag">Reporting</span>
-          <h4>Employee Report</h4>
-          <p>Filter by sale order, date range, or employee — every field optional — then print to PDF.</p>
-        </div>
-      </div>
-
-      <div class="status-strip">
-        <div class="status-item"><span class="status-dot open"></span><b>Open</b>&nbsp;— the default status on a new allocation</div>
-        <div class="status-item"><span class="status-dot cancelled"></span><b>Cancelled</b>&nbsp;— set when the linked sale order is cancelled</div>
-        <div class="status-item"><span class="status-dot deleted"></span><b>Deleted</b>&nbsp;— kept for record instead of being removed</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="reports">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="kicker">Schedule Timeline &amp; Reporting</span>
-        <h2>Two more screens worth showing</h2>
-        <p>The calendar view of the same board, and the report you'll actually print.</p>
-      </div>
-
-      <div class="reports-layout">
-        <div class="modal-mock">
-          <div class="modal-head">
-            <h4>Employee Report</h4>
-            <span class="modal-x">✕</span>
-          </div>
-          <div class="modal-body">
-            <div class="modal-note">
-              <b>Employee Report</b> — Employee-centric view. See what a particular employee worked on, when,
-              and for which Sale Order. All fields below are optional — leave blank to include everything.
-            </div>
-            <div class="modal-grid">
-              <div>
-                <div class="grp">Selection Criteria</div>
-                <div class="f-row"><label>SO</label><div class="f-val placeholder">Any Sale Order</div></div>
-                <div class="f-row"><label>Date Range</label><div class="f-val placeholder">From — To</div></div>
-                <div class="f-row"><label>Employee(s)</label><div class="f-val placeholder">All employees</div></div>
-              </div>
-              <div>
-                <div class="grp">Options</div>
-                <div class="f-row" style="display:flex; align-items:center; gap:8px;">
-                  <span class="check-fake"></span><label style="margin:0;">Include Deleted</label>
+            <div style="display:table-cell; width:52%; vertical-align:middle; padding-right:36px;">
+                <div style="font-family:'SF Mono','Courier New',monospace; font-size:12px; letter-spacing:2px; color:#4F5FD6; border-bottom:1px solid #D6DBF7; display:inline-block; padding-bottom:8px; margin-bottom:26px;">
+                    FOL. 00 &nbsp;/&nbsp; FIELD SERVICE &nbsp;/&nbsp; ODOO 19
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-foot">
-            <span class="mini-btn primary">Generate Report</span>
-            <span class="mini-btn ghost">Print PDF</span>
-            <span class="mini-btn ghost">Cancel</span>
-          </div>
-        </div>
 
-        <div>
-          <div class="shell" style="margin-bottom:20px;">
-            <div class="shell-topbar"><div class="shell-app"><i></i>Schedule Board Matrix</div></div>
-            <div class="cal-mock">
-              <div class="cal-toolbar">
-                <span>‹</span><span>›</span><span>Month</span><span>Today</span>
-                <span style="margin-left:6px;">August 2026</span>
-                <div class="views">
-                  <span class="on">▦</span><span>≣</span><span>▤</span>
+                <h1 style="margin:0; font-family:Georgia,'Iowan Old Style','Palatino Linotype',serif; font-weight:400; font-size:46px; color:#242A6B; line-height:1.15; letter-spacing:-0.3px;">
+                    Every job, staffed<br>and scheduled<br>on sight.
+                </h1>
+
+                <p style="margin:22px 0 0 0; font-size:16px; line-height:1.7; color:#6B71A8; max-width:400px;">
+                    Confirm a Sale Order and the assignment is already on the calendar &mdash;
+                    resources allocated, hours calculated, ready for the Gantt.
+                    Nothing to re-enter by hand.
+                </p>
+            </div>
+
+            <div style="display:table-cell; width:48%; vertical-align:middle;">
+                <div style="transform:rotate(1.4deg); max-width:420px; margin:0 auto;">
+                    <div style="background-color:#FFFFFF; border:1px solid #E4E7FA; box-shadow:0 30px 60px rgba(41,49,140,0.16);">
+
+                        <div style="padding:16px 22px; border-bottom:1px dashed #DCE0F8; display:table; width:100%; box-sizing:border-box;">
+                            <div style="display:table-cell; vertical-align:middle;">
+                                <div style="font-family:Georgia,serif; font-size:14px; color:#242A6B;">Site Install &mdash; Client A</div>
+                                <div style="font-family:'SF Mono','Courier New',monospace; font-size:10px; color:#9BA1D4; margin-top:3px;">SO0231 &nbsp;/&nbsp; 2 RESOURCES</div>
+                            </div>
+                            <div style="display:table-cell; text-align:right; vertical-align:middle;">
+                                <span style="font-family:'SF Mono','Courier New',monospace; font-size:10px; font-weight:700; letter-spacing:1px; color:#4F5FD6; border:1px solid #4F5FD6; padding:3px 8px;">OPEN</span>
+                            </div>
+                        </div>
+
+                        <table style="width:100%; border-collapse:collapse; font-family:'SF Mono','Courier New',monospace; font-size:12px;">
+                            <tr>
+                                <td style="padding:9px 22px 4px 22px; font-size:9px; color:#9BA1D4; letter-spacing:1px;">DAY</td>
+                                <td style="padding:9px 22px 4px 0; font-size:9px; color:#9BA1D4; letter-spacing:1px;">RESOURCE</td>
+                                <td style="padding:9px 22px 4px 0; text-align:right; font-size:9px; color:#9BA1D4; letter-spacing:1px;">HOURS</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 22px; color:#6B71A8;">MON</td>
+                                <td style="padding:6px 22px 6px 0; color:#242A6B;">A. Khan</td>
+                                <td style="padding:6px 22px 6px 0; text-align:right; color:#4F5FD6;">8.0</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 22px 14px 22px; color:#6B71A8;">TUE</td>
+                                <td style="padding:6px 22px 14px 0; color:#242A6B;">A. Khan, S. Iqbal</td>
+                                <td style="padding:6px 22px 14px 0; text-align:right; color:#4F5FD6;">16.0</td>
+                            </tr>
+                            <tr style="border-top:1px solid #242A6B;">
+                                <td colspan="2" style="padding:12px 22px; font-family:Georgia,serif; font-size:13px; color:#242A6B;">Allocated</td>
+                                <td style="padding:12px 22px; text-align:right; font-size:16px; font-weight:700; color:#242A6B;">24.0h</td>
+                            </tr>
+                        </table>
+
+                        <!-- torn / deckle edge (CSS zig-zag, no SVG) -->
+                        <div style="height:10px; background-image:linear-gradient(135deg, #FFFFFF 50%, transparent 50%), linear-gradient(-135deg, #FFFFFF 50%, transparent 50%); background-position:top left; background-size:12px 12px; background-repeat:repeat-x; border-top:1px solid #E4E7FA;"></div>
+                    </div>
                 </div>
-              </div>
-              <div class="cal-grid">
-                <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
-                <div class="day"><span>9</span></div><div class="day"><span>10</span></div><div class="day today"><span>11</span></div><div class="day"><span>12</span></div><div class="day"><span>13</span></div><div class="day"><span>14</span></div><div class="day"><span>15</span></div>
-                <div class="day"><span>16</span></div><div class="day"><span>17</span></div><div class="day"><span>18</span></div><div class="day"><span>19</span></div><div class="day"><span>20</span></div><div class="day"><span>21</span></div><div class="day"><span>22</span></div>
-              </div>
             </div>
-          </div>
 
-          <div class="reports-note">
-            <p>Schedule Timeline gives the same allocations a month-calendar layout, with calendar, list,
-            and kanban switches and a mini date picker for jumping around the year.</p>
-            <span class="kicker">Also in the Reporting menu</span>
-            <ul>
-              <li>An SO-based execution report, filterable by a single date, a sale order, or a period.</li>
-              <li>Both wizards generate on screen first — printing to PDF is a separate, optional step.</li>
-            </ul>
-          </div>
         </div>
-      </div>
     </div>
-  </section>
 
-  <section id="integrations">
-    <div class="wrap">
-      <div class="cta">
-        <h2>One board, backed by the apps you already run</h2>
-        <p>Service Planning is built on HR, Project, Sales, Calendar, and Mail — no parallel resource list to keep in sync.</p>
-        <div class="hero-actions" style="justify-content:center;">
-          <a class="btn btn-primary" href="#workflow">Walk through the workflow</a>
+    <!-- ============ LEDGER STAT ROW ============ -->
+    <div style="max-width:1040px; margin:80px auto 0 auto; padding:0 32px; border-top:1px solid #242A6B; border-bottom:1px solid #E4E7FA;">
+        <div style="display:table; width:100%; table-layout:fixed;">
+            <div style="display:table-cell; width:33.3%; padding:20px 20px 20px 0; border-right:1px solid #E4E7FA;">
+                <div style="font-family:Georgia,serif; font-size:30px; color:#242A6B;">02</div>
+                <div style="font-family:'SF Mono','Courier New',monospace; font-size:10.5px; letter-spacing:0.5px; color:#6B71A8; margin-top:2px;">REPORT WIZARDS &mdash; EMPLOYEE, SO</div>
+            </div>
+            <div style="display:table-cell; width:33.3%; padding:20px 20px; border-right:1px solid #E4E7FA;">
+                <div style="font-family:Georgia,serif; font-size:30px; color:#242A6B;">01</div>
+                <div style="font-family:'SF Mono','Courier New',monospace; font-size:10.5px; letter-spacing:0.5px; color:#6B71A8; margin-top:2px;">GANTT VIEW, TEAM-WIDE</div>
+            </div>
+            <div style="display:table-cell; width:33.3%; padding:20px 0 20px 20px;">
+                <div style="font-family:Georgia,serif; font-size:30px; color:#242A6B;">00</div>
+                <div style="font-family:'SF Mono','Courier New',monospace; font-size:10.5px; letter-spacing:0.5px; color:#6B71A8; margin-top:2px;">MANUAL RE-ENTRY FROM SALES</div>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
-</main>
 
-<footer>
-  <div class="wrap">
-    <div class="foot-left">
-      <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="5" width="18" height="16" rx="3" stroke="#fff" stroke-width="1.6"/>
-          <path d="M8 3v4M16 3v4M3 10h18" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="meta"><b>Service Planning</b> · Elevantra Private Limited</div>
-    </div>
-    <div class="foot-right mono">
-      <span>v19.0.1.0.0</span>
-      <span>Odoo 19 Community</span>
-      <span>LGPL-3</span>
-    </div>
-  </div>
-</footer>
+    <div style="max-width:1040px; margin:0 auto; padding:0 32px;">
 
-</body>
-</html>
+        <!-- ============ OVERVIEW ============ -->
+        <div style="padding:64px 0 8px 0; max-width:620px;">
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; color:#4F5FD6; margin-bottom:14px;">FOL. 01 &nbsp;&mdash;&nbsp; OVERVIEW</div>
+            <h2 style="font-family:Georgia,serif; font-weight:400; font-size:28px; color:#242A6B; line-height:1.35; margin:0 0 16px 0;">
+                Built for the dispatcher who staffs from the Sale Order, not a spreadsheet.
+            </h2>
+            <p style="font-size:15.5px; line-height:1.75; color:#6B71A8; margin:0;">
+                Confirming a Sale Order creates its assignment automatically. Assign resources,
+                set it to repeat, and track it on a Gantt or a calendar &mdash; all inside
+                Odoo Community, with the Sales, HR, and Project apps you already run.
+            </p>
+        </div>
+
+        <!-- ============ FLOW DIAGRAM (inline SVG, no JS needed) ============ -->
+        <div style="margin-top:40px; border:1px solid #E4E7FA; padding:2px;">
+            <div style="border:1px solid #E4E7FA; display:table; width:100%; table-layout:fixed;">
+
+                <div style="display:table-cell; width:58%; padding:28px 30px; border-right:1px solid #E4E7FA; vertical-align:top;">
+                    <div style="font-family:'SF Mono','Courier New',monospace; font-size:10px; letter-spacing:1.5px; color:#4F5FD6; margin-bottom:6px;">FLOW</div>
+                    <div style="font-family:Georgia,serif; font-size:16px; color:#242A6B; margin-bottom:18px;">From confirmed order to staffed shift</div>
+
+                    <div style="display:table; width:100%; table-layout:fixed;">
+                        <div style="display:table-cell; width:33.3%; text-align:center; vertical-align:top;">
+                            <div style="border:1px solid #4F5FD6; padding:12px 4px; font-family:'SF Mono','Courier New',monospace; font-size:10px; letter-spacing:1px; color:#242A6B;">SALE</div>
+                        </div>
+                        <div style="display:table-cell; width:8%; text-align:center; vertical-align:middle; font-size:16px; color:#9BA1D4;">&rarr;</div>
+                        <div style="display:table-cell; width:33.3%; text-align:center; vertical-align:top;">
+                            <div style="background-color:#E4E7FA; border:1px solid #4F5FD6; padding:12px 4px; font-family:'SF Mono','Courier New',monospace; font-size:10px; letter-spacing:1px; color:#242A6B; line-height:1.6;">PLANNING<br/>SCHEDULE</div>
+                        </div>
+                        <div style="display:table-cell; width:8%; text-align:center; vertical-align:middle; font-size:16px; color:#9BA1D4;">&rarr;</div>
+                        <div style="display:table-cell; width:33.3%; text-align:center; vertical-align:top;">
+                            <div style="background-color:#4F5FD6; border:1px solid #4F5FD6; padding:12px 4px; font-family:'SF Mono','Courier New',monospace; font-size:10px; letter-spacing:1px; color:#FFFFFF;">GANTT</div>
+                        </div>
+                    </div>
+                    <div style="display:table; width:100%; table-layout:fixed; margin-top:10px;">
+                        <div style="display:table-cell; width:33.3%; text-align:center; font-family:'SF Mono','Courier New',monospace; font-size:9px; color:#6B71A8;">on confirm</div>
+                        <div style="display:table-cell; width:8%;"></div>
+                        <div style="display:table-cell; width:33.3%; text-align:center; font-family:'SF Mono','Courier New',monospace; font-size:9px; color:#6B71A8;">recurs, tracks</div>
+                        <div style="display:table-cell; width:8%;"></div>
+                        <div style="display:table-cell; width:33.3%; text-align:center; font-family:'SF Mono','Courier New',monospace; font-size:9px; color:#6B71A8;">visualized</div>
+                    </div>
+                </div>
+
+                <div style="display:table-cell; width:42%; padding:28px 30px; vertical-align:top;">
+                    <div style="font-family:'SF Mono','Courier New',monospace; font-size:10px; letter-spacing:1.5px; color:#4F5FD6; margin-bottom:6px;">STATUS</div>
+                    <div style="font-family:Georgia,serif; font-size:16px; color:#242A6B; margin-bottom:18px;">Where assignments stand</div>
+
+                    <div style="font-family:Georgia,serif; font-size:26px; color:#242A6B; margin-bottom:4px;">54% <span style="font-family:'SF Mono','Courier New',monospace; font-size:10px; color:#8B90CB; font-weight:normal;">OPEN</span></div>
+                    <div style="display:table; width:100%; height:14px; margin:14px 0 16px 0; border-collapse:collapse;">
+                        <div style="display:table-cell; width:54%; background-color:#4F5FD6;"></div>
+                        <div style="display:table-cell; width:25%; background-color:#7C86E6;"></div>
+                        <div style="display:table-cell; width:21%; background-color:#C4C9F4;"></div>
+                    </div>
+                    <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; color:#242A6B; line-height:2.1;">
+                        <div><span style="color:#4F5FD6;">&#9632;</span> Open &mdash; 54%</div>
+                        <div><span style="color:#7C86E6;">&#9632;</span> Recurring &mdash; 25%</div>
+                        <div><span style="color:#C4C9F4;">&#9632;</span> Cancelled &mdash; 21%</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============ FEATURE INDEX ============ -->
+        <div style="margin-top:80px;">
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; color:#4F5FD6; margin-bottom:30px;">FOL. 02 &nbsp;&mdash;&nbsp; WHAT'S INCLUDED</div>
+
+            <div style="border-top:1px solid #242A6B;">
+
+                <div style="display:table; width:100%; border-bottom:1px solid #E4E7FA; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        Confirm the order, get the schedule
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        Confirming a Sale Order creates its Planning Schedule automatically &mdash;
+                        customer, products, and dates carried across, hours calculated from the
+                        date range. Cancel or delete the order and the schedule follows.
+                    </div>
+                </div>
+
+                <div style="display:table; width:100%; border-bottom:1px solid #E4E7FA; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        A Gantt built for the whole team
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        A dedicated Planning Gantt gives dispatchers a single, visual timeline
+                        of every assignment across resources &mdash; not buried inside each
+                        Sale Order.
+                    </div>
+                </div>
+
+                <div style="display:table; width:100%; border-bottom:1px solid #E4E7FA; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        Recurring assignments, real rules
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        Repeat daily, weekly, monthly, or yearly with a full RFC-style recurrence
+                        &mdash; specific weekdays, "third Tuesday" style monthly rules, an end
+                        date, or a fixed count of occurrences.
+                    </div>
+                </div>
+
+                <div style="display:table; width:100%; border-bottom:1px solid #E4E7FA; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        Multiple resources, one assignment
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        Attach any number of resources to a single schedule, with a status
+                        &mdash; Open, Cancelled, or Deleted &mdash; that stays in sync with the
+                        linked Sale Order's own state.
+                    </div>
+                </div>
+
+                <div style="display:table; width:100%; border-bottom:1px solid #E4E7FA; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        Two report wizards, two angles
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        The Employee Report filters by resource, Sale Order, and date range to
+                        show what someone worked on. The SO Execution Report filters by a
+                        single date, a period, or one order to show who's executing it &mdash;
+                        both generate on screen or print straight to PDF.
+                    </div>
+                </div>
+
+                <div style="display:table; width:100%; padding:20px 0;">
+                    <div style="display:table-cell; width:36px; vertical-align:top; padding-top:20px;">
+                        <div style="width:20px; height:20px; background-color:#4F5FD6; border-radius:4px;"></div>
+                    </div>
+                    <div style="display:table-cell; width:230px; vertical-align:top; padding:20px 20px 20px 0; font-family:Georgia,serif; font-size:16px; color:#242A6B;">
+                        Catch what fell through
+                    </div>
+                    <div style="display:table-cell; vertical-align:top; padding:20px 0; font-size:14px; color:#6B71A8; line-height:1.6;">
+                        One click checks every open Sale Order line against its planning
+                        record and reports back missing or duplicate assignments &mdash;
+                        before they become a staffing gap or a double-booking.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ============ HOW IT WORKS ============ -->
+        <div style="margin-top:80px;">
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; color:#4F5FD6; margin-bottom:34px;">FOL. 03 &nbsp;&mdash;&nbsp; FROM ORDER TO ROSTER</div>
+
+            <div style="position:relative; display:table; width:100%; table-layout:fixed;">
+                <div style="display:table-cell; width:25%; vertical-align:top; padding-right:16px;">
+                    <div style="width:30px; height:30px; border:1px solid #242A6B; border-radius:50%; text-align:center; line-height:28px; font-family:'SF Mono','Courier New',monospace; font-size:12px; color:#242A6B; margin-bottom:16px;">01</div>
+                    <div style="border-top:1px solid #E4E7FA; padding-top:14px;">
+                        <div style="font-family:Georgia,serif; font-size:15px; color:#242A6B; margin-bottom:6px;">Set the planning dates</div>
+                        <div style="font-size:12.5px; color:#6B71A8; line-height:1.55;">Add a Planning Start and End Date right on the Sale Order.</div>
+                    </div>
+                </div>
+                <div style="display:table-cell; width:25%; vertical-align:top; padding-right:16px;">
+                    <div style="width:30px; height:30px; border:1px solid #242A6B; border-radius:50%; text-align:center; line-height:28px; font-family:'SF Mono','Courier New',monospace; font-size:12px; color:#242A6B; margin-bottom:16px;">02</div>
+                    <div style="border-top:1px solid #E4E7FA; padding-top:14px;">
+                        <div style="font-family:Georgia,serif; font-size:15px; color:#242A6B; margin-bottom:6px;">Confirm the order</div>
+                        <div style="font-size:12.5px; color:#6B71A8; line-height:1.55;">The Planning Schedule is created for you, hours already totaled.</div>
+                    </div>
+                </div>
+                <div style="display:table-cell; width:25%; vertical-align:top; padding-right:16px;">
+                    <div style="width:30px; height:30px; border:1px solid #242A6B; border-radius:50%; text-align:center; line-height:28px; font-family:'SF Mono','Courier New',monospace; font-size:12px; color:#242A6B; margin-bottom:16px;">03</div>
+                    <div style="border-top:1px solid #E4E7FA; padding-top:14px;">
+                        <div style="font-family:Georgia,serif; font-size:15px; color:#242A6B; margin-bottom:6px;">Assign and repeat</div>
+                        <div style="font-size:12.5px; color:#6B71A8; line-height:1.55;">Add resources, and mark it recurring if the work repeats.</div>
+                    </div>
+                </div>
+                <div style="display:table-cell; width:25%; vertical-align:top;">
+                    <div style="width:30px; height:30px; background-color:#4F5FD6; border-radius:50%; text-align:center; line-height:30px; font-family:'SF Mono','Courier New',monospace; font-size:12px; color:#FFFFFF; margin-bottom:16px;">04</div>
+                    <div style="border-top:1px solid #4F5FD6; padding-top:14px;">
+                        <div style="font-family:Georgia,serif; font-size:15px; color:#242A6B; margin-bottom:6px;">Track it, any view</div>
+                        <div style="font-size:12.5px; color:#6B71A8; line-height:1.55;">Gantt, calendar, kanban, or list &mdash; and pull a report anytime.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ FAQ (native details/summary, no JS needed) ============ -->
+        <div style="margin-top:80px; margin-bottom:64px;">
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; color:#4F5FD6; margin-bottom:12px;">FOL. 04 &nbsp;&mdash;&nbsp; QUESTIONS</div>
+
+            <div style="border-top:1px solid #242A6B;">
+                <details style="border-bottom:1px solid #E4E7FA; padding:18px 0;">
+                    <summary style="cursor:pointer; font-family:Georgia,serif; font-size:16px; color:#242A6B; list-style-position:outside; outline:none;">
+                        What happens to the schedule if the Sale Order is cancelled?
+                    </summary>
+                    <div style="font-size:14px; color:#6B71A8; line-height:1.65; margin-top:14px; max-width:640px;">
+                        Its status flips to Cancelled automatically &mdash; it isn't deleted, so
+                        the history stays visible. If the order itself is deleted, the linked
+                        schedule is marked Deleted and unlinked from the order rather than
+                        removed outright.
+                    </div>
+                </details>
+
+                <details style="border-bottom:1px solid #E4E7FA; padding:18px 0;">
+                    <summary style="cursor:pointer; font-family:Georgia,serif; font-size:16px; color:#242A6B; list-style-position:outside; outline:none;">
+                        How granular can a recurrence rule get?
+                    </summary>
+                    <div style="font-size:14px; color:#6B71A8; line-height:1.65; margin-top:14px; max-width:640px;">
+                        Daily, weekly, monthly, or yearly, with an interval and a choice of
+                        ending &mdash; a repetition count, a specific end date, or ongoing.
+                        Weekly rules pick individual weekdays; monthly rules can target a
+                        date of the month or a pattern like "the last Friday."
+                    </div>
+                </details>
+
+                <details style="border-bottom:1px solid #E4E7FA; padding:18px 0;">
+                    <summary style="cursor:pointer; font-family:Georgia,serif; font-size:16px; color:#242A6B; list-style-position:outside; outline:none;">
+                        Can one Sale Order have more than one planning entry?
+                    </summary>
+                    <div style="font-size:14px; color:#6B71A8; line-height:1.65; margin-top:14px; max-width:640px;">
+                        By design, no &mdash; each order syncs to a single schedule that's
+                        updated as the order changes, and creating a duplicate for an
+                        already-planned order is blocked with a validation error. The
+                        Missing/Duplicate check surfaces anything that still slips through.
+                    </div>
+                </details>
+
+                <details style="padding:18px 0;">
+                    <summary style="cursor:pointer; font-family:Georgia,serif; font-size:16px; color:#242A6B; list-style-position:outside; outline:none;">
+                        Which report wizard do I want?
+                    </summary>
+                    <div style="font-size:14px; color:#6B71A8; line-height:1.65; margin-top:14px; max-width:640px;">
+                        Starting from "who was working" &mdash; use the Employee Report, filtered
+                        by resource, order, or date range. Starting from "what's happening with
+                        this order" &mdash; use the SO Execution Report, filtered by a single
+                        date, a period, or the order itself. Both can generate on screen or
+                        print directly to PDF.
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ============ REQUIREMENTS ============ -->
+        <div style="margin-bottom:64px; padding:22px 26px; background-color:#3B44A8;">
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:11px; font-weight:700; color:#FFFFFF; margin-bottom:8px; letter-spacing:1px;">
+                REQUIREMENTS
+            </div>
+            <div style="font-family:'SF Mono','Courier New',monospace; font-size:12.5px; color:#C8CCF3; line-height:1.8;">
+                base &nbsp;/&nbsp; web &nbsp;/&nbsp; mail &nbsp;/&nbsp; hr &nbsp;/&nbsp; project &nbsp;/&nbsp; sale &nbsp;/&nbsp; calendar
+            </div>
+        </div>
+
+        <!-- ============ FOOTER ============ -->
+        <div style="padding:26px 0 48px 0; border-top:1px solid #242A6B; display:table; width:100%;">
+            <div style="display:table-cell; vertical-align:middle;">
+                <div style="font-family:'SF Mono','Courier New',monospace; font-size:10.5px; letter-spacing:1px; color:#4F5FD6; border:1px solid #4F5FD6; display:inline-block; padding:6px 12px;">
+                    LGPL&#8209;3 LICENSED
+                </div>
+            </div>
+            <div style="display:table-cell; vertical-align:middle; text-align:right; font-size:12.5px; color:#8B90CB;">
+                Developed by <strong style="color:#242A6B;">Elevantra Private Limited</strong>
+            </div>
+        </div>
+
+    </div>
+
+</section>

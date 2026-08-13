@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Adds a "Support Tickets" card to /my/home, same style as
+         Your Orders / Your Invoices / Tasks. -->
+    <template id="portal_my_home_menu_helpdesk"
+              name="Portal layout : helpdesk ticket menu entries"
+              inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Support Tickets</t>
+                <t t-set="url" t-value="'/my/tickets'"/>
+                <t t-set="placeholder_count" t-value="'ticket_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- /my/tickets - list of the logged-in customer's own tickets -->
+    <template id="portal_my_tickets" name="My Tickets">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Support Tickets</t>
+            </t>
+
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/my/tickets/new" class="btn btn-primary">
+                    <i class="fa fa-plus"/> New Ticket
+                </a>
+            </div>
+
+            <t t-if="not tickets">
+                <p class="alert alert-warning">You don't have any support tickets yet.</p>
+            </t>
+            <t t-else="">
+                <table class="table table-hover o_portal_my_doc_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Incident #</th>
+                            <th>Subject</th>
+                            <th>Ticket Rating</th>
+                            <th>Stage</th>
+                            <th>Date of Reporting</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="tickets" t-as="ticket">
+                            <td><span t-esc="ticket.ticket_ref"/></td>
+                            <td><span t-esc="ticket.name"/></td>
+                            <td><span t-esc="ticket.ticket_rating"/></td>
+                            <td><span t-esc="ticket.stage_id.name"/></td>
+                            <td><span t-esc="ticket.create_date"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <t t-call="portal.pager"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

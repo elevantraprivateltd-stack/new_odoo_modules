@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="client_form_page_template" name="Helpdesk Client Form">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <title>Client Form</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link rel="stylesheet" type="text/css"
+                      href="/ele_helpdesk/static/src/css/helpdesk_contact_form.css"/>
+                <style>
+                    body { margin:0; padding:40px 16px; background:#f4f6fa; }
+                    .hd-page-wrap { max-width:600px; margin:0 auto; background:#fff;
+                                    padding:32px; border-radius:8px;
+                                    box-shadow:0 1px 4px rgba(0,0,0,.08); }
+                </style>
+            </head>
+            <body>
+                <div class="hd-page-wrap">
+                    <div id="hd-ticket-form-mount"/>
+                </div>
+                <script type="text/javascript"
+                        src="/ele_helpdesk/static/src/js/helpdesk_contact_form.js"/>
+            </body>
+        </html>
+    </template>
+
+</odoo>

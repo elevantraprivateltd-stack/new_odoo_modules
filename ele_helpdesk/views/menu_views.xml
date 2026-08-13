@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu -->
+    <menuitem id="menu_helpdesk_root" name="Helpdesk" sequence="25"/>
+
+    <!-- Tickets -->
+    <menuitem id="menu_helpdesk_tickets" name="Tickets" parent="menu_helpdesk_root"
+              action="action_helpdesk_ticket" sequence="10"/>
+
+    <!-- Client Form: opens the public client-facing form (same one embedded
+         on elevantra.cloud) in a new tab, so agents can preview it or log a
+         ticket on a client's behalf. -->
+    <record id="action_helpdesk_client_form" model="ir.actions.act_url">
+        <field name="name">Client Form</field>
+        <field name="url">/helpdesk/client-form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_helpdesk_client_form" name="Client Form" parent="menu_helpdesk_root"
+              action="action_helpdesk_client_form" sequence="15"/>
+
+    <!-- Reporting -->
+    <menuitem id="menu_helpdesk_reporting" name="Reporting" parent="menu_helpdesk_root" sequence="20"/>
+    <menuitem id="menu_helpdesk_custom_dashboard" name="Dashboard" parent="menu_helpdesk_reporting"
+              action="action_helpdesk_custom_dashboard" sequence="10"/>
+    <menuitem id="menu_helpdesk_custom_report" name="Report" parent="menu_helpdesk_reporting"
+              action="action_helpdesk_report_wizard" sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_helpdesk_config" name="Configuration" parent="menu_helpdesk_root" sequence="30"/>
+    <menuitem id="menu_helpdesk_teams" name="Teams" parent="menu_helpdesk_config"
+              action="action_helpdesk_team" sequence="10"/>
+    <menuitem id="menu_helpdesk_stages" name="Stages" parent="menu_helpdesk_config"
+              action="action_helpdesk_stage" sequence="20"/>
+    <menuitem id="menu_helpdesk_ticket_types" name="Ticket Types" parent="menu_helpdesk_config"
+              action="action_helpdesk_ticket_type" sequence="30"/>
+
+</odoo>

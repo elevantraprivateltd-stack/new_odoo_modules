@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_ticket_graph_dashboard" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.graph.dashboard</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Ticket Analysis" type="line" sample="1">
+                <field name="create_date" interval="month"/>
+                <field name="id" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_ticket_pivot_dashboard" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.pivot.dashboard</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Ticket Analysis" sample="1">
+                <field name="team_id" type="row"/>
+                <field name="stage_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_custom_dashboard" model="ir.actions.act_window">
+        <field name="name">Helpdesk Analytics Dashboard</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">graph,pivot,kanban,list</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_helpdesk_ticket_graph_dashboard')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_helpdesk_ticket_pivot_dashboard')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No ticket data available for dashboard!
+            </p>
+        </field>
+    </record>
+
+</odoo>

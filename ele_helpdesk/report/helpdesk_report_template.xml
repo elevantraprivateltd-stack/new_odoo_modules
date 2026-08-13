@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_helpdesk_custom_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="kpis" t-value="doc.get_kpis()"/>
+                <t t-set="tickets" t-value="doc.get_tickets()"/>
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <div class="text-center mb-4">
+                            <h2>Help Desk Custom Report</h2>
+                            <p class="text-muted">
+                                Period: <span t-esc="doc.date_from"/> to <span t-esc="doc.date_to"/>
+                            </p>
+                        </div>
+
+                        <table class="table table-bordered text-center" style="margin-bottom: 24px;">
+                            <tr style="background-color:#f2f2f2; font-weight:bold;">
+                                <td>Total Tickets</td>
+                                <td>Open</td>
+                                <td>Closed</td>
+                                <td>Overdue</td>
+                                <td>Avg. Resolution (hrs)</td>
+                            </tr>
+                            <tr style="font-size: 16px;">
+                                <td t-esc="kpis['total']"/>
+                                <td t-esc="kpis['open']"/>
+                                <td t-esc="kpis['closed']"/>
+                                <td t-esc="kpis['overdue']"/>
+                                <td t-esc="kpis['avg_resolution_hours']"/>
+                            </tr>
+                        </table>
+
+                        <h4>Filters Applied</h4>
+                        <ul>
+                            <li t-if="doc.team_id">Team: <span t-esc="doc.team_id.name"/></li>
+                            <li t-if="doc.stage_id">
+                                Stage(s): <span t-esc="', '.join(doc.stage_id.mapped('name'))"/>
+                            </li>
+                            <li t-if="doc.priority">Priority: <span t-esc="dict(doc._fields['priority'].selection).get(doc.priority)"/></li>
+                            <li t-if="doc.ticket_type_id">Ticket Type: <span t-esc="doc.ticket_type_id.name"/></li>
+                            <li t-if="doc.department">Department: <span t-esc="dict(doc._fields['department'].selection).get(doc.department)"/></li>
+                            <li t-if="doc.user_id">Agent: <span t-esc="doc.user_id.name"/></li>
+                            <li t-if="doc.partner_id">Customer: <span t-esc="doc.partner_id.name"/></li>
+                            <li t-if="doc.only_overdue">Only Overdue Tickets</li>
+                        </ul>
+
+                        <h4>Ticket Details</h4>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr style="background-color:#e9ecef;">
+                                    <th>Ticket #</th>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Customer</th>
+                                    <th>Stage</th>
+                                    <th>Priority</th>
+                                    <th>Assigned To</th>
+                                    <th>Created On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="tickets" t-as="ticket">
+                                    <td t-esc="ticket.ticket_ref"/>
+                                    <td t-esc="ticket.name"/>
+                                    <td t-esc="ticket.ticket_type_id.name or '-'"/>
+                                    <td t-esc="ticket.partner_id.name or '-'"/>
+                                    <td t-esc="ticket.stage_id.name"/>
+                                    <td t-esc="dict(ticket._fields['priority'].selection).get(ticket.priority)"/>
+                                    <td t-esc="ticket.user_id.name or 'Unassigned'"/>
+                                    <td t-esc="ticket.create_date.strftime('%d-%m-%Y') if ticket.create_date else ''"/>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="text-muted text-center mt-4" style="font-size:10px;">
+                            Generated on <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+                        </p>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

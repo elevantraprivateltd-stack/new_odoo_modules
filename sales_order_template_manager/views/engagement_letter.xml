@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_company_form_inherit_engagement" model="ir.ui.view">
-        <field name="name">res.company.form.inherit.engagement</field>
-        <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form"/>
+    <record id="view_order_form_inherit_engagement_checkbox" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.engagement.checkbox</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//notebook" position="inside">
-                <page string="Engagement Letter Layout">
-                    <group>
-                        <field name="engagement_letter_header_image" widget="image"/>
-                        <field name="engagement_letter_footer_image" widget="image"/>
-                    </group>
-                </page>
+            <!-- Ye xpath us page ke andar field dalega jahan engagement_letter_html hai -->
+            <xpath expr="//field[@name='engagement_letter_html']" position="before">
+                <field name="print_engagement_header_footer"
+                       widget="boolean_toggle"
+                       string="Print with Company Header/Footer"/>
             </xpath>
         </field>
     </record>

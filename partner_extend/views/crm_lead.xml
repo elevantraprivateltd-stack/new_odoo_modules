@@ -43,23 +43,29 @@
     </record>
 
 
-    <!--    <record id="crm_lead_form_inherit_custom_strings" model="ir.ui.view">-->
-    <!--        <field name="name">crm.lead.form.inherit.custom.strings</field>-->
-    <!--        <field name="model">crm.lead</field>-->
-    <!--        <field name="inherit_id" ref="crm.crm_lead_view_form"/>-->
-    <!--        <field name="arch" type="xml">-->
+    <record id="crm_lead_form_inherit_custom_strings" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.custom.strings</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
 
-    <!--            &lt;!&ndash; Company Information -> Institute Information &ndash;&gt;-->
-    <!--            <xpath expr="//page[@name='lead']/group/group[1]" position="attributes">-->
-    <!--                <attribute name="string">Institute Information</attribute>-->
-    <!--            </xpath>-->
+            <!-- Company Information -> Institute Information -->
+            <xpath expr="//page[@name='lead']/group/group[1]" position="attributes">
+                <attribute name="string">School Info</attribute>
+            </xpath>
 
-    <!--            &lt;!&ndash; Contact Information -> POS Information &ndash;&gt;-->
-    <!--            <xpath expr="//page[@name='lead']/group/group[2]" position="attributes">-->
-    <!--                <attribute name="string">POS Information</attribute>-->
-    <!--            </xpath>-->
 
-    <!--        </field>-->
-    <!--    </record>-->
+            <!-- Contact Information -> POS Information -->
+            <xpath expr="//page[@name='lead']/group/group[2]" position="attributes">
+                <attribute name="string">POS Information</attribute>
+            </xpath>
+
+            <xpath expr="//page[@name='lead']/group/group[3]" position="attributes">
+                <attribute name="string">Institute Details</attribute>
+            </xpath>
+
+
+        </field>
+    </record>
 
 </odoo>

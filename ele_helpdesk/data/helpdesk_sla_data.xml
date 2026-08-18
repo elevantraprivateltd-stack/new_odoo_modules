@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Agreed SLA: P1 = 4 hours, P2 = 2 days, P3 = 7 days -->
+    <record id="sla_p1" model="helpdesk.sla">
+        <field name="sequence">10</field>
+        <field name="ticket_rating">P1</field>
+        <field name="days">0</field>
+        <field name="hours">4</field>
+        <field name="description">Critical - must be resolved within 4 hours</field>
+    </record>
+    <record id="sla_p2" model="helpdesk.sla">
+        <field name="sequence">20</field>
+        <field name="ticket_rating">P2</field>
+        <field name="days">2</field>
+        <field name="hours">0</field>
+        <field name="description">High - must be resolved within 2 days</field>
+    </record>
+    <record id="sla_p3" model="helpdesk.sla">
+        <field name="sequence">30</field>
+        <field name="ticket_rating">P3</field>
+        <field name="days">7</field>
+        <field name="hours">0</field>
+        <field name="description">Normal - must be resolved within 7 days</field>
+    </record>
+</odoo>

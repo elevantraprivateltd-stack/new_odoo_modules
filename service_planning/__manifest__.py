@@ -44,7 +44,5 @@ Key Features:
     'installable': True,
     'application': True,
     'auto_install': False,
-    'price': 99.00,
-    'currency': 'USD',
     'license': 'LGPL-3',
 }

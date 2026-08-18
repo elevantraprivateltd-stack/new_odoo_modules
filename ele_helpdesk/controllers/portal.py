@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+from odoo.exceptions import AccessError, MissingError
 from odoo.http import request, route
 
 
@@ -39,3 +40,24 @@ class HelpdeskCustomerPortal(CustomerPortal):
     def portal_new_ticket(self, **kw):
         # Re-uses the same Client Form used on elevantra.cloud and inside Odoo.
         return request.redirect('/helpdesk/client-form')
+
+    # -----------------------------------------------------------------
+    # Customer ticket detail page - "the customer page" for a single
+    # ticket. Access control: a portal user may only ever open a ticket
+    # that belongs to their own partner_id; anything else raises a 403
+    # via the standard portal _document_check_access helper (same
+    # mechanism used by /my/orders/<id>, /my/invoices/<id>, etc.), which
+    # relies on the ir.rule "Portal: own tickets only" already defined
+    # in security/helpdesk_security.xml.
+    # -----------------------------------------------------------------
+    @route(['/my/tickets/<int:ticket_id>'], type='http', auth='user', website=True)
+    def portal_ticket_detail(self, ticket_id, **kw):
+        try:
+            ticket_sudo = self._document_check_access('helpdesk.ticket', ticket_id)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        return request.render('ele_helpdesk.portal_ticket_detail', {
+            'ticket': ticket_sudo,
+            'page_name': 'ticket',
+        })

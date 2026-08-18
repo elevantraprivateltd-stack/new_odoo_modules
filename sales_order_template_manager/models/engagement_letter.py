@@ -1,17 +1,16 @@
-# models/res_company.py
+# models/sale_order.py
 from odoo import fields, models
 
 
-class ResCompany(models.Model):
-    _inherit = 'res.company'
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
 
-    engagement_letter_header_image = fields.Binary(
-        string="Engagement Letter Header Image",
-        help="Full-width letterhead header image (recommended width ~1000px)."
-    )
-    engagement_letter_footer_image = fields.Binary(
-        string="Engagement Letter Footer Image",
-        help="Full-width letterhead footer image (recommended width ~1000px)."
+    print_engagement_header_footer = fields.Boolean(
+        string="Print with Header/Footer",
+        default=True,
+        help="Agar ye checked hai to Engagement Letter report company ka "
+             "existing (default) header/footer use karega. Agar uncheck "
+             "hai to sirf plain content print hoga, bina header/footer ke."
     )
 
 

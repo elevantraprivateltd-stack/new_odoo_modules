@@ -4,9 +4,18 @@
     <!-- Root Menu -->
     <menuitem id="menu_helpdesk_root" name="Helpdesk" sequence="25"/>
 
+    <!-- Live Dashboard (with customer filter) -->
+    <menuitem id="menu_helpdesk_live_dashboard" name="Dashboard" parent="menu_helpdesk_root"
+              action="action_helpdesk_live_dashboard" sequence="5"/>
+
     <!-- Tickets -->
     <menuitem id="menu_helpdesk_tickets" name="Tickets" parent="menu_helpdesk_root"
               action="action_helpdesk_ticket" sequence="10"/>
+
+    <!-- Customers: every partner that has raised a ticket, each row links
+         straight to that customer's own Contact page. -->
+    <menuitem id="menu_helpdesk_customers" name="Customers" parent="menu_helpdesk_root"
+              action="action_helpdesk_customers" sequence="12"/>
 
     <!-- Client Form: opens the public client-facing form (same one embedded
          on elevantra.cloud) in a new tab, so agents can preview it or log a
@@ -21,7 +30,9 @@
 
     <!-- Reporting -->
     <menuitem id="menu_helpdesk_reporting" name="Reporting" parent="menu_helpdesk_root" sequence="20"/>
-    <menuitem id="menu_helpdesk_custom_dashboard" name="Dashboard" parent="menu_helpdesk_reporting"
+    <menuitem id="menu_helpdesk_analytics" name="Ticket Analytics" parent="menu_helpdesk_reporting"
+              action="action_helpdesk_analytics_dashboard" sequence="5"/>
+    <menuitem id="menu_helpdesk_custom_dashboard" name="Ticket Analysis" parent="menu_helpdesk_reporting"
               action="action_helpdesk_custom_dashboard" sequence="10"/>
     <menuitem id="menu_helpdesk_custom_report" name="Report" parent="menu_helpdesk_reporting"
               action="action_helpdesk_report_wizard" sequence="20"/>
@@ -34,5 +45,9 @@
               action="action_helpdesk_stage" sequence="20"/>
     <menuitem id="menu_helpdesk_ticket_types" name="Ticket Types" parent="menu_helpdesk_config"
               action="action_helpdesk_ticket_type" sequence="30"/>
+    <menuitem id="menu_helpdesk_ticket_tags" name="Ticket Tags" parent="menu_helpdesk_config"
+              action="action_helpdesk_ticket_tag" sequence="40"/>
+    <menuitem id="menu_helpdesk_sla" name="SLA Policies" parent="menu_helpdesk_config"
+              action="action_helpdesk_sla" sequence="50"/>
 
 </odoo>

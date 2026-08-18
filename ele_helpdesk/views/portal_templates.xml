@@ -46,8 +46,16 @@
                     </thead>
                     <tbody>
                         <tr t-foreach="tickets" t-as="ticket">
-                            <td><span t-esc="ticket.ticket_ref"/></td>
-                            <td><span t-esc="ticket.name"/></td>
+                            <td>
+                                <a t-attf-href="/my/tickets/#{ticket.id}">
+                                    <span t-esc="ticket.ticket_ref"/>
+                                </a>
+                            </td>
+                            <td>
+                                <a t-attf-href="/my/tickets/#{ticket.id}">
+                                    <span t-esc="ticket.name"/>
+                                </a>
+                            </td>
                             <td><span t-esc="ticket.ticket_rating"/></td>
                             <td><span t-esc="ticket.stage_id.name"/></td>
                             <td><span t-esc="ticket.create_date"/></td>
@@ -56,6 +64,50 @@
                 </table>
                 <t t-call="portal.pager"/>
             </t>
+        </t>
+    </template>
+
+    <!-- /my/tickets/<id> - a single ticket's own "customer page".
+         Only reachable by the customer that owns the ticket (see
+         controllers/portal.py::portal_ticket_detail). -->
+    <template id="portal_ticket_detail" name="My Ticket">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_back_in_edit_mode">
+                <t t-set="backend_url" t-value="'/my/tickets'"/>
+            </t>
+
+            <div class="row">
+                <div class="col-12">
+                    <h3>
+                        <span t-field="ticket.ticket_ref"/> - <span t-field="ticket.name"/>
+                    </h3>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td class="text-muted">Stage</td>
+                            <td><span t-field="ticket.stage_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Ticket Rating</td>
+                            <td><span t-field="ticket.ticket_rating"/></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Date of Reporting</td>
+                            <td><span t-field="ticket.create_date"/></td>
+                        </tr>
+                        <tr t-if="ticket.user_id">
+                            <td class="text-muted">Assigned To</td>
+                            <td><span t-field="ticket.user_id.name"/></td>
+                        </tr>
+                        <tr t-if="ticket.close_date">
+                            <td class="text-muted">Closed On</td>
+                            <td><span t-field="ticket.close_date"/></td>
+                        </tr>
+                    </table>
+                    <h5>Description</h5>
+                    <div t-field="ticket.description"/>
+                </div>
+            </div>
         </t>
     </template>
 

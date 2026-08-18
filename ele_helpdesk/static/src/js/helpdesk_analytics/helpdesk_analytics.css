@@ -1,0 +1,258 @@
+.o_helpdesk_analytics {
+    padding: 20px 24px 32px;
+}
+
+.o_helpdesk_analytics .hda_header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.o_helpdesk_analytics .hda_title {
+    margin: 0;
+    font-weight: 600;
+}
+
+.o_helpdesk_analytics .hda_toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.o_helpdesk_analytics .hda_filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o_helpdesk_analytics .hda_select {
+    min-width: 200px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+.o_helpdesk_analytics .hda_refresh_btn {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+}
+
+.o_helpdesk_analytics .hda_loading {
+    color: #6b7280;
+    padding: 24px 0;
+}
+
+/* ---------------- KPI cards ---------------- */
+.o_helpdesk_analytics .hda_kpi_row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.o_helpdesk_analytics .hda_kpi_card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+}
+
+.o_helpdesk_analytics .hda_kpi_label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    margin-bottom: 6px;
+}
+
+.o_helpdesk_analytics .hda_kpi_value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.o_helpdesk_analytics .hda_kpi_unit {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+/* ---------------- Charts ---------------- */
+.o_helpdesk_analytics .hda_charts_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.o_helpdesk_analytics .hda_chart_card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.o_helpdesk_analytics .hda_legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.o_helpdesk_analytics .hda_legend_item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.o_helpdesk_analytics .hda_legend_dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.o_helpdesk_analytics .hda_pie_svg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.o_helpdesk_analytics .hda_pie_svg path {
+    stroke: #fff;
+    stroke-width: 1;
+}
+
+.o_helpdesk_analytics .hda_bar_chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 220px;
+    padding-top: 10px;
+}
+
+.o_helpdesk_analytics .hda_bar_col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+}
+
+.o_helpdesk_analytics .hda_bar_track {
+    position: relative;
+    width: 40px;
+    height: 190px;
+    background: #f3f4f6;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+}
+
+.o_helpdesk_analytics .hda_bar_segment {
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.o_helpdesk_analytics .hda_bar_seg_tip {
+    display: none;
+}
+
+.o_helpdesk_analytics .hda_bar_segment:hover .hda_bar_seg_tip {
+    display: block;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.o_helpdesk_analytics .hda_bar_label {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.o_helpdesk_analytics .hda_empty {
+    color: #9ca3af;
+    text-align: center;
+    padding: 12px 0;
+}
+
+/* ---------------- Tables ---------------- */
+.o_helpdesk_analytics .hda_tables_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.o_helpdesk_analytics .hda_table_card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.o_helpdesk_analytics .hda_table_card_wide {
+    grid-column: 1 / -1;
+}
+
+.o_helpdesk_analytics .hda_table_title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0e7c86;
+    margin: 0 0 10px;
+}
+
+.o_helpdesk_analytics .hda_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.o_helpdesk_analytics .hda_table th {
+    text-align: left;
+    font-size: 12px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 6px 4px;
+}
+
+.o_helpdesk_analytics .hda_table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 13px;
+}
+
+.o_helpdesk_analytics .hda_table .hda_num {
+    text-align: right;
+    font-weight: 600;
+}
+
+@media (max-width: 992px) {
+    .o_helpdesk_analytics .hda_kpi_row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .o_helpdesk_analytics .hda_charts_row,
+    .o_helpdesk_analytics .hda_tables_row {
+        grid-template-columns: 1fr;
+    }
+}

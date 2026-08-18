@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Live Dashboard (OWL client action) with customer filter -->
+    <record id="action_helpdesk_live_dashboard" model="ir.actions.client">
+        <field name="name">Helpdesk Dashboard</field>
+        <field name="tag">helpdesk_dashboard</field>
+    </record>
+
+    <!-- Ticket Analytics (OWL client action): KPI cards + pie chart by
+         stage + stacked bar chart by team/stage + Top Customers /
+         Top Assignees / Tickets by Tags tables. -->
+    <record id="action_helpdesk_analytics_dashboard" model="ir.actions.client">
+        <field name="name">Ticket Analytics</field>
+        <field name="tag">helpdesk_analytics_dashboard</field>
+    </record>
+
     <record id="view_helpdesk_ticket_graph_dashboard" model="ir.ui.view">
         <field name="name">helpdesk.ticket.graph.dashboard</field>
         <field name="model">helpdesk.ticket</field>

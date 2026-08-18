@@ -72,6 +72,7 @@
                 <field name="team_id"/>
                 <field name="ticket_type_id" optional="show"/>
                 <field name="ticket_rating" optional="show"/>
+                <field name="tag_ids" widget="many2many_tags" optional="hide"/>
                 <field name="stage_id"/>
                 <field name="priority" widget="priority"/>
                 <field name="user_id"/>
@@ -90,6 +91,16 @@
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_open_customer"
+                                class="oe_stat_button" icon="fa-user"
+                                invisible="not partner_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Customer</span>
+                                <span class="o_stat_text">Page</span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h6>
                             <field name="ticket_ref" readonly="1"/>
@@ -136,7 +147,11 @@
                             <field name="priority" widget="priority"/>
                             <field name="deadline"/>
                             <field name="is_overdue" readonly="1"/>
+                            <field name="rating" string="Customer Rating (1-5)"/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     </group>
                     <notebook>
                         <page string="Description">

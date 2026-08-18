@@ -9,3 +9,7 @@ access_helpdesk_stage_manager,helpdesk.stage.manager,model_helpdesk_stage,group_
 access_helpdesk_ticket_type_user,helpdesk.ticket.type.user,model_helpdesk_ticket_type,group_helpdesk_user,1,0,0,0
 access_helpdesk_ticket_type_manager,helpdesk.ticket.type.manager,model_helpdesk_ticket_type,group_helpdesk_manager,1,1,1,1
 access_helpdesk_report_wizard,helpdesk.report.wizard,model_helpdesk_report_wizard,group_helpdesk_user,1,1,1,1
+access_helpdesk_sla_user,helpdesk.sla.user,model_helpdesk_sla,group_helpdesk_user,1,0,0,0
+access_helpdesk_sla_manager,helpdesk.sla.manager,model_helpdesk_sla,group_helpdesk_manager,1,1,1,1
+access_helpdesk_ticket_tag_user,helpdesk.ticket.tag.user,model_helpdesk_ticket_tag,group_helpdesk_user,1,1,1,0
+access_helpdesk_ticket_tag_manager,helpdesk.ticket.tag.manager,model_helpdesk_ticket_tag,group_helpdesk_manager,1,1,1,1

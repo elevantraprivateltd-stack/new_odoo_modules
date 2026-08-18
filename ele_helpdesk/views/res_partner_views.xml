@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Smart button on the Contact form -> opens this customer's tickets -->
+    <record id="view_partner_form_helpdesk_button" model="ir.ui.view">
+        <field name="name">res.partner.form.helpdesk.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button type="object" name="action_view_helpdesk_tickets"
+                        class="oe_stat_button" icon="fa-life-ring"
+                        invisible="helpdesk_ticket_count == 0">
+                    <field name="helpdesk_ticket_count" widget="statinfo" string="Tickets"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- "Customers" list inside the Helpdesk app: every partner that has
+         raised at least one ticket, each row links straight to that
+         customer's own Contact page (the "customer page"). -->
+    <record id="action_helpdesk_customers" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('helpdesk_ticket_ids', '!=', False)]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No customers yet - they will appear here as soon as a ticket is raised.
+            </p>
+        </field>
+    </record>
+
+</odoo>

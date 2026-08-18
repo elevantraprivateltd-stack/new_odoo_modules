@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ele_helpdesk.HelpdeskAnalyticsDashboard">
+        <div class="o_helpdesk_analytics">
+            <div class="hda_header">
+                <h2 class="hda_title">Ticket Analytics</h2>
+                <div class="hda_toolbar">
+                    <div class="hda_filter">
+                        <label for="hda_customer_select">Customer</label>
+                        <select id="hda_customer_select" t-on-change="onCustomerChange" class="hda_select">
+                            <option value="">All Customers</option>
+                            <t t-foreach="state.customers" t-as="c" t-key="c.id">
+                                <option t-att-value="c.id" t-att-selected="state.partnerId === c.id">
+                                    <t t-esc="c.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <button class="hda_refresh_btn" t-on-click="onRefreshClick" title="Refresh now">
+                        ⟳ Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div t-if="state.loading and !state.data" class="hda_loading">Loading analytics…</div>
+
+            <t t-if="state.data">
+                <!-- ================= KPI CARDS ================= -->
+                <div class="hda_kpi_row">
+                    <div class="hda_kpi_card">
+                        <div class="hda_kpi_label">Tickets</div>
+                        <div class="hda_kpi_value"><t t-esc="state.data.kpis.tickets"/></div>
+                    </div>
+                    <div class="hda_kpi_card">
+                        <div class="hda_kpi_label">Rating</div>
+                        <div class="hda_kpi_value"><t t-esc="state.data.kpis.rating"/>/5</div>
+                    </div>
+                    <div class="hda_kpi_card">
+                        <div class="hda_kpi_label">Time to Assign</div>
+                        <div class="hda_kpi_value"><t t-esc="state.data.kpis.time_to_assign"/> <span class="hda_kpi_unit">hours</span></div>
+                    </div>
+                    <div class="hda_kpi_card">
+                        <div class="hda_kpi_label">Time to Respond</div>
+                        <div class="hda_kpi_value"><t t-esc="state.data.kpis.time_to_respond"/> <span class="hda_kpi_unit">hours</span></div>
+                    </div>
+                    <div class="hda_kpi_card">
+                        <div class="hda_kpi_label">Time to Close</div>
+                        <div class="hda_kpi_value"><t t-esc="state.data.kpis.time_to_close"/> <span class="hda_kpi_unit">hours</span></div>
+                    </div>
+                </div>
+
+                <!-- ================= CHARTS ================= -->
+                <div class="hda_charts_row">
+                    <!-- Pie: tickets by stage -->
+                    <div class="hda_chart_card">
+                        <div class="hda_legend">
+                            <t t-foreach="pieSlices" t-as="slice" t-key="slice.name">
+                                <span class="hda_legend_item">
+                                    <span class="hda_legend_dot" t-attf-style="background:{{slice.color}}"/>
+                                    <t t-esc="slice.name"/>
+                                </span>
+                            </t>
+                        </div>
+                        <svg viewBox="0 0 220 220" class="hda_pie_svg">
+                            <t t-foreach="pieSlices" t-as="slice" t-key="slice.name">
+                                <path t-att-d="slice.d" t-attf-style="fill:{{slice.color}}">
+                                    <title><t t-esc="slice.name"/>: <t t-esc="slice.count"/> (<t t-esc="slice.pct"/>%)</title>
+                                </path>
+                            </t>
+                        </svg>
+                        <div t-if="!pieSlices.length" class="hda_empty">No ticket data yet.</div>
+                    </div>
+
+                    <!-- Stacked bar: tickets by stage, split by team -->
+                    <div class="hda_chart_card">
+                        <div class="hda_legend">
+                            <t t-foreach="barChart.teams" t-as="team" t-key="team.id">
+                                <span class="hda_legend_item">
+                                    <span class="hda_legend_dot" t-attf-style="background:{{color(team_index)}}"/>
+                                    <t t-esc="team.name"/>
+                                </span>
+                            </t>
+                        </div>
+                        <div class="hda_bar_chart">
+                            <t t-foreach="barChart.bars" t-as="bar" t-key="bar.name">
+                                <div class="hda_bar_col">
+                                    <div class="hda_bar_track">
+                                        <t t-foreach="bar.segments" t-as="seg" t-key="seg.teamName">
+                                            <div class="hda_bar_segment"
+                                                 t-attf-style="height:{{seg.heightPct}}%; bottom:{{seg.bottomPct}}%; background:{{seg.color}}">
+                                                <span class="hda_bar_seg_tip"><t t-esc="seg.teamName"/>: <t t-esc="seg.value"/></span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="hda_bar_label"><t t-esc="bar.name"/></div>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-if="!barChart.bars.length" class="hda_empty">No team data yet.</div>
+                    </div>
+                </div>
+
+                <!-- ================= TABLES ================= -->
+                <div class="hda_tables_row">
+                    <div class="hda_table_card">
+                        <h3 class="hda_table_title">Top Customers</h3>
+                        <table class="hda_table">
+                            <thead><tr><th>Customer</th><th>Tickets</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="state.data.top_customers" t-as="row" t-key="row.name">
+                                    <td><t t-esc="row.name"/></td>
+                                    <td class="hda_num"><t t-esc="row.count"/></td>
+                                </tr>
+                                <tr t-if="!state.data.top_customers.length">
+                                    <td colspan="2" class="hda_empty">No data yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="hda_table_card">
+                        <h3 class="hda_table_title">Top Assignees</h3>
+                        <table class="hda_table">
+                            <thead><tr><th>Agent</th><th>Tickets</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="state.data.top_assignees" t-as="row" t-key="row.name">
+                                    <td><t t-esc="row.name"/></td>
+                                    <td class="hda_num"><t t-esc="row.count"/></td>
+                                </tr>
+                                <tr t-if="!state.data.top_assignees.length">
+                                    <td colspan="2" class="hda_empty">No data yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="hda_tables_row">
+                    <div class="hda_table_card hda_table_card_wide">
+                        <h3 class="hda_table_title">Tickets by Tags</h3>
+                        <table class="hda_table">
+                            <thead><tr><th>Ticket Tags</th><th>Tickets</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="state.data.tickets_by_tags" t-as="row" t-key="row.name">
+                                    <td><t t-esc="row.name"/></td>
+                                    <td class="hda_num"><t t-esc="row.count"/></td>
+                                </tr>
+                                <tr t-if="!state.data.tickets_by_tags.length">
+                                    <td colspan="2" class="hda_empty">No tags used yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ele_helpdesk.HelpdeskDashboard">
+        <div class="o_helpdesk_dashboard">
+            <div class="hd_header">
+                <h2 class="hd_title">Helpdesk Dashboard</h2>
+                <div class="hd_toolbar">
+                    <div class="hd_filter">
+                        <label for="hd_customer_select">Customer</label>
+                        <select id="hd_customer_select" t-on-change="onCustomerChange" class="hd_select">
+                            <option value="">All Customers</option>
+                            <t t-foreach="state.customers" t-as="c" t-key="c.id">
+                                <option t-att-value="c.id" t-att-selected="state.partnerId === c.id">
+                                    <t t-esc="c.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <button class="hd_refresh_btn" t-on-click="onRefreshClick" title="Refresh now">
+                        ⟳ Refresh
+                    </button>
+                    <span class="hd_live_badge"><span class="hd_dot"/> Live</span>
+                    <span t-if="state.lastUpdated" class="hd_updated">
+                        Updated <t t-esc="state.lastUpdated.toLocaleTimeString()"/>
+                    </span>
+                </div>
+            </div>
+
+            <div t-if="state.loading and !state.data" class="hd_loading">Loading dashboard…</div>
+
+            <t t-if="state.data">
+                <!-- ================= MY TICKETS + MY PERFORMANCE ================= -->
+                <div class="hd_my_row">
+                    <div class="hd_my_block">
+                        <h3 class="hd_block_title">My Tickets</h3>
+                        <div class="hd_mini_row">
+                            <div class="hd_mini hd_mini_primary" t-on-click="() => this.openTickets([['user_id','=',this.uid],['stage_id.is_close','=',false]])">
+                                <div class="hd_mini_value"><t t-esc="state.data.my.open"/></div>
+                                <div class="hd_mini_label">Open Tickets</div>
+                            </div>
+                            <div class="hd_mini" t-on-click="() => this.openTickets([['user_id','=',this.uid],['priority','=','2'],['stage_id.is_close','=',false]])">
+                                <div class="hd_mini_value">
+                                    <t t-esc="state.data.my.high_priority"/>
+                                    <span class="hd_stars">★★</span>
+                                </div>
+                                <div class="hd_mini_label">High Priority</div>
+                            </div>
+                            <div class="hd_mini hd_mini_primary" t-on-click="() => this.openTickets([['user_id','=',this.uid],['priority','=','3'],['stage_id.is_close','=',false]])">
+                                <div class="hd_mini_value">
+                                    <t t-esc="state.data.my.urgent"/>
+                                    <span class="hd_stars">★★★</span>
+                                </div>
+                                <div class="hd_mini_label">Urgent</div>
+                            </div>
+                        </div>
+                        <div class="hd_kv_row">
+                            <div class="hd_kv"><span class="k">Avg Open Hours</span><span class="v"><t t-esc="state.data.my.avg_open_hours"/>h</span></div>
+                            <div class="hd_kv"><span class="k">Failed (Overdue)</span><span class="v"><t t-esc="state.data.my.failed"/></span></div>
+                        </div>
+                    </div>
+
+                    <div class="hd_my_block">
+                        <div class="hd_block_title_row">
+                            <h3 class="hd_block_title">My Performance</h3>
+                            <span class="hd_sub_label">Today</span>
+                        </div>
+                        <div class="hd_mini_row">
+                            <div class="hd_mini hd_mini_gold">
+                                <div class="hd_mini_value"><t t-esc="state.data.my.closed_today"/></div>
+                                <div class="hd_mini_label">Closed Tickets</div>
+                            </div>
+                            <div class="hd_mini hd_mini_gold">
+                                <div class="hd_mini_value"><t t-esc="state.data.my.sla_success_rate"/>%</div>
+                                <div class="hd_mini_label">SLA Success Rate</div>
+                            </div>
+                            <div class="hd_mini hd_mini_gold">
+                                <div class="hd_mini_value">
+                                    <t t-esc="state.data.my.avg_rating"/>/5 <span class="hd_stars">★</span>
+                                </div>
+                                <div class="hd_mini_label">Average Rating</div>
+                            </div>
+                        </div>
+                        <div class="hd_sub_label hd_sub_label_row">Avg Last 7 days</div>
+                        <div class="hd_kv_row">
+                            <div class="hd_kv"><span class="k">Closed</span><span class="v"><t t-esc="state.data.my.closed_last7"/></span></div>
+                            <div class="hd_kv"><span class="k">SLA Rate</span><span class="v"><t t-esc="state.data.my.sla_success_rate_last7"/>%</span></div>
+                            <div class="hd_kv"><span class="k">Average Rating</span><span class="v"><t t-esc="state.data.my.avg_rating_last7"/>/5</span></div>
+                            <div class="hd_kv"><span class="k">Daily Target</span><span class="v"><t t-esc="state.data.my.daily_target"/></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= GLOBAL KPIs ================= -->
+                <h3 class="hd_section_title">Overview<t t-if="state.partnerId"> — filtered by customer</t></h3>
+                <div class="hd_kpi_row">
+                    <div class="hd_kpi hd_kpi_primary" t-on-click="() => this.openTickets([['stage_id.is_close','=',false]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.open"/></div>
+                        <div class="hd_kpi_label">Open Tickets</div>
+                    </div>
+                    <div class="hd_kpi" t-on-click="() => this.openTickets([['stage_id.is_close','=',true]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.closed"/></div>
+                        <div class="hd_kpi_label">Closed Tickets</div>
+                    </div>
+                    <div class="hd_kpi hd_kpi_urgent" t-on-click="() => this.openTickets([['priority','=','3'],['stage_id.is_close','=',false]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.urgent"/></div>
+                        <div class="hd_kpi_label">Urgent</div>
+                    </div>
+                    <div class="hd_kpi" t-on-click="() => this.openTickets([['priority','=','2'],['stage_id.is_close','=',false]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.high_priority"/></div>
+                        <div class="hd_kpi_label">High Priority</div>
+                    </div>
+                    <div class="hd_kpi" t-on-click="() => this.openTickets([['user_id','=',false],['stage_id.is_close','=',false]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.unassigned"/></div>
+                        <div class="hd_kpi_label">Unassigned</div>
+                    </div>
+                    <div class="hd_kpi hd_kpi_warning" t-on-click="() => this.openTickets([['is_overdue','=',true]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.overdue"/></div>
+                        <div class="hd_kpi_label">Overdue</div>
+                    </div>
+                    <div class="hd_kpi">
+                        <div class="hd_kpi_value"><t t-esc="state.data.avg_open_hours"/>h</div>
+                        <div class="hd_kpi_label">Avg Open Hours</div>
+                    </div>
+                    <div class="hd_kpi">
+                        <div class="hd_kpi_value"><t t-esc="state.data.sla_success_rate"/>%</div>
+                        <div class="hd_kpi_label">SLA Success Rate</div>
+                    </div>
+                    <div class="hd_kpi">
+                        <div class="hd_kpi_value"><t t-esc="state.data.total"/></div>
+                        <div class="hd_kpi_label">Total Tickets</div>
+                    </div>
+                </div>
+
+                <!-- ================= BY TEAM ================= -->
+                <h3 class="hd_section_title">By Team</h3>
+                <div class="hd_teams_row">
+                    <t t-foreach="state.data.teams" t-as="team" t-key="team.id">
+                        <div class="hd_team_card">
+                            <h4 t-on-click="() => this.openTeamTickets(team)"><t t-esc="team.name"/></h4>
+                            <div class="hd_team_top">
+                                <div class="hd_team_top_item" t-on-click="() => this.openTeamTickets(team, [['stage_id.is_close','=',true]])">
+                                    <span class="k">Tickets Closed</span>
+                                    <span class="v"><t t-esc="team.closed"/></span>
+                                </div>
+                                <div class="hd_team_top_item">
+                                    <span class="k">SLA Success Rate</span>
+                                    <span class="v"><t t-esc="team.sla_success_rate"/>%</span>
+                                </div>
+                                <div class="hd_team_top_item">
+                                    <span class="k">Average Rating</span>
+                                    <span class="v"><t t-esc="team.avg_rating"/>/5 <span class="hd_stars">★</span></span>
+                                </div>
+                            </div>
+                            <div class="hd_team_stats">
+                                <div class="hd_team_stat" t-on-click="() => this.openTeamTickets(team, [['stage_id.is_close','=',false]])">
+                                    <span class="v"><t t-esc="team.open"/></span>
+                                    <span class="l">Open</span>
+                                </div>
+                                <div class="hd_team_stat" t-on-click="() => this.openTeamTickets(team, [['stage_id.is_close','=',false],['user_id','=',false]])">
+                                    <span class="v"><t t-esc="team.unassigned"/></span>
+                                    <span class="l">Unassigned</span>
+                                </div>
+                                <div class="hd_team_stat" t-on-click="() => this.openTeamTickets(team, [['stage_id.is_close','=',false],['priority','=','3']])">
+                                    <span class="v"><t t-esc="team.urgent"/></span>
+                                    <span class="l">Urgent</span>
+                                </div>
+                                <div class="hd_team_stat" t-on-click="() => this.openTeamTickets(team, [['is_overdue','=',true]])">
+                                    <span class="v"><t t-esc="team.failed"/></span>
+                                    <span class="l">Failed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <div t-if="!state.data.teams.length" class="hd_no_teams">
+                        No teams configured yet. Add teams under Helpdesk &gt; Configuration &gt; Teams.
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

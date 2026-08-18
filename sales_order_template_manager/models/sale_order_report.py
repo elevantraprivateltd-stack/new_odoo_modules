@@ -19,7 +19,7 @@ class SaleOrder(models.Model):
 
     # Header button click hone par report trigger karne ka function
     def action_print_engagement_letter(self):
-        return self.env.ref('sales_order_template.action_report_engagement_letter').report_action(self)
+        return self.env.ref('sales_order_template_manager.action_report_engagement_letter').report_action(self)
 
     is_proposal_report = fields.Boolean(
         string="Include Proposal Template?",

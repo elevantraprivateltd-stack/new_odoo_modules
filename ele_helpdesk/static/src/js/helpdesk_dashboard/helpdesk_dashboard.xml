@@ -125,6 +125,14 @@
                         <div class="hd_kpi_value"><t t-esc="state.data.sla_success_rate"/>%</div>
                         <div class="hd_kpi_label">SLA Success Rate</div>
                     </div>
+                    <div class="hd_kpi" t-on-click="() => this.openTickets([['within_sla','=',true]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.within_sla_count"/></div>
+                        <div class="hd_kpi_label">Within SLA</div>
+                    </div>
+                    <div class="hd_kpi hd_kpi_warning" t-on-click="() => this.openTickets([['after_sla','=',true]])">
+                        <div class="hd_kpi_value"><t t-esc="state.data.after_sla_count"/></div>
+                        <div class="hd_kpi_label">After SLA</div>
+                    </div>
                     <div class="hd_kpi">
                         <div class="hd_kpi_value"><t t-esc="state.data.total"/></div>
                         <div class="hd_kpi_label">Total Tickets</div>

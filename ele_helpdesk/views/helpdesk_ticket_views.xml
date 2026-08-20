@@ -78,6 +78,9 @@
                 <field name="user_id"/>
                 <field name="is_overdue" optional="show" widget="boolean_toggle"/>
                 <field name="create_date"/>
+                <field name="close_date" string="Date of Solved" optional="hide"/>
+                <field name="within_sla" optional="hide"/>
+                <field name="after_sla" optional="hide"/>
             </list>
         </field>
     </record>
@@ -120,6 +123,9 @@
                             <field name="expected_time" readonly="1"/>
                             <field name="user_id" string="Assigned To"/>
                             <field name="time_remaining" readonly="1"/>
+                            <field name="close_date" readonly="1"/>
+                            <field name="within_sla" readonly="1"/>
+                            <field name="after_sla" readonly="1"/>
                         </group>
                     </group>
                     <group>
@@ -189,6 +195,8 @@
                 <filter string="My Tickets" name="my_tickets" domain="[('user_id','=',uid)]"/>
                 <filter string="Unassigned" name="unassigned" domain="[('user_id','=',False)]"/>
                 <filter string="Overdue" name="overdue" domain="[('is_overdue','=',True)]"/>
+                <filter string="Within SLA" name="within_sla" domain="[('within_sla','=',True)]"/>
+                <filter string="After SLA" name="after_sla" domain="[('after_sla','=',True)]"/>
                 <group>
                     <filter string="Stage" name="group_stage" context="{'group_by':'stage_id'}"/>
                     <filter string="Team" name="group_team" context="{'group_by':'team_id'}"/>

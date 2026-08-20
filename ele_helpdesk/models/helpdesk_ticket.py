@@ -121,7 +121,21 @@ class HelpdeskTicket(models.Model):
     deadline = fields.Datetime(string='Deadline', tracking=True)
     time_remaining = fields.Char(string='Time Remaining', compute='_compute_time_remaining')
 
-    close_date = fields.Datetime(string='Closed On', readonly=True)
+    close_date = fields.Datetime(string='Date of Solved', readonly=True)
+
+    # ---------------------------------------------------------
+    # SLA breach flags - computed once the ticket is solved by
+    # comparing Date of Solved (close_date) against the SLA Deadline.
+    # These are the fields the Live Dashboard's SLA % is built from.
+    # ---------------------------------------------------------
+    within_sla = fields.Boolean(
+        string='Within SLA', compute='_compute_sla_status', store=True,
+        help='Ticket was solved on or before its SLA deadline.',
+    )
+    after_sla = fields.Boolean(
+        string='After SLA', compute='_compute_sla_status', store=True,
+        help='Ticket was solved after its SLA deadline (SLA breached).',
+    )
     is_overdue = fields.Boolean(string='Overdue', compute='_compute_is_overdue', store=True)
     color = fields.Integer(string='Color Index')
     active = fields.Boolean(default=True)
@@ -160,11 +174,27 @@ class HelpdeskTicket(models.Model):
             hours = sla_hours.get(ticket.ticket_rating, self._SLA_HOURS.get(ticket.ticket_rating, 168))
             ticket.expected_time = '%s hours (%s)' % (hours, ticket.ticket_rating or 'P3')
 
-    @api.depends('deadline', 'stage_id.is_close')
+    @api.depends('deadline', 'close_date', 'stage_id.is_close')
     def _compute_time_remaining(self):
+        """Live countdown while the ticket is open. The moment it's
+        solved (Date of Solved / close_date gets set), this freezes
+        automatically and instead shows how much time was left (or how
+        late it was) AT THE MOMENT it was solved - it no longer keeps
+        counting down against "now"."""
         now = fields.Datetime.now()
         for ticket in self:
-            if not ticket.deadline or ticket.stage_id.is_close:
+            if not ticket.deadline:
+                ticket.time_remaining = '-'
+                continue
+            if ticket.close_date:
+                delta = ticket.deadline - ticket.close_date
+                hours = delta.total_seconds() / 3600.0
+                if hours < 0:
+                    ticket.time_remaining = 'Solved late by %.1f hrs' % abs(hours)
+                else:
+                    ticket.time_remaining = 'Solved %.1f hrs early' % hours
+                continue
+            if ticket.stage_id.is_close:
                 ticket.time_remaining = '-'
                 continue
             delta = ticket.deadline - now
@@ -173,6 +203,19 @@ class HelpdeskTicket(models.Model):
                 ticket.time_remaining = 'Overdue by %.1f hrs' % abs(hours)
             else:
                 ticket.time_remaining = '%.1f hrs left' % hours
+
+    @api.depends('close_date', 'deadline')
+    def _compute_sla_status(self):
+        """Only meaningful once the ticket has actually been solved
+        (close_date set). Until then both flags stay False - the
+        ticket's SLA outcome simply isn't decided yet."""
+        for ticket in self:
+            if ticket.close_date and ticket.deadline:
+                ticket.within_sla = ticket.close_date <= ticket.deadline
+                ticket.after_sla = ticket.close_date > ticket.deadline
+            else:
+                ticket.within_sla = False
+                ticket.after_sla = False
 
     @api.depends('deadline', 'stage_id.is_close')
     def _compute_is_overdue(self):
@@ -277,9 +320,37 @@ class HelpdeskTicket(models.Model):
     # Live Dashboard (read-only stats, called from the OWL widget)
     # ---------------------------------------------------------
     @api.model
+    def _is_helpdesk_staff(self):
+        """Only Helpdesk User/Manager (agents) - or an admin - are allowed
+        to browse cross-customer stats. Anyone else (a portal customer,
+        or any other internal user who was never given a Helpdesk group)
+        is restricted to their own data only, no matter what argument
+        they pass in. This is enforced here - not just in the menu/UI -
+        because get_dashboard_data()/get_analytics_dashboard_data() use
+        sudo() internally to build the aggregated stats, so this check is
+        the only thing standing between a customer and everyone else's
+        tickets."""
+        user = self.env.user
+        return (
+            user._is_admin()
+            or user.has_group('ele_helpdesk.group_helpdesk_user')
+            or user.has_group('ele_helpdesk.group_helpdesk_manager')
+        )
+
+    @api.model
     def get_dashboard_customers(self):
         """List of customers that have at least one ticket -> used to
-        populate the dashboard's customer filter dropdown."""
+        populate the dashboard's customer filter dropdown.
+
+        Helpdesk staff see every customer, as before. A customer/portal
+        user (or any non-helpdesk user) only ever gets their own name
+        back, if they even have a ticket - never anyone else's."""
+        if not self._is_helpdesk_staff():
+            partner = self.env.user.partner_id
+            if not partner or not self.sudo().search_count([('partner_id', '=', partner.id)]):
+                return []
+            return [{'id': partner.id, 'name': partner.name}]
+
         rows = self.sudo().search_read(
             [('partner_id', '!=', False)], ['partner_id'],
         )
@@ -295,14 +366,16 @@ class HelpdeskTicket(models.Model):
 
     @api.model
     def _sla_success_rate(self, closed_domain):
-        """% of closed tickets that were closed on/before their deadline.
-        Computed from the real 'deadline' vs 'close_date' fields - no
-        fabricated numbers."""
-        rows = self.sudo().search_read(closed_domain, ['deadline', 'close_date'])
-        rows = [r for r in rows if r['deadline'] and r['close_date']]
+        """% of closed tickets that were solved within SLA. Driven by the
+        stored 'within_sla' / 'after_sla' flags (Date of Solved vs
+        Deadline) - no fabricated numbers, and consistent everywhere
+        (ticket form, list, dashboard) since they all read the same
+        two fields."""
+        rows = self.sudo().search_read(closed_domain, ['within_sla', 'after_sla'])
+        rows = [r for r in rows if r['within_sla'] or r['after_sla']]
         if not rows:
             return 0.0
-        met = sum(1 for r in rows if r['close_date'] <= r['deadline'])
+        met = sum(1 for r in rows if r['within_sla'])
         return round(100.0 * met / len(rows), 2)
 
     @api.model
@@ -326,7 +399,17 @@ class HelpdeskTicket(models.Model):
     @api.model
     def get_dashboard_data(self, partner_id=False):
         """Aggregated, always-fresh stats for the Live Dashboard.
-        Pass a partner_id to restrict every number to that customer only."""
+        Pass a partner_id to restrict every number to that customer only.
+
+        Security: a non-helpdesk-staff caller (a customer/portal user)
+        can NEVER see anyone else's numbers - whatever partner_id they
+        send is ignored and replaced with their own partner, so calling
+        this method directly (e.g. from the browser console) can't be
+        used to peek at other customers' data or company-wide totals."""
+        if not self._is_helpdesk_staff():
+            own_partner = self.env.user.partner_id
+            partner_id = own_partner.id if own_partner else -1
+
         Ticket = self.sudo()
         base_domain = [('partner_id', '=', partner_id)] if partner_id else []
 
@@ -412,6 +495,8 @@ class HelpdeskTicket(models.Model):
             'overdue': Ticket.search_count(base_domain + [('is_overdue', '=', True)]),
             'avg_open_hours': self._avg_open_hours(open_ids),
             'sla_success_rate': self._sla_success_rate(closed_domain),
+            'within_sla_count': Ticket.search_count(closed_domain + [('within_sla', '=', True)]),
+            'after_sla_count': Ticket.search_count(closed_domain + [('after_sla', '=', True)]),
             'priority_breakdown': priority_breakdown,
             'rating_breakdown': rating_breakdown,
             'teams': team_data,
@@ -434,6 +519,14 @@ class HelpdeskTicket(models.Model):
 
     @api.model
     def get_analytics_dashboard_data(self, partner_id=False):
+        """Same rule as get_dashboard_data(): non-staff callers are always
+        forced back to their own partner_id, regardless of what they pass
+        in, so this can't be used to pull company-wide/other-customer
+        analytics either."""
+        if not self._is_helpdesk_staff():
+            own_partner = self.env.user.partner_id
+            partner_id = own_partner.id if own_partner else -1
+
         Ticket = self.sudo()
         domain = [('partner_id', '=', partner_id)] if partner_id else []
         tickets = Ticket.search(domain)

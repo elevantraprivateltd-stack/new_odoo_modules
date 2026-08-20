@@ -298,6 +298,38 @@
     color: #d97706;
 }
 
+.o_helpdesk_dashboard .hd_two_col_row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.o_helpdesk_dashboard .hd_panel {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.o_helpdesk_dashboard .hd_panel .hd_section_title {
+    margin-bottom: 12px;
+}
+
+.o_helpdesk_dashboard .hd_kpi_row_compact {
+    margin-bottom: 0;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.o_helpdesk_dashboard .hd_kpi_row_compact .hd_kpi {
+    padding: 12px 8px;
+    text-align: center;
+}
+
+.o_helpdesk_dashboard .hd_kpi_row_compact .hd_kpi_value {
+    font-size: 22px;
+}
+
 .o_helpdesk_dashboard .hd_section_title {
     font-size: 15px;
     font-weight: 600;

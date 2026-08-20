@@ -386,6 +386,22 @@ class HelpdeskTicket(models.Model):
             'daily_target': 5,  # adjust here, or move to a config parameter later
         }
 
+        # ---------------- By Priority (Low / Medium / High / Urgent) -----
+        # Counts open tickets only, same as the other Overview KPIs above.
+        priority_breakdown = {
+            'low': Ticket.search_count(open_domain + [('priority', '=', '0')]),
+            'medium': Ticket.search_count(open_domain + [('priority', '=', '1')]),
+            'high': Ticket.search_count(open_domain + [('priority', '=', '2')]),
+            'urgent': Ticket.search_count(open_domain + [('priority', '=', '3')]),
+        }
+
+        # ---------------- By Ticket Rating (P1 / P2 / P3) -----------------
+        rating_breakdown = {
+            'p1': Ticket.search_count(open_domain + [('ticket_rating', '=', 'P1')]),
+            'p2': Ticket.search_count(open_domain + [('ticket_rating', '=', 'P2')]),
+            'p3': Ticket.search_count(open_domain + [('ticket_rating', '=', 'P3')]),
+        }
+
         return {
             'total': Ticket.search_count(base_domain),
             'open': len(open_ids),
@@ -396,6 +412,8 @@ class HelpdeskTicket(models.Model):
             'overdue': Ticket.search_count(base_domain + [('is_overdue', '=', True)]),
             'avg_open_hours': self._avg_open_hours(open_ids),
             'sla_success_rate': self._sla_success_rate(closed_domain),
+            'priority_breakdown': priority_breakdown,
+            'rating_breakdown': rating_breakdown,
             'teams': team_data,
             'my': my,
             'generated_at': fields.Datetime.to_string(fields.Datetime.now()),

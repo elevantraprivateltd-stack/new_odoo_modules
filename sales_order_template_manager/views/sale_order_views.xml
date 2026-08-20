@@ -8,10 +8,6 @@
         <field name="arch" type="xml">
 
             <xpath expr="//header" position="inside">
-                <button name="action_load_proposal_terms"
-                        string="Toggle Proposal Text"
-                        type="object"
-                        class="btn-primary"/>
                 <button name="action_print_engagement_letter"
                         string="Print Engagement Letter"
                         type="object"
@@ -26,15 +22,17 @@
                         </h1>
                     </div>
                     <div class="oe_avatar">
-                        <field name="report_header_icon" widget="image" nolabel="1" class="oe_avatar m-0"/>
+                        <!--                        <field name="report_header_icon" widget="image" nolabel="1" class="oe_avatar m-0"/>-->
                     </div>
                 </div>
             </xpath>
+            <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                <field name="proposal_template_id"/>
+            </xpath>
+
             <xpath expr="//notebook" position="inside">
                 <page string="Engagement Letter" name="engagement_letter_tab">
-                    <group>
-                        <field name="engagement_letter_html" widget="html" nolabel="1"/>
-                    </group>
+                    <field name="engagement_letter_html" widget="html" nolabel="1"/>
                 </page>
             </xpath>
         </field>

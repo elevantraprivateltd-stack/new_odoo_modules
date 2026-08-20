@@ -131,6 +131,49 @@
                     </div>
                 </div>
 
+                <!-- ================= BY PRIORITY / BY TICKET RATING (P1-P2-P3) ================= -->
+                <div class="hd_two_col_row">
+                    <div class="hd_panel">
+                        <h3 class="hd_section_title">By Priority</h3>
+                        <div class="hd_kpi_row hd_kpi_row_compact">
+                            <div class="hd_kpi" t-on-click="() =&gt; this.openTickets([['priority','=','0'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.priority_breakdown.low"/></div>
+                                <div class="hd_kpi_label">Low</div>
+                            </div>
+                            <div class="hd_kpi" t-on-click="() =&gt; this.openTickets([['priority','=','1'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.priority_breakdown.medium"/></div>
+                                <div class="hd_kpi_label">Medium</div>
+                            </div>
+                            <div class="hd_kpi" t-on-click="() =&gt; this.openTickets([['priority','=','2'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.priority_breakdown.high"/></div>
+                                <div class="hd_kpi_label">High</div>
+                            </div>
+                            <div class="hd_kpi hd_kpi_urgent" t-on-click="() =&gt; this.openTickets([['priority','=','3'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.priority_breakdown.urgent"/></div>
+                                <div class="hd_kpi_label">Urgent</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hd_panel">
+                        <h3 class="hd_section_title">By Ticket Rating (P1 / P2 / P3)</h3>
+                        <div class="hd_kpi_row hd_kpi_row_compact">
+                            <div class="hd_kpi hd_kpi_urgent" t-on-click="() =&gt; this.openTickets([['ticket_rating','=','P1'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.rating_breakdown.p1"/></div>
+                                <div class="hd_kpi_label">P1</div>
+                            </div>
+                            <div class="hd_kpi hd_kpi_warning" t-on-click="() =&gt; this.openTickets([['ticket_rating','=','P2'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.rating_breakdown.p2"/></div>
+                                <div class="hd_kpi_label">P2</div>
+                            </div>
+                            <div class="hd_kpi" t-on-click="() =&gt; this.openTickets([['ticket_rating','=','P3'],['stage_id.is_close','=',false]])">
+                                <div class="hd_kpi_value"><t t-esc="state.data.rating_breakdown.p3"/></div>
+                                <div class="hd_kpi_label">P3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ================= BY TEAM ================= -->
                 <h3 class="hd_section_title">By Team</h3>
                 <div class="hd_teams_row">

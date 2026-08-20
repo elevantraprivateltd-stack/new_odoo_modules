@@ -20,10 +20,12 @@ Key Features:
 * **Engagement Letter Generation**: we add a custom page to notebook and add a custom print button to print the engagement letter .
 * **Streamlined UI**: Optimized sales view interface for easier management of templates and customer proposals.
 """,
-    'depends': ['base', 'sale'],
+    'depends': ['base', 'sale', 'sale_management'],
     'data': [
+        'security/ir.model.access.csv',
         'report/sale_order_template.xml',
         'report/engagement_letter_report.xml',
+        'views/sale_order_proposal_template_views.xml',
         'views/sale_order_views.xml',
         'views/engagement_letter.xml',
     ],

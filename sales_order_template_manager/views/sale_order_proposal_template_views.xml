@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_order_proposal_template_list" model="ir.ui.view">
+        <field name="name">sale.order.proposal.template.list</field>
+        <field name="model">sale.order.proposal.template</field>
+        <field name="arch" type="xml">
+            <list string="Proposal Templates">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_order_proposal_template_form" model="ir.ui.view">
+        <field name="name">sale.order.proposal.template.form</field>
+        <field name="model">sale.order.proposal.template</field>
+        <field name="arch" type="xml">
+            <form string="Proposal Template">
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="e.g. Standard Accounting Proposal"/>
+                    </group>
+                    <notebook>
+                        <page string="Text" name="text_page">
+                            <field name="text" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sale_order_proposal_template" model="ir.actions.act_window">
+        <field name="name">Proposal Templates</field>
+        <field name="res_model">sale.order.proposal.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_sale_order_proposal_template"
+              name="Proposal Templates"
+              action="action_sale_order_proposal_template"
+              parent="sale.menu_sale_config"
+              sequence="20"/>
+
+</odoo>

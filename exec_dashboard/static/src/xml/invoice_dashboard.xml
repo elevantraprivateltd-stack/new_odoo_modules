@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="exec_dashboard.InvoiceDashboard">
+        <div class="o_exec_dashboard">
+            <h2>Invoicing Dashboard</h2>
+            <div class="o_dashboard_loading" t-if="state.loading">Loading...</div>
+            <div class="o_dashboard_cards" t-else="">
+                <div class="o_dashboard_card o_card_orange" t-on-click="() => this.openInvoices('unpaid')">
+                    <span class="o_card_value" t-esc="state.unpaid.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.unpaid.amount)"/>
+                    <span class="o_card_label">Unpaid</span>
+                </div>
+                <div class="o_dashboard_card o_card_red" t-on-click="() => this.openInvoices('late')">
+                    <span class="o_card_value" t-esc="state.late.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.late.amount)"/>
+                    <span class="o_card_label">Late</span>
+                </div>
+                <div class="o_dashboard_card o_card_green" t-on-click="() => this.openInvoices('paid')">
+                    <span class="o_card_value" t-esc="state.paid.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.paid.amount)"/>
+                    <span class="o_card_label">Paid (This Month)</span>
+                </div>
+            </div>
+
+            <h2 class="o_exec_dashboard_subtitle">Sale &amp; Purchase</h2>
+            <div class="o_dashboard_cards" t-if="!state.loading">
+                <div class="o_dashboard_card o_card_purple" t-on-click="() => this.openSales()">
+                    <span class="o_card_value" t-esc="state.sales.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.sales.amount)"/>
+                    <span class="o_card_label">Total Sales</span>
+                </div>
+                <div class="o_dashboard_card o_card_blue" t-if="state.purchases" t-on-click="() => this.openPurchases()">
+                    <span class="o_card_value" t-esc="state.purchases.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.purchases.amount)"/>
+                    <span class="o_card_label">Total Purchases</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

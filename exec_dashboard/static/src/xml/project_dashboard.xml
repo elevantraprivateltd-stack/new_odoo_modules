@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="exec_dashboard.ProjectDashboard">
+        <div class="o_exec_dashboard">
+            <h2>Project Dashboard</h2>
+            <div class="o_dashboard_loading" t-if="state.loading">Loading...</div>
+            <div class="o_dashboard_cards" t-else="">
+                <div class="o_dashboard_card o_card_purple" t-on-click="() => this.openProjects()">
+                    <span class="o_card_value" t-esc="state.activeProjects"/>
+                    <span class="o_card_label">Active Projects</span>
+                </div>
+                <div class="o_dashboard_card o_card_blue" t-on-click="() => this.openTasks()">
+                    <span class="o_card_value" t-esc="state.openTasks"/>
+                    <span class="o_card_label">Open Tasks</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

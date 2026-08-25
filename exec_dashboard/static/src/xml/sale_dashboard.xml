@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="exec_dashboard.SaleDashboard">
+        <div class="o_exec_dashboard">
+            <h2>Sales Dashboard</h2>
+            <div class="o_dashboard_loading" t-if="state.loading">Loading...</div>
+            <div class="o_dashboard_cards" t-else="">
+                <div class="o_dashboard_card o_card_orange" t-on-click="() => this.openOrders('draft')">
+                    <span class="o_card_value" t-esc="state.draft.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.draft.amount)"/>
+                    <span class="o_card_label">Draft Quotation</span>
+                </div>
+                <div class="o_dashboard_card o_card_blue" t-on-click="() => this.openOrders('sent')">
+                    <span class="o_card_value" t-esc="state.sent.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.sent.amount)"/>
+                    <span class="o_card_label">Quotation Sent</span>
+                </div>
+                <div class="o_dashboard_card o_card_green" t-on-click="() => this.openOrders('confirmed')">
+                    <span class="o_card_value" t-esc="state.confirmed.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.confirmed.amount)"/>
+                    <span class="o_card_label">Quotation Confirmed</span>
+                </div>
+                <div class="o_dashboard_card o_card_red" t-on-click="() => this.openOrders('invoiceDue')">
+                    <span class="o_card_value" t-esc="state.invoiceDue.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.invoiceDue.amount)"/>
+                    <span class="o_card_label">Invoice Due</span>
+                </div>
+                <div class="o_dashboard_card o_card_purple" t-on-click="() => this.openOrders('open')">
+                    <span class="o_card_value" t-esc="state.open.count"/>
+                    <span class="o_card_amount" t-esc="this.formatAmount(state.open.amount)"/>
+                    <span class="o_card_label">Quotation Open</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

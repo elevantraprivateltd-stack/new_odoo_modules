@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="exec_dashboard.CrmDashboard">
+        <div class="o_exec_dashboard">
+            <h2>CRM Dashboard</h2>
+            <div class="o_dashboard_loading" t-if="state.loading">Loading...</div>
+            <div class="o_dashboard_cards" t-else="">
+                <div class="o_dashboard_card o_card_purple" t-on-click="() => this.openLeads('total')">
+                    <span class="o_card_value" t-esc="state.total"/>
+                    <span class="o_card_label">Total Leads</span>
+                </div>
+                <div class="o_dashboard_card o_card_blue" t-on-click="() => this.openLeads('newLeads')">
+                    <span class="o_card_value" t-esc="state.newLeads"/>
+                    <span class="o_card_label">New (This Month)</span>
+                </div>
+                <div class="o_dashboard_card o_card_orange" t-on-click="() => this.openLeads('inProgress')">
+                    <span class="o_card_value" t-esc="state.inProgress"/>
+                    <span class="o_card_label">In Progress</span>
+                </div>
+                <div class="o_dashboard_card o_card_green" t-on-click="() => this.openLeads('won')">
+                    <span class="o_card_value" t-esc="state.won"/>
+                    <span class="o_card_label">Won</span>
+                </div>
+                <div class="o_dashboard_card o_card_red" t-on-click="() => this.openLeads('lost')">
+                    <span class="o_card_value" t-esc="state.lost"/>
+                    <span class="o_card_label">Lost</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

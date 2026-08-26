@@ -215,6 +215,13 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Create your first Help Desk ticket</p>
         </field>
+        <!-- Only Helpdesk staff may browse ALL tickets from this backend
+             action. Portal customers are separately restricted to their
+             own tickets by the "Portal: own tickets only" ir.rule, but a
+             plain internal user (no ir.rule applies to them by default)
+             would otherwise see every customer's tickets here if they
+             ever reached this action - so lock the action itself too. -->
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
     <record id="view_helpdesk_ticket_type_list" model="ir.ui.view">
@@ -234,6 +241,7 @@
         <field name="name">Ticket Types</field>
         <field name="res_model">helpdesk.ticket.type</field>
         <field name="view_mode">list</field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
 </odoo>

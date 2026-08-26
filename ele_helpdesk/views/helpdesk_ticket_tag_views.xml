@@ -17,6 +17,7 @@
         <field name="name">Ticket Tags</field>
         <field name="res_model">helpdesk.ticket.tag</field>
         <field name="view_mode">list</field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
 </odoo>

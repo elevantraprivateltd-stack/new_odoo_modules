@@ -46,6 +46,7 @@
         <field name="res_model">helpdesk.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
 </odoo>

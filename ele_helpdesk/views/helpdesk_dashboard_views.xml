@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Live Dashboard (OWL client action) with customer filter -->
+    <!-- Live Dashboard (OWL client action) with customer filter.
+         NOTE: ir.actions.client has no "groups"/"group_ids" field in any
+         Odoo version - only ir.actions.act_window does - so it can't be
+         restricted here. Access is controlled by (1) the menu item's
+         groups="..." (menu_views.xml), which hides it from the UI for
+         non-staff, and (2), more importantly, server-side in
+         helpdesk_ticket.py: get_dashboard_data() / get_dashboard_customers()
+         call _is_helpdesk_staff() and force a non-staff caller's own
+         partner_id no matter what they pass in - so even if a non-staff
+         user opened this action directly by URL, the RPC calls behind it
+         still can't return any other customer's data. -->
     <record id="action_helpdesk_live_dashboard" model="ir.actions.client">
         <field name="name">Helpdesk Dashboard</field>
         <field name="tag">helpdesk_dashboard</field>
@@ -9,7 +19,9 @@
 
     <!-- Ticket Analytics (OWL client action): KPI cards + pie chart by
          stage + stacked bar chart by team/stage + Top Customers /
-         Top Assignees / Tickets by Tags tables. -->
+         Top Assignees / Tickets by Tags tables. Same note as above -
+         protected by the menu + by get_analytics_dashboard_data()'s
+         server-side _is_helpdesk_staff() check. -->
     <record id="action_helpdesk_analytics_dashboard" model="ir.actions.client">
         <field name="name">Ticket Analytics</field>
         <field name="tag">helpdesk_analytics_dashboard</field>
@@ -41,6 +53,7 @@
         <field name="name">Helpdesk Analytics Dashboard</field>
         <field name="res_model">helpdesk.ticket</field>
         <field name="view_mode">graph,pivot,kanban,list</field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'graph', 'view_id': ref('view_helpdesk_ticket_graph_dashboard')}),
             (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_helpdesk_ticket_pivot_dashboard')})]"/>

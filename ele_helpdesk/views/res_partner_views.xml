@@ -31,6 +31,7 @@
                 No customers yet - they will appear here as soon as a ticket is raised.
             </p>
         </field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
 </odoo>

@@ -47,6 +47,7 @@
                 Define the SLA resolution time for each priority (P1, P2, P3).
             </p>
         </field>
+        <field name="group_ids" eval="[(6, 0, [ref('ele_helpdesk.group_helpdesk_user'), ref('ele_helpdesk.group_helpdesk_manager')])]"/>
     </record>
 
 </odoo>

@@ -57,4 +57,4 @@ Enterprise Helpdesk app. Includes:
             'ele_helpdesk/static/src/js/helpdesk_analytics/helpdesk_analytics.css',
         ],
     },
-}# comment
+}

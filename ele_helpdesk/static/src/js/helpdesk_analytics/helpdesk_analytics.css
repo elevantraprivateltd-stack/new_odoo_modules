@@ -256,3 +256,17 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Force the action container to scroll if the analytics content is
+   taller than the viewport (fixes "page does not scroll down"). */
+.o_action_manager,
+.o_content {
+    overflow-y: auto !important;
+    height: 100% !important;
+}
+
+.o_helpdesk_analytics {
+    overflow: visible;
+    min-height: 0;
+    height: auto;
+}

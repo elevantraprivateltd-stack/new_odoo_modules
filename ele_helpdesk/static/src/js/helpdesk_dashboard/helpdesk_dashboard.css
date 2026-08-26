@@ -393,3 +393,17 @@
 .o_helpdesk_dashboard .hd_no_teams {
     color: #6b7280;
 }
+
+/* Force the action container to scroll if the dashboard content is
+   taller than the viewport (fixes "page does not scroll down"). */
+.o_action_manager,
+.o_content {
+    overflow-y: auto !important;
+    height: 100% !important;
+}
+
+.o_helpdesk_dashboard {
+    overflow: visible;
+    min-height: 0;
+    height: auto;
+}

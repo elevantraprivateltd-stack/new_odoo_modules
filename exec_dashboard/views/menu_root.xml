@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Top-level app icon shown on the home screen (like Discuss, CRM, Sales...) -->
     <menuitem id="menu_exec_dashboard_root"
-              name="Dashboards"
-              web_icon="exec_dashboard,static/description/icon.jpeg"
-              sequence="8"/>
+              name="Executive Dashboard"
+              sequence="5"/>
 </odoo>

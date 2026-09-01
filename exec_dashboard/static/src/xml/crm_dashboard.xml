@@ -1,30 +1,174 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
-    <t t-name="exec_dashboard.CrmDashboard">
-        <div class="o_exec_dashboard">
-            <h2>CRM Dashboard</h2>
-            <div class="o_dashboard_loading" t-if="state.loading">Loading...</div>
-            <div class="o_dashboard_cards" t-else="">
-                <div class="o_dashboard_card o_card_purple" t-on-click="() => this.openLeads('total')">
-                    <span class="o_card_value" t-esc="state.total"/>
-                    <span class="o_card_label">Total Leads</span>
+    <t t-name="exec_dashboard.CRMDashboardTemplate">
+        <div class="o_dashboard_container">
+            <div class="dashboard_filter_bar">
+                <div>
+                    <h4>CRM Lead Pipeline Analytics</h4>
+                    <div class="subtitle">Live filtered counts • Click any KPI card to drill into records</div>
                 </div>
-                <div class="o_dashboard_card o_card_blue" t-on-click="() => this.openLeads('newLeads')">
-                    <span class="o_card_value" t-esc="state.newLeads"/>
-                    <span class="o_card_label">New (This Month)</span>
+            </div>
+
+            <div class="dash_filters_panel">
+                <div class="dash_filter_field">
+                    <label>Team</label>
+                    <select t-on-change="(ev) => this.onFilterChange('team_id', ev)">
+                        <option value="">All Teams</option>
+                        <t t-foreach="state.filter_options.teams" t-as="t" t-key="t.id">
+                            <option t-att-value="t.id" t-att-selected="state.filters.team_id == t.id"><t t-esc="t.name"/></option>
+                        </t>
+                    </select>
                 </div>
-                <div class="o_dashboard_card o_card_orange" t-on-click="() => this.openLeads('inProgress')">
-                    <span class="o_card_value" t-esc="state.inProgress"/>
-                    <span class="o_card_label">In Progress</span>
+                <div class="dash_filter_field">
+                    <label>Stage</label>
+                    <select t-on-change="(ev) => this.onFilterChange('stage_id', ev)">
+                        <option value="">All Stages</option>
+                        <t t-foreach="state.filter_options.stages" t-as="s" t-key="s.id">
+                            <option t-att-value="s.id" t-att-selected="state.filters.stage_id == s.id"><t t-esc="s.name"/></option>
+                        </t>
+                    </select>
                 </div>
-                <div class="o_dashboard_card o_card_green" t-on-click="() => this.openLeads('won')">
-                    <span class="o_card_value" t-esc="state.won"/>
-                    <span class="o_card_label">Won</span>
+                <div class="dash_filter_field">
+                    <label>Lead Source</label>
+                    <select t-on-change="(ev) => this.onFilterChange('source_id', ev)">
+                        <option value="">All Sources</option>
+                        <t t-foreach="state.filter_options.sources" t-as="s" t-key="s.id">
+                            <option t-att-value="s.id" t-att-selected="state.filters.source_id == s.id"><t t-esc="s.name"/></option>
+                        </t>
+                    </select>
                 </div>
-                <div class="o_dashboard_card o_card_red" t-on-click="() => this.openLeads('lost')">
-                    <span class="o_card_value" t-esc="state.lost"/>
-                    <span class="o_card_label">Lost</span>
+                <div class="dash_filter_field">
+                    <label>Salesperson</label>
+                    <select t-on-change="(ev) => this.onFilterChange('user_id', ev)">
+                        <option value="">All Users</option>
+                        <t t-foreach="state.filter_options.users" t-as="u" t-key="u.id">
+                            <option t-att-value="u.id" t-att-selected="state.filters.user_id == u.id"><t t-esc="u.name"/></option>
+                        </t>
+                    </select>
                 </div>
+                <div class="dash_filter_field">
+                    <label>Priority</label>
+                    <select t-on-change="(ev) => this.onFilterChange('priority', ev)">
+                        <option value="">Any Priority</option>
+                        <option value="0" t-att-selected="state.filters.priority == '0'">Low</option>
+                        <option value="1" t-att-selected="state.filters.priority == '1'">Medium</option>
+                        <option value="2" t-att-selected="state.filters.priority == '2'">High</option>
+                        <option value="3" t-att-selected="state.filters.priority == '3'">Very High</option>
+                    </select>
+                </div>
+                <div class="dash_filter_field">
+                    <label>Period</label>
+                    <select t-on-change="(ev) => this.onFilterChange('date_preset', ev)">
+                        <option value="all" t-att-selected="state.filters.date_preset == 'all'">All Time</option>
+                        <option value="today" t-att-selected="state.filters.date_preset == 'today'">Today</option>
+                        <option value="this_week" t-att-selected="state.filters.date_preset == 'this_week'">This Week</option>
+                        <option value="this_month" t-att-selected="state.filters.date_preset == 'this_month'">This Month</option>
+                        <option value="last_month" t-att-selected="state.filters.date_preset == 'last_month'">Last Month</option>
+                        <option value="this_quarter" t-att-selected="state.filters.date_preset == 'this_quarter'">This Quarter</option>
+                        <option value="this_year" t-att-selected="state.filters.date_preset == 'this_year'">This Year</option>
+                        <option value="custom" t-att-selected="state.filters.date_preset == 'custom'">Custom Range</option>
+                    </select>
+                </div>
+                <t t-if="state.filters.date_preset === 'custom'">
+                    <div class="dash_filter_field">
+                        <label>From</label>
+                        <input type="date" t-att-value="state.filters.date_from" t-on-change="(ev) => this.onFilterChange('date_from', ev)"/>
+                    </div>
+                    <div class="dash_filter_field">
+                        <label>To</label>
+                        <input type="date" t-att-value="state.filters.date_to" t-on-change="(ev) => this.onFilterChange('date_to', ev)"/>
+                    </div>
+                </t>
+                <div class="dash_filter_field dash_filter_reset">
+                    <button class="dash_reset_btn" t-att-disabled="!hasActiveFilters" t-on-click="resetFilters">
+                        <i class="fa fa-refresh"/> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard_cards_grid">
+                <div class="dash_card gradient grad_blue" t-on-click="() => this.openCRMAction('all')">
+                    <div class="card_icon"><i class="fa fa-tasks"/></div>
+                    <div class="card_title">Total Leads</div>
+                    <div class="card_value"><t t-esc="state.total_leads"/></div>
+                    <div class="card_sub">All pipeline</div>
+                </div>
+                <div class="dash_card gradient grad_teal" t-on-click="() => this.openCRMAction('open')">
+                    <div class="card_icon"><i class="fa fa-folder-open"/></div>
+                    <div class="card_title">Open Leads</div>
+                    <div class="card_value"><t t-esc="state.open_leads"/></div>
+                    <div class="card_sub">Active pipeline</div>
+                </div>
+                <div class="dash_card gradient grad_orange" t-on-click="() => this.openCRMAction('new')">
+                    <div class="card_icon"><i class="fa fa-star"/></div>
+                    <div class="card_title">New Leads</div>
+                    <div class="card_value"><t t-esc="state.new_leads"/></div>
+                    <div class="card_sub">0% probability</div>
+                </div>
+                <div class="dash_card gradient grad_indigo" t-on-click="() => this.openCRMAction('in_progress')">
+                    <div class="card_icon"><i class="fa fa-spinner"/></div>
+                    <div class="card_title">In Progress</div>
+                    <div class="card_value"><t t-esc="state.in_progress"/></div>
+                    <div class="card_sub">Working</div>
+                </div>
+                <div class="dash_card gradient grad_green" t-on-click="() => this.openCRMAction('won')">
+                    <div class="card_icon"><i class="fa fa-trophy"/></div>
+                    <div class="card_title">Won Deals</div>
+                    <div class="card_value"><t t-esc="state.won_leads"/></div>
+                    <div class="card_sub">100% closed</div>
+                </div>
+                <div class="dash_card gradient grad_red" t-on-click="() => this.openCRMAction('lost')">
+                    <div class="card_icon"><i class="fa fa-times-circle"/></div>
+                    <div class="card_title">Lost Leads</div>
+                    <div class="card_value"><t t-esc="state.lost_leads"/></div>
+                    <div class="card_sub">Archived</div>
+                </div>
+                <div class="dash_card gradient grad_purple" t-on-click="() => this.openCRMAction('activities')">
+                    <div class="card_icon"><i class="fa fa-bell"/></div>
+                    <div class="card_title">My Activities</div>
+                    <div class="card_value"><t t-esc="state.my_activities"/></div>
+                    <div class="card_sub">Pending</div>
+                </div>
+                <div class="dash_card gradient grad_cyan">
+                    <div class="card_icon"><i class="fa fa-dollar"/></div>
+                    <div class="card_title">Expected Revenue</div>
+                    <div class="card_value"><t t-esc="state.total_revenue"/></div>
+                    <div class="card_sub">Open pipeline</div>
+                </div>
+            </div>
+
+            <div class="charts_row">
+                <div class="chart_box">
+                    <h5>Pipeline Distribution</h5>
+                    <div class="chart_canvas_wrap">
+                        <canvas t-ref="pipelineChart"/>
+                    </div>
+                </div>
+                <div class="chart_box">
+                    <h5>Leads by Team</h5>
+                    <div class="chart_canvas_wrap">
+                        <canvas t-ref="teamChart"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts_row">
+                <div class="chart_box">
+                    <h5>Leads by Stage</h5>
+                    <div class="chart_canvas_wrap">
+                        <canvas t-ref="stageChart"/>
+                    </div>
+                </div>
+                <div class="chart_box">
+                    <h5>Leads by Source</h5>
+                    <div class="chart_canvas_wrap">
+                        <canvas t-ref="sourceChart"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard_footer_note">
+                Real-time data from crm.lead • Charts powered by Chart.js • Click KPI cards to open filtered records
             </div>
         </div>
     </t>

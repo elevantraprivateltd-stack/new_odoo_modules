@@ -1,86 +1,297 @@
 /** @odoo-module **/
+import {registry} from "@web/core/registry";
+import {rpc} from "@web/core/network/rpc";
+import {Component, onWillStart, onMounted, onWillUnmount, useState, useRef} from "@odoo/owl";
 
-import { registry } from "@web/core/registry";
-import { Component, onWillStart, useState } from "@odoo/owl";
-import { useService } from "@web/core/utils/hooks";
+const COLORS = ["#6366f1", "#22d3ee", "#10b981", "#f59e0b", "#ef4444", "#a78bfa", "#ec4899", "#14b8a6", "#3b82f6", "#f97316"];
 
-export class CrmExecDashboard extends Component {
-    static template = "exec_dashboard.CrmDashboard";
+function getChart() {
+    return window.Chart || (typeof Chart !== "undefined" ? Chart : null);
+}
+
+export class CRMDashboard extends Component {
+    static template = "exec_dashboard.CRMDashboardTemplate";
 
     setup() {
-        this.orm = useService("orm");
-        this.actionService = useService("action");
         this.state = useState({
-            loading: true,
-            total: 0,
-            newLeads: 0,
-            inProgress: 0,
-            won: 0,
-            lost: 0,
+            total_leads: 0, open_leads: 0, new_leads: 0, in_progress: 0,
+            won_leads: 0, lost_leads: 0, my_activities: 0, total_revenue: 0,
+            by_team_data: [], by_stage_data: [], by_source_data: [], loaded: false,
+            filter_options: {teams: [], stages: [], sources: [], users: []},
+            filters: {
+                team_id: "", stage_id: "", source_id: "", user_id: "",
+                priority: "", date_preset: "all", date_from: "", date_to: "",
+            },
         });
+        this.stageChartRef = useRef("stageChart");
+        this.teamChartRef = useRef("teamChart");
+        this.pipelineChartRef = useRef("pipelineChart");
+        this.sourceChartRef = useRef("sourceChart");
+        this._charts = [];
+        this._mounted = false;
+
         onWillStart(async () => {
             await this.loadData();
         });
-    }
-
-    firstDayOfMonth() {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
-    }
-
-    get domains() {
-        return {
-            total: [["type", "=", "opportunity"]],
-            newLeads: [
-                ["type", "=", "opportunity"],
-                ["create_date", ">=", this.firstDayOfMonth()],
-            ],
-            inProgress: [
-                ["type", "=", "opportunity"],
-                ["active", "=", true],
-                ["stage_id.is_won", "=", false],
-            ],
-            won: [
-                ["type", "=", "opportunity"],
-                ["stage_id.is_won", "=", true],
-            ],
-            lost: [
-                ["type", "=", "opportunity"],
-                ["active", "=", false],
-                ["probability", "=", 0],
-            ],
-        };
+        onMounted(() => {
+            this._mounted = true;
+            this.scheduleRender();
+        });
+        onWillUnmount(() => {
+            this._mounted = false;
+            this.destroyCharts();
+        });
     }
 
     async loadData() {
-        this.state.loading = true;
-        const domains = this.domains;
-        const entries = Object.entries(domains);
-        const results = await Promise.all(
-            entries.map(([, domain]) =>
-                this.orm.searchCount("crm.lead", domain, { context: { active_test: false } })
-            )
-        );
-        entries.forEach(([key], i) => {
-            this.state[key] = results[i];
-        });
-        this.state.loading = false;
+        try {
+            const f = this.state.filters;
+            const payload = {
+                team_id: f.team_id || null,
+                stage_id: f.stage_id || null,
+                source_id: f.source_id || null,
+                user_id: f.user_id || null,
+                priority: f.priority || null,
+                date_preset: f.date_preset || "all",
+                date_from: f.date_from || null,
+                date_to: f.date_to || null,
+            };
+            const data = await rpc("/exec_dashboard/get_crm_ultra_data", payload);
+            Object.assign(this.state, data);
+            this.state.loaded = true;
+            this.scheduleRender();
+        } catch (e) {
+            console.error("CRM Dashboard error:", e);
+        }
     }
 
-    openLeads(key) {
-        this.actionService.doAction({
+    onFilterChange(field, ev) {
+        this.state.filters[field] = ev.target.value;
+        if (field === "date_preset" && ev.target.value !== "custom") {
+            this.state.filters.date_from = "";
+            this.state.filters.date_to = "";
+        }
+        this.loadData();
+    }
+
+    resetFilters() {
+        Object.assign(this.state.filters, {
+            team_id: "", stage_id: "", source_id: "", user_id: "",
+            priority: "", date_preset: "all", date_from: "", date_to: "",
+        });
+        this.loadData();
+    }
+
+    get hasActiveFilters() {
+        const f = this.state.filters;
+        return !!(f.team_id || f.stage_id || f.source_id || f.user_id || f.priority || (f.date_preset && f.date_preset !== "all"));
+    }
+
+    scheduleRender() {
+        if (!this._mounted || !this.state.loaded) return;
+        // Wait for layout so canvas has size
+        setTimeout(() => this.renderCharts(), 120);
+    }
+
+    destroyCharts() {
+        (this._charts || []).forEach((c) => {
+            try {
+                c.destroy();
+            } catch (_) {
+            }
+        });
+        this._charts = [];
+    }
+
+    renderCharts() {
+        const ChartLib = getChart();
+        if (!ChartLib) {
+            console.warn("Chart.js not available on window.Chart");
+            return;
+        }
+        this.destroyCharts();
+
+        // Pipeline Doughnut
+        const pipeEl = this.pipelineChartRef.el;
+        if (pipeEl) {
+            const ch = new ChartLib(pipeEl, {
+                type: "doughnut",
+                data: {
+                    labels: ["New", "In Progress", "Won", "Lost"],
+                    datasets: [{
+                        data: [
+                            this.state.new_leads || 0,
+                            this.state.in_progress || 0,
+                            this.state.won_leads || 0,
+                            this.state.lost_leads || 0,
+                        ],
+                        backgroundColor: ["#f59e0b", "#6366f1", "#10b981", "#ef4444"],
+                        borderWidth: 0,
+                        hoverOffset: 10,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "62%",
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {color: "#cbd5e1", padding: 14, font: {size: 11}},
+                        },
+                    },
+                },
+            });
+            this._charts.push(ch);
+        }
+
+        // Stage Bar
+        const stageEl = this.stageChartRef.el;
+        if (stageEl) {
+            const hasData = (this.state.by_stage_data || []).length > 0;
+            const ch = new ChartLib(stageEl, {
+                type: "bar",
+                data: {
+                    labels: hasData ? this.state.by_stage_data.map((i) => i.name) : ["No data"],
+                    datasets: [{
+                        label: "Leads",
+                        data: hasData ? this.state.by_stage_data.map((i) => i.count) : [0],
+                        backgroundColor: COLORS,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {display: false}},
+                    scales: {
+                        x: {ticks: {color: "#94a3b8", font: {size: 10}}, grid: {display: false}},
+                        y: {ticks: {color: "#94a3b8"}, grid: {color: "rgba(148,163,184,0.12)"}, beginAtZero: true},
+                    },
+                },
+            });
+            this._charts.push(ch);
+        }
+
+        // Team Pie
+        const teamEl = this.teamChartRef.el;
+        if (teamEl) {
+            const hasData = (this.state.by_team_data || []).length > 0;
+            const ch = new ChartLib(teamEl, {
+                type: "pie",
+                data: {
+                    labels: hasData ? this.state.by_team_data.map((i) => i.name) : ["No data"],
+                    datasets: [{
+                        data: hasData ? this.state.by_team_data.map((i) => i.count) : [1],
+                        backgroundColor: hasData ? COLORS : ["#334155"],
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            labels: {color: "#cbd5e1", font: {size: 11}, boxWidth: 12},
+                        },
+                    },
+                },
+            });
+            this._charts.push(ch);
+        }
+
+        // Source Bar (horizontal)
+        const sourceEl = this.sourceChartRef.el;
+        if (sourceEl) {
+            const hasData = (this.state.by_source_data || []).length > 0;
+            const ch = new ChartLib(sourceEl, {
+                type: "bar",
+                data: {
+                    labels: hasData ? this.state.by_source_data.map((i) => i.name) : ["No data"],
+                    datasets: [{
+                        label: "Leads",
+                        data: hasData ? this.state.by_source_data.map((i) => i.count) : [0],
+                        backgroundColor: COLORS,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }],
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {legend: {display: false}},
+                    scales: {
+                        x: {ticks: {color: "#94a3b8"}, grid: {color: "rgba(148,163,184,0.12)"}, beginAtZero: true},
+                        y: {ticks: {color: "#94a3b8", font: {size: 10}}, grid: {display: false}},
+                    },
+                },
+            });
+            this._charts.push(ch);
+        }
+    }
+
+    openCRMAction(targetType) {
+        let domain = [];
+        let name = "CRM Leads";
+        if (targetType === "open") {
+            domain = [["active", "=", true], ["probability", "<", 100]];
+            name = "Open Leads";
+        } else if (targetType === "new") {
+            domain = [["active", "=", true], ["probability", "=", 0]];
+            name = "New Leads";
+        } else if (targetType === "in_progress") {
+            domain = [["active", "=", true], ["probability", ">", 0], ["probability", "<", 100]];
+            name = "In Progress";
+        } else if (targetType === "won") {
+            domain = [["active", "=", true], ["probability", "=", 100]];
+            name = "Won Deals";
+        } else if (targetType === "lost") {
+            domain = [["active", "=", false], ["probability", "=", 0]];
+            name = "Lost Leads";
+        } else if (targetType === "activities") {
+            // Direct CRM Leads par filter laga kar activities open karne ka perfect tarika
+            this.env.services.action.doAction({
+                type: "ir.actions.act_window",
+                name: "My Activities",
+                res_model: "crm.lead",
+                views: [[false, "list"], [false, "form"]],
+                domain: [["activity_ids", "!=", false]],
+                context: {
+                    search_default_my_activities: 1,
+                    search_default_activities_overdue: 1,
+                    search_default_activities_today: 1,
+                    search_default_activities_upcoming: 1
+                },
+                target: "current",
+            });
+            return;
+        }
+        // Respect active filters when drilling down
+        const f = this.state.filters;
+        if (f.team_id) domain.push(["team_id", "=", parseInt(f.team_id)]);
+        if (f.stage_id) domain.push(["stage_id", "=", parseInt(f.stage_id)]);
+        if (f.source_id) domain.push(["source_id", "=", parseInt(f.source_id)]);
+        if (f.user_id) domain.push(["user_id", "=", parseInt(f.user_id)]);
+        this.env.services.action.doAction({
             type: "ir.actions.act_window",
-            name: "Leads / Opportunities",
+            name: name,
             res_model: "crm.lead",
-            views: [
-                [false, "list"],
-                [false, "form"],
-                [false, "kanban"],
-            ],
-            domain: this.domains[key],
-            context: { active_test: false },
+            views: [[false, "list"], [false, "kanban"], [false, "form"]],
+            domain: domain,
+            target: "current",
         });
     }
 }
 
-registry.category("actions").add("exec_dashboard.crm_dashboard", CrmExecDashboard);
+registry
+    .category(
+        "actions"
+    ).add(
+    "crm_ultra_dashboard"
+    ,
+    CRMDashboard
+)
+;

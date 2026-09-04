@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_duplicate_wizard_form" model="ir.ui.view">
+        <field name="name">company.duplicate.wizard.form</field>
+        <field name="model">company.duplicate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Duplicate Company">
+                <group>
+                    <field name="source_company_id"/>
+                    <field name="new_company_name"/>
+                </group>
+                <group string="What to Copy">
+                    <field name="copy_partners"/>
+                    <!-- copy_products field completely removed -->
+                    <field name="copy_accounting"/>
+                    <field name="copy_warehouses"/>
+                </group>
+                <footer>
+                    <button name="action_duplicate" string="Duplicate Company" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_company_duplicate_wizard" model="ir.actions.act_window">
+        <field name="name">Duplicate Company</field>
+        <field name="res_model">company.duplicate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu item (agar pehle se hai to theek hai, warna yeh add karo) -->
+    <menuitem id="menu_company_duplicate_wizard"
+              name="Duplicate Company"
+              parent="base.menu_users"
+              action="action_company_duplicate_wizard"
+              sequence="50"/>
+</odoo>

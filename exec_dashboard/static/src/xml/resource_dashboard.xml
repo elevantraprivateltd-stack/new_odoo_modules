@@ -9,6 +9,10 @@
                 </div>
             </div>
 
+            <div t-if="state.error" class="dash_error_banner">
+                ⚠ Dashboard data could not be loaded: <t t-esc="state.error"/>
+            </div>
+
             <div class="dash_filters_panel">
                 <div class="dash_filter_field">
                     <label>Department</label>

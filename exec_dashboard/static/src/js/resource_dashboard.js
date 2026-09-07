@@ -16,7 +16,7 @@ export class ResourceDashboard extends Component {
         this.state = useState({
             total_employees: 0, active_employees: 0, departments_count: 0,
             attendance_count: 0, leave_count: 0, available_count: 0,
-            assigned_count: 0, dept_data: [], loaded: false,
+            assigned_count: 0, dept_data: [], loaded: false, error: null,
             filter_options: { departments: [], jobs: [] },
             filters: { department_id: "", job_id: "" },
         });
@@ -38,11 +38,20 @@ export class ResourceDashboard extends Component {
                 job_id: f.job_id || null,
             };
             const data = await rpc("/exec_dashboard/get_resource_ultra_data", payload);
-            Object.assign(this.state, data);
+            if (data && data.error) {
+                console.error("Resource Dashboard backend error:", data.error);
+                this.state.error = data.error;
+                this.state.loaded = true;
+                return;
+            }
+Object.assign(this.state, data);
+            this.state.error = null;
             this.state.loaded = true;
             this.scheduleRender();
         } catch (e) {
             console.error("Resource Dashboard error:", e);
+            this.state.error = (e && e.message) ? e.message : String(e);
+            this.state.loaded = true;
         }
     }
 

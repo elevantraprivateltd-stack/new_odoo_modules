@@ -16,7 +16,7 @@ export class ProjectDashboard extends Component {
         this.state = useState({
             total_projects: 0, open_projects: 0, total_tasks: 0,
             open_tasks: 0, done_tasks: 0, my_tasks: 0, tags_count: 0,
-            stage_data: [], loaded: false,
+            stage_data: [], loaded: false, error: null,
             filter_options: { projects: [], stages: [], users: [] },
             filters: { project_id: "", stage_id: "", user_id: "", date_preset: "all", date_from: "", date_to: "" },
         });
@@ -42,11 +42,20 @@ export class ProjectDashboard extends Component {
                 date_to: f.date_to || null,
             };
             const data = await rpc("/exec_dashboard/get_project_ultra_data", payload);
-            Object.assign(this.state, data);
+            if (data && data.error) {
+                console.error("Project Dashboard backend error:", data.error);
+                this.state.error = data.error;
+                this.state.loaded = true;
+                return;
+            }
+Object.assign(this.state, data);
+            this.state.error = null;
             this.state.loaded = true;
             this.scheduleRender();
         } catch (e) {
             console.error("Project Dashboard error:", e);
+            this.state.error = (e && e.message) ? e.message : String(e);
+            this.state.loaded = true;
         }
     }
 

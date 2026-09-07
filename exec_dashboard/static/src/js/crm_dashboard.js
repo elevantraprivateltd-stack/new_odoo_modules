@@ -16,7 +16,7 @@ export class CRMDashboard extends Component {
         this.state = useState({
             total_leads: 0, open_leads: 0, new_leads: 0, in_progress: 0,
             won_leads: 0, lost_leads: 0, my_activities: 0, total_revenue: 0,
-            by_team_data: [], by_stage_data: [], by_source_data: [], loaded: false,
+            by_team_data: [], by_stage_data: [], by_source_data: [], loaded: false, error: null,
             filter_options: {teams: [], stages: [], sources: [], users: []},
             filters: {
                 team_id: "", stage_id: "", source_id: "", user_id: "",
@@ -57,11 +57,20 @@ export class CRMDashboard extends Component {
                 date_to: f.date_to || null,
             };
             const data = await rpc("/exec_dashboard/get_crm_ultra_data", payload);
+            if (data && data.error) {
+                console.error("CRM Dashboard backend error:", data.error);
+                this.state.error = data.error;
+                this.state.loaded = true;
+                return;
+            }
             Object.assign(this.state, data);
+            this.state.error = null;
             this.state.loaded = true;
             this.scheduleRender();
         } catch (e) {
             console.error("CRM Dashboard error:", e);
+            this.state.error = (e && e.message) ? e.message : String(e);
+            this.state.loaded = true;
         }
     }
 

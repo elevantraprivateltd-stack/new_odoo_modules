@@ -360,3 +360,13 @@ html .o_web_client .o_action_manager .o_content,
     min-height: 280px !important;
     height: 280px !important;
 }
+
+.dash_error_banner {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    color: #fecaca;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin: 0 0 16px 0;
+    font-size: 13px;
+}

@@ -16,7 +16,7 @@ export class InvoiceDashboard extends Component {
             unpaid_invoices: 0, paid_invoices: 0, bills_count: 0,
             refunds_count: 0, vendors_count: 0,
             total_sale_amount: 0, total_purchase_amount: 0,
-            payments_collected: 0, residual_amount: 0, loaded: false,
+            payments_collected: 0, residual_amount: 0, loaded: false, error: null,
             filter_options: { partners: [], users: [], payment_states: [] },
             filters: { partner_id: "", user_id: "", payment_state: "", date_preset: "all", date_from: "", date_to: "" },
         });
@@ -43,11 +43,20 @@ export class InvoiceDashboard extends Component {
                 date_to: f.date_to || null,
             };
             const data = await rpc("/exec_dashboard/get_invoice_ultra_data", payload);
-            Object.assign(this.state, data);
+            if (data && data.error) {
+                console.error("Invoice Dashboard backend error:", data.error);
+                this.state.error = data.error;
+                this.state.loaded = true;
+                return;
+            }
+Object.assign(this.state, data);
+            this.state.error = null;
             this.state.loaded = true;
             this.scheduleRender();
         } catch (e) {
             console.error("Invoice Dashboard error:", e);
+            this.state.error = (e && e.message) ? e.message : String(e);
+            this.state.loaded = true;
         }
     }
 

@@ -16,7 +16,7 @@ export class SaleDashboard extends Component {
         this.state = useState({
             total_orders: 0, quotations: 0, sale_confirmed: 0, cancelled: 0,
             to_invoice: 0, upsell: 0, fully_invoiced: 0, customers_count: 0,
-            total_sales: 0, salesperson_data: [], loaded: false,
+            total_sales: 0, salesperson_data: [], loaded: false, error: null,
             filter_options: { teams: [], users: [], states: [] },
             filters: { team_id: "", user_id: "", state: "", date_preset: "all", date_from: "", date_to: "" },
         });
@@ -43,11 +43,20 @@ export class SaleDashboard extends Component {
                 date_to: f.date_to || null,
             };
             const data = await rpc("/exec_dashboard/get_sale_ultra_data", payload);
-            Object.assign(this.state, data);
+            if (data && data.error) {
+                console.error("Sale Dashboard backend error:", data.error);
+                this.state.error = data.error;
+                this.state.loaded = true;
+                return;
+            }
+Object.assign(this.state, data);
+            this.state.error = null;
             this.state.loaded = true;
             this.scheduleRender();
         } catch (e) {
             console.error("Sale Dashboard error:", e);
+            this.state.error = (e && e.message) ? e.message : String(e);
+            this.state.loaded = true;
         }
     }
 

@@ -37,7 +37,7 @@ Enterprise Helpdesk app. Includes:
         'report/helpdesk_report_actions.xml',      # <-- Reports pehle load hongi
         'report/helpdesk_report_template.xml',
         'views/website_client_form_templates.xml',  # <-- Client Form page
-        'views/portal_templates.xml',                # <-- "Support Tickets" card on /my/home
+        'views/portal_templates.xml',                # <-- "Helpdesk Tickets" card on /my/home
         'views/menu_views.xml',                     # <-- Menus sab se aakhir mein
     ],
     'installable': True,

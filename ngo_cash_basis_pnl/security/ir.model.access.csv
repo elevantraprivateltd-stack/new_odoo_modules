@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cash_pnl_category_invoice,cash.pnl.category.invoice,model_cash_pnl_category,account.group_account_invoice,1,1,1,0
+access_cash_pnl_category_manager,cash.pnl.category.manager,model_cash_pnl_category,account.group_account_manager,1,1,1,1
+access_cash_pnl_wizard_invoice,cash.pnl.wizard.invoice,model_cash_pnl_wizard,account.group_account_invoice,1,1,1,1
+access_cash_pnl_wizard_manager,cash.pnl.wizard.manager,model_cash_pnl_wizard,account.group_account_manager,1,1,1,1

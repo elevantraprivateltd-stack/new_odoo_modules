@@ -9,45 +9,49 @@
     <menuitem id="menu_helpdesk_root" name="Helpdesk" sequence="25"
               groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
 
-    <!-- Live Dashboard (with customer filter) -->
+    <!-- Live Dashboard (with customer filter) - Managers only. A "User"
+         level staff member is meant to only log tickets via the Client
+         Form, not see the full pipeline/dashboard. -->
     <menuitem id="menu_helpdesk_live_dashboard" name="Dashboard" parent="menu_helpdesk_root"
               action="action_helpdesk_live_dashboard" sequence="5"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
 
-    <!-- Tickets -->
+    <!-- Tickets - Managers only, same reasoning as above. -->
     <menuitem id="menu_helpdesk_tickets" name="Tickets" parent="menu_helpdesk_root"
               action="action_helpdesk_ticket" sequence="10"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
 
     <!-- Customers: every partner that has raised a ticket, each row links
-         straight to that customer's own Contact page. -->
+         straight to that customer's own Contact page. Managers only. -->
     <menuitem id="menu_helpdesk_customers" name="Customers" parent="menu_helpdesk_root"
               action="action_helpdesk_customers" sequence="12"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
 
     <!-- Client Form: opens the public client-facing form (same one embedded
          on elevantra.cloud) in a new tab, so agents can preview it or log a
-         ticket on a client's behalf. -->
+         ticket on a client's behalf. Visible to BOTH User and Manager -
+         this is the ONLY menu a "User" level staff member sees. -->
     <record id="action_helpdesk_client_form" model="ir.actions.act_url">
         <field name="name">Client Form</field>
         <field name="url">/helpdesk/client-form</field>
         <field name="target">new</field>
     </record>
     <menuitem id="menu_helpdesk_client_form" name="Client Form" parent="menu_helpdesk_root"
-              action="action_helpdesk_client_form" sequence="15"/>
-
-    <!-- Reporting -->
-    <menuitem id="menu_helpdesk_reporting" name="Reporting" parent="menu_helpdesk_root" sequence="20"
+              action="action_helpdesk_client_form" sequence="15"
               groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+
+    <!-- Reporting - Managers only. -->
+    <menuitem id="menu_helpdesk_reporting" name="Reporting" parent="menu_helpdesk_root" sequence="20"
+              groups="ele_helpdesk.group_helpdesk_manager"/>
     <menuitem id="menu_helpdesk_analytics" name="Ticket Analytics" parent="menu_helpdesk_reporting"
               action="action_helpdesk_analytics_dashboard" sequence="5"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
     <menuitem id="menu_helpdesk_custom_dashboard" name="Ticket Analysis" parent="menu_helpdesk_reporting"
               action="action_helpdesk_custom_dashboard" sequence="10"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
     <menuitem id="menu_helpdesk_custom_report" name="Report" parent="menu_helpdesk_reporting"
               action="action_helpdesk_report_wizard" sequence="20"
-              groups="ele_helpdesk.group_helpdesk_user,ele_helpdesk.group_helpdesk_manager"/>
+              groups="ele_helpdesk.group_helpdesk_manager"/>
 
     <!-- Configuration - Managers only -->
     <menuitem id="menu_helpdesk_config" name="Configuration" parent="menu_helpdesk_root" sequence="30"

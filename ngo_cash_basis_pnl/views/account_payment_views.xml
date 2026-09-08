@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_payment_form_cash_pnl" model="ir.ui.view">
+        <field name="name">account.payment.form.cash.pnl</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="cash_pnl_category_id"
+                       domain="[('type', '=', payment_type == 'inbound' and 'income' or 'expense')]"
+                       options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- NOTE: we intentionally do NOT inherit the built-in Payments list/tree
+         view here, because its exact view id differs slightly between Odoo
+         versions/editions (view_account_payment_tree vs _list). The category
+         field is available on the Payment form (above) and can be added to
+         the list view later, in one line, via Studio or a small XML patch
+         once we know the exact view id on your instance
+         (Settings > Technical > Views, search model = account.payment). -->
+
+</odoo>

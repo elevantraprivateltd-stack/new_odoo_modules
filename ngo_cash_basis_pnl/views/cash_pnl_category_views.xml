@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cash_pnl_category_list" model="ir.ui.view">
+        <field name="name">cash.pnl.category.list</field>
+        <field name="model">cash.pnl.category</field>
+        <field name="arch" type="xml">
+            <list string="Cash Basis P&amp;L Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cash_pnl_category_form" model="ir.ui.view">
+        <field name="name">cash.pnl.category.form</field>
+        <field name="model">cash.pnl.category</field>
+        <field name="arch" type="xml">
+            <form string="Cash Basis P&amp;L Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="type"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cash_pnl_category_search" model="ir.ui.view">
+        <field name="name">cash.pnl.category.search</field>
+        <field name="model">cash.pnl.category</field>
+        <field name="arch" type="xml">
+            <search string="Search Categories">
+                <field name="name"/>
+                <filter string="Income" name="income_only" domain="[('type','=','income')]"/>
+                <filter string="Expense" name="expense_only" domain="[('type','=','expense')]"/>
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Type" name="group_type" context="{'group_by':'type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cash_pnl_category" model="ir.actions.act_window">
+        <field name="name">Cash Basis P&amp;L Categories</field>
+        <field name="res_model">cash.pnl.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+   <menuitem id="menu_cash_pnl_category"
+          name="Profit and Loss (Cash Basis)"
+          parent="account.menu_finance_reports"
+          action="action_cash_pnl_category"
+          sequence="2"/>
+
+</odoo>

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Adds a "Support Tickets" card to /my/home, same style as
-         Your Orders / Your Invoices / Tasks. -->
+    <!-- Adds a "Helpdesk Tickets" card to /my/home, same style as
+         Your Orders / Your Invoices / Addresses. -->
     <template id="portal_my_home_menu_helpdesk"
               name="Portal layout : helpdesk ticket menu entries"
               inherit_id="portal.portal_my_home" priority="50">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Support Tickets</t>
+                <t t-set="icon" t-value="'/ele_helpdesk/static/src/img/icon-ticket.svg'"/>
+                <t t-set="title">Helpdesk Tickets</t>
+                <t t-set="text">Raise, follow or check the status of your support tickets</t>
                 <t t-set="url" t-value="'/my/tickets'"/>
                 <t t-set="placeholder_count" t-value="'ticket_count'"/>
             </t>
@@ -21,7 +23,7 @@
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Support Tickets</t>
+                <t t-set="title">Helpdesk Tickets</t>
             </t>
 
             <div class="d-flex justify-content-end mb-3">

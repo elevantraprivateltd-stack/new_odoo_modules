@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cash_pnl_wizard_form" model="ir.ui.view">
+        <field name="name">cash.pnl.wizard.form</field>
+        <field name="model">cash.pnl.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Profit and Loss (Cash Basis)">
+                <group>
+                    <group string="Dates">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group string="Cash &amp; Bank">
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="opening_balance"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_report" type="object"
+                            string="Print" class="btn-primary"/>
+                    <button string="Discard" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cash_pnl_wizard" model="ir.actions.act_window">
+        <field name="name">Profit and Loss (Cash Basis)</field>
+        <field name="res_model">cash.pnl.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Placed directly under the root Accounting app menu, since the exact
+         id of the built-in "Reporting" submenu differs between Community,
+         Enterprise and third-party report apps (e.g. Accounting Kit). This
+         guarantees the module installs cleanly on any Odoo 19 Community
+         setup; once installed you can drag this menu item under Reporting
+         yourself from Settings > Technical > Menu Items if you prefer. -->
+    <menuitem id="menu_cash_pnl_wizard"
+          name="Profit and Loss (Cash Basis)"
+          parent="account.menu_finance_reports"
+          action="action_cash_pnl_wizard"
+          sequence="2"/>
+
+</odoo>

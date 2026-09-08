@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Income categories -->
+    <record id="cash_pnl_cat_income_individual" model="cash.pnl.category">
+        <field name="name">Donations - Individuals</field>
+        <field name="type">income</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="cash_pnl_cat_income_corporate" model="cash.pnl.category">
+        <field name="name">Donations - Corporate</field>
+        <field name="type">income</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="cash_pnl_cat_income_grants" model="cash.pnl.category">
+        <field name="name">Grants Received</field>
+        <field name="type">income</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="cash_pnl_cat_income_membership" model="cash.pnl.category">
+        <field name="name">Membership Fees</field>
+        <field name="type">income</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="cash_pnl_cat_income_events" model="cash.pnl.category">
+        <field name="name">Fundraising Events</field>
+        <field name="type">income</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="cash_pnl_cat_income_other" model="cash.pnl.category">
+        <field name="name">Other Income</field>
+        <field name="type">income</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- Expense categories -->
+    <record id="cash_pnl_cat_expense_program" model="cash.pnl.category">
+        <field name="name">Program / Project Expenses</field>
+        <field name="type">expense</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="cash_pnl_cat_expense_salaries" model="cash.pnl.category">
+        <field name="name">Salaries &amp; Wages</field>
+        <field name="type">expense</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="cash_pnl_cat_expense_rent" model="cash.pnl.category">
+        <field name="name">Rent</field>
+        <field name="type">expense</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="cash_pnl_cat_expense_utilities" model="cash.pnl.category">
+        <field name="name">Utilities</field>
+        <field name="type">expense</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="cash_pnl_cat_expense_travel" model="cash.pnl.category">
+        <field name="name">Travel &amp; Transport</field>
+        <field name="type">expense</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="cash_pnl_cat_expense_supplies" model="cash.pnl.category">
+        <field name="name">Office Supplies</field>
+        <field name="type">expense</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="cash_pnl_cat_expense_comm" model="cash.pnl.category">
+        <field name="name">Communication (Phone/Internet)</field>
+        <field name="type">expense</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="cash_pnl_cat_expense_bank" model="cash.pnl.category">
+        <field name="name">Bank Charges</field>
+        <field name="type">expense</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="cash_pnl_cat_expense_repairs" model="cash.pnl.category">
+        <field name="name">Repairs &amp; Maintenance</field>
+        <field name="type">expense</field>
+        <field name="sequence">90</field>
+    </record>
+    <record id="cash_pnl_cat_expense_other" model="cash.pnl.category">
+        <field name="name">Other Expenses</field>
+        <field name="type">expense</field>
+        <field name="sequence">100</field>
+    </record>
+
+</odoo>

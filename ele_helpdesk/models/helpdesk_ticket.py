@@ -321,19 +321,19 @@ class HelpdeskTicket(models.Model):
     # ---------------------------------------------------------
     @api.model
     def _is_helpdesk_staff(self):
-        """Only Helpdesk User/Manager (agents) - or an admin - are allowed
-        to browse cross-customer stats. Anyone else (a portal customer,
-        or any other internal user who was never given a Helpdesk group)
-        is restricted to their own data only, no matter what argument
-        they pass in. This is enforced here - not just in the menu/UI -
-        because get_dashboard_data()/get_analytics_dashboard_data() use
-        sudo() internally to build the aggregated stats, so this check is
-        the only thing standing between a customer and everyone else's
+        """Only the Administrator (Helpdesk Manager group, or a technical
+        admin) is allowed to browse cross-customer stats. Everyone else -
+        a plain Helpdesk User (i.e. a customer's own login), a portal
+        customer, or any other internal user who was never given the
+        Manager group - is restricted to their own data only, no matter
+        what argument they pass in. This is enforced here - not just in
+        the menu/UI - because get_dashboard_data()/get_analytics_dashboard_data()
+        use sudo() internally to build the aggregated stats, so this check
+        is the only thing standing between a customer and everyone else's
         tickets."""
         user = self.env.user
         return (
             user._is_admin()
-            or user.has_group('ele_helpdesk.group_helpdesk_user')
             or user.has_group('ele_helpdesk.group_helpdesk_manager')
         )
 

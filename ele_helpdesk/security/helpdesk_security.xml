@@ -25,6 +25,34 @@
         <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 
+    <!-- Helpdesk "User" (normal customer login, non-manager) may only ever
+         see their own tickets. Managers imply this group too, so an
+         explicit "see everything" rule for the Manager group is added
+         right below - ir.rule combines same-model group rules with OR,
+         so a manager ends up with (own tickets) OR (everything) = everything. -->
+    <record id="rule_helpdesk_ticket_user" model="ir.rule">
+        <field name="name">User: own tickets only</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_helpdesk_user'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Administrator (Manager) always sees the total record set. -->
+    <record id="rule_helpdesk_ticket_manager" model="ir.rule">
+        <field name="name">Manager: all tickets</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_helpdesk_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
     <!-- Portal customers may only ever see their own tickets -->
     <record id="rule_helpdesk_ticket_portal" model="ir.rule">
         <field name="name">Portal: own tickets only</field>

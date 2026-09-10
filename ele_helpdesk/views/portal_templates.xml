@@ -41,6 +41,7 @@
                         <tr class="active">
                             <th>Incident #</th>
                             <th>Subject</th>
+                            <th t-if="is_helpdesk_admin">Customer</th>
                             <th>Ticket Rating</th>
                             <th>Stage</th>
                             <th>Date of Reporting</th>
@@ -58,6 +59,7 @@
                                     <span t-esc="ticket.name"/>
                                 </a>
                             </td>
+                            <td t-if="is_helpdesk_admin"><span t-esc="ticket.partner_id.name"/></td>
                             <td><span t-esc="ticket.ticket_rating"/></td>
                             <td><span t-esc="ticket.stage_id.name"/></td>
                             <td><span t-esc="ticket.create_date"/></td>

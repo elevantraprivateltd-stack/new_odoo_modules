@@ -9,21 +9,36 @@ class HelpdeskCustomerPortal(CustomerPortal):
     Tasks, etc.) and a /my/tickets page listing the logged-in customer's own
     tickets, with a button that opens the Client Form to raise a new one."""
 
+    def _is_helpdesk_admin(self):
+        """The Administrator (Helpdesk Manager group, or a technical admin)
+        sees every customer's tickets on the portal, not just their own.
+        Any other logged-in user (a plain portal customer) stays scoped
+        to their own partner_id."""
+        user = request.env.user
+        return user._is_admin() or user.has_group('ele_helpdesk.group_helpdesk_manager')
+
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'ticket_count' in counters:
-            partner = request.env.user.partner_id
             Ticket = request.env['helpdesk.ticket']
+            if self._is_helpdesk_admin():
+                domain = []
+            else:
+                partner = request.env.user.partner_id
+                domain = [('partner_id', '=', partner.id)]
             values['ticket_count'] = Ticket.search_count(
-                [('partner_id', '=', partner.id)]
+                domain
             ) if Ticket.check_access_rights('read', raise_exception=False) else 0
         return values
 
     @route(['/my/tickets', '/my/tickets/page/<int:page>'], type='http', auth='user', website=True)
     def portal_my_tickets(self, page=1, **kw):
-        partner = request.env.user.partner_id
         Ticket = request.env['helpdesk.ticket']
-        domain = [('partner_id', '=', partner.id)]
+        if self._is_helpdesk_admin():
+            domain = []
+        else:
+            partner = request.env.user.partner_id
+            domain = [('partner_id', '=', partner.id)]
 
         ticket_count = Ticket.search_count(domain)
         pager = portal_pager(url='/my/tickets', total=ticket_count, page=page, step=20)
@@ -34,6 +49,7 @@ class HelpdeskCustomerPortal(CustomerPortal):
             'pager': pager,
             'page_name': 'ticket',
             'default_url': '/my/tickets',
+            'is_helpdesk_admin': self._is_helpdesk_admin(),
         })
 
     @route('/my/tickets/new', type='http', auth='user', website=True)

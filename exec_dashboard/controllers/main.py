@@ -86,6 +86,16 @@ class UltimateDashboardController(http.Controller):
             Lead = request.env['crm.lead'].sudo()
             base_domain = list(domain) if domain else []
 
+            # Scope strictly to the Pipeline (Opportunities), matching what
+            # CRM > Pipeline kanban shows. crm.lead also stores raw,
+            # not-yet-converted "Leads" (type='lead', visible under the
+            # separate CRM > Leads menu) which never appear in the Pipeline
+            # kanban. Without this filter those raw Leads were silently
+            # added into every KPI (e.g. New Leads showed 12 while the
+            # Pipeline's "New" column only had 3 — the extra 9 were
+            # unconverted Leads, not Pipeline opportunities).
+            base_domain.append(('type', '=', 'opportunity'))
+
             if team_id:
                 base_domain.append(('team_id', '=', int(team_id)))
             if stage_id:
@@ -98,12 +108,37 @@ class UltimateDashboardController(http.Controller):
                 base_domain.append(('priority', '=', priority))
             base_domain += build_date_domain('create_date', date_preset, date_from, date_to)
 
+            # "New Leads" must mean "leads currently sitting in the stage
+            # named 'New'" — exactly what the Pipeline kanban shows in its
+            # "New" column. Earlier this used probability==0 (wrong: a
+            # later-stage lead like Proposition can also have probability
+            # 0), and before that "lowest sequence stage globally" (also
+            # wrong: with multiple sales teams, each team can have its own
+            # stage records, so the lowest-sequence stage across ALL teams
+            # isn't necessarily the 'New' stage the user sees — e.g. it
+            # picked a different team's stage and produced 13 instead of
+            # the real 3). Matching by name is what actually lines up with
+            # the kanban column and with by_stage_data below, which already
+            # counts leads per real stage name correctly.
+            new_stage_ids = request.env['crm.stage'].sudo().search(
+                [('name', '=ilike', 'New')]).ids
+
             total_leads = Lead.search_count(base_domain)
             open_leads = Lead.search_count(base_domain + [('active', '=', True), ('probability', '<', 100)])
-            new_leads = Lead.search_count(base_domain + [('active', '=', True), ('probability', '=', 0)])
-            in_progress = Lead.search_count(base_domain + [
-                ('active', '=', True), ('probability', '>', 0), ('probability', '<', 100),
-            ])
+            if new_stage_ids:
+                new_leads = Lead.search_count(base_domain + [
+                    ('active', '=', True), ('stage_id', 'in', new_stage_ids),
+                ])
+                in_progress = Lead.search_count(base_domain + [
+                    ('active', '=', True), ('probability', '<', 100),
+                    ('stage_id', 'not in', new_stage_ids),
+                ])
+            else:
+                # Fallback (no stage literally named "New") keeps old behaviour
+                new_leads = Lead.search_count(base_domain + [('active', '=', True), ('probability', '=', 0)])
+                in_progress = Lead.search_count(base_domain + [
+                    ('active', '=', True), ('probability', '>', 0), ('probability', '<', 100),
+                ])
             won_leads = Lead.search_count(base_domain + [('active', '=', True), ('probability', '=', 100)])
             lost_leads = Lead.search_count(base_domain + [('active', '=', False), ('probability', '=', 0)])
 
@@ -146,6 +181,7 @@ class UltimateDashboardController(http.Controller):
                 'my_activities': my_activities, 'total_revenue': round(total_revenue, 2),
                 'by_team_data': by_team_data, 'by_stage_data': by_stage_data,
                 'by_source_data': by_source_data, 'filter_options': filter_options,
+                'new_stage_id': new_stage_ids,
             }
         except Exception as e:
             _logger.exception("exec_dashboard: get_crm_ultra_data failed")

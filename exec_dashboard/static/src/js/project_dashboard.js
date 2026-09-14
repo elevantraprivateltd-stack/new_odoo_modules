@@ -1,6 +1,7 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
+import { user } from "@web/core/user";
 import { Component, onWillStart, onMounted, onWillUnmount, useState, useRef } from "@odoo/owl";
 
 const COLORS = ["#6366f1", "#22d3ee", "#10b981", "#f59e0b", "#ef4444", "#a78bfa", "#ec4899", "#14b8a6", "#3b82f6", "#f97316"];
@@ -143,7 +144,7 @@ Object.assign(this.state, data);
         let name = "Tasks";
         if (targetType === "projects") { model = "project.project"; name = "Projects"; }
         else if (targetType === "open_projects") { model = "project.project"; domain = [["active", "=", true]]; name = "Open Projects"; }
-        else if (targetType === "my_tasks") { domain = [["user_ids", "in", [this.env.user.id]]]; name = "My Tasks"; }
+        else if (targetType === "my_tasks") { domain = [["user_ids", "in", [user.userId]]]; name = "My Tasks"; }
         else if (targetType === "open_tasks") { domain = [["stage_id.fold", "=", false]]; name = "Open Tasks"; }
         else if (targetType === "done_tasks") { domain = [["stage_id.fold", "=", true]]; name = "Done Tasks"; }
         const f = this.state.filters;

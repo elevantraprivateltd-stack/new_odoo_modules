@@ -15,7 +15,7 @@ export class CRMDashboard extends Component {
     setup() {
         this.state = useState({
             total_leads: 0, open_leads: 0, new_leads: 0, in_progress: 0,
-            won_leads: 0, lost_leads: 0, my_activities: 0, total_revenue: 0,
+            won_leads: 0, lost_leads: 0, my_activities: 0, total_revenue: 0, new_stage_id: [],
             by_team_data: [], by_stage_data: [], by_source_data: [], loaded: false, error: null,
             filter_options: {teams: [], stages: [], sources: [], users: []},
             filters: {
@@ -243,22 +243,37 @@ export class CRMDashboard extends Component {
     }
 
     openCRMAction(targetType) {
-        let domain = [];
+        // Every drilldown must stay scoped to Pipeline Opportunities only,
+        // matching the KPI counts (which now exclude raw, not-yet-converted
+        // Leads). Without this, clicking a card could open more records
+        // than the number shown.
+        let domain = [["type", "=", "opportunity"]];
         let name = "CRM Leads";
         if (targetType === "open") {
-            domain = [["active", "=", true], ["probability", "<", 100]];
+            domain.push(["active", "=", true], ["probability", "<", 100]);
             name = "Open Leads";
         } else if (targetType === "new") {
-            domain = [["active", "=", true], ["probability", "=", 0]];
+            // "New" = leads currently in the stage(s) literally named "New",
+            // matching the KPI card count and the Pipeline kanban column
+            // (not probability == 0, which can be 0 for later-stage leads too).
+            if (this.state.new_stage_id && this.state.new_stage_id.length) {
+                domain.push(["active", "=", true], ["stage_id", "in", this.state.new_stage_id]);
+            } else {
+                domain.push(["active", "=", true], ["probability", "=", 0]);
+            }
             name = "New Leads";
         } else if (targetType === "in_progress") {
-            domain = [["active", "=", true], ["probability", ">", 0], ["probability", "<", 100]];
+            if (this.state.new_stage_id && this.state.new_stage_id.length) {
+                domain.push(["active", "=", true], ["probability", "<", 100], ["stage_id", "not in", this.state.new_stage_id]);
+            } else {
+                domain.push(["active", "=", true], ["probability", ">", 0], ["probability", "<", 100]);
+            }
             name = "In Progress";
         } else if (targetType === "won") {
-            domain = [["active", "=", true], ["probability", "=", 100]];
+            domain.push(["active", "=", true], ["probability", "=", 100]);
             name = "Won Deals";
         } else if (targetType === "lost") {
-            domain = [["active", "=", false], ["probability", "=", 0]];
+            domain.push(["active", "=", false], ["probability", "=", 0]);
             name = "Lost Leads";
         } else if (targetType === "activities") {
             // Direct CRM Leads par filter laga kar activities open karne ka perfect tarika

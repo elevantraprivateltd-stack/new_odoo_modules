@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_stock_status_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <h2>Stock Status Report</h2>
+                        <p>
+                            Period:
+                            <span t-esc="doc.date_from"/> to <span t-esc="doc.date_to"/>
+                            <t t-if="doc.warehouse_id">
+                                | Warehouse: <span t-esc="doc.warehouse_id.name"/>
+                            </t>
+                            <t t-if="doc.category_id">
+                                | Category: <span t-esc="doc.category_id.name"/>
+                            </t>
+                        </p>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="table-active">
+                                    <th>Product ID</th>
+                                    <th>Product Name / Description</th>
+                                    <th>UoM</th>
+                                    <th class="text-end">Opening Balance</th>
+                                    <th class="text-end">Received</th>
+                                    <th class="text-end">Return to Vendor</th>
+                                    <th class="text-end">Sold / Dispatched</th>
+                                    <th class="text-end">Return from Customer</th>
+                                    <th class="text-end">Other Adjustment</th>
+                                    <th class="text-end">Closing Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td><span t-esc="line.product_code"/></td>
+                                    <td><span t-esc="line.product_name"/></td>
+                                    <td><span t-esc="line.uom_id.name"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.opening_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.received_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.return_vendor_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.sold_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.return_customer_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.other_qty"/></td>
+                                    <td class="text-end"><span t-esc="'%.2f' % line.closing_qty"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

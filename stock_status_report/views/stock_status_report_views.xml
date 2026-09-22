@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_status_report_wizard_form" model="ir.ui.view">
+        <field name="name">stock.status.report.wizard.form</field>
+        <field name="model">stock.status.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Stock Status Report">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Stock Status Report</h1>
+                    </div>
+                    <group>
+                        <group string="Period">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="Filters (optional)">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="warehouse_id"/>
+                            <field name="category_id"/>
+                            <field name="product_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <div class="o_horizontal_separator">
+                        <button name="action_compute_report" type="object"
+                                string="Generate Report" class="btn-primary"/>
+                        <button name="action_print_pdf" type="object"
+                                string="Print PDF" class="btn-secondary"
+                                invisible="not line_ids"/>
+                        <button name="action_export_xlsx" type="object"
+                                string="Export to Excel" class="btn-secondary"
+                                invisible="not line_ids"/>
+                    </div>
+                    <notebook invisible="not line_ids">
+                        <page string="Report">
+                            <field name="line_ids" nolabel="1">
+                                <list create="false" delete="false"
+                                      import="false" export_xlsx="1">
+                                    <field name="product_code" string="Product ID"/>
+                                    <field name="product_name" string="Product Name / Description"/>
+                                    <field name="uom_id" string="UoM" optional="show"/>
+                                    <field name="opening_qty" string="Opening Balance" sum="Total"/>
+                                    <field name="received_qty" string="Received" sum="Total"/>
+                                    <field name="return_vendor_qty" string="Return to Vendor" sum="Total"/>
+                                    <field name="sold_qty" string="Sold / Dispatched" sum="Total"/>
+                                    <field name="return_customer_qty" string="Return from Customer" sum="Total"/>
+                                    <field name="other_qty" string="Other Adjustment" sum="Total" optional="show"/>
+                                    <field name="closing_qty" string="Closing Balance" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_status_report_wizard" model="ir.actions.act_window">
+        <field name="name">Stock Status Report</field>
+        <field name="res_model">stock.status.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_stock_status_report"
+              name="Stock Status Report"
+              parent="stock.menu_warehouse_report"
+              action="action_stock_status_report_wizard"
+              sequence="20"/>
+
+</odoo>

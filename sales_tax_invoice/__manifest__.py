@@ -8,6 +8,8 @@
     'data': [
         'report/report_sales_tax_invoice.xml',
     ],
+    'author':'Elevantra Private Limited',
+    'website':'https://www.elevanttra.cloud',
     'installable': True,
     'application': False,
     'license': 'LGPL-3',

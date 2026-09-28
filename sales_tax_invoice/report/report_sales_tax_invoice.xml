@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_sales_tax_invoice" model="report.paperformat">
+        <field name="name">Sales Tax Invoice - Exact Reference</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">4</field>
+        <field name="margin_bottom">4</field>
+        <field name="margin_left">4</field>
+        <field name="margin_right">4</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+    <record id="action_report_sales_tax_invoice" model="ir.actions.report">
+        <field name="name">Sales Tax Invoice</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sales_tax_invoice.report_sales_tax_invoice_template</field>
+        <field name="report_file">sales_tax_invoice.report_sales_tax_invoice_template</field>
+        <field name="paperformat_id" ref="sales_tax_invoice.paperformat_sales_tax_invoice"/>
+        <field name="print_report_name">'Sales Tax Invoice - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_sales_tax_invoice_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <t t-set="r" t-value="get_report_data(o)"/>
+                    <div class="page sti-page">
+                        <style>@page { margin:0; border:none; } html, body { margin:0 !important; padding:0 !important;
+                            border:none !important; } * { box-sizing:border-box; } .sti-page { position:relative;
+                            min-height:283mm; font-family:Arial, Helvetica, sans-serif; color:#111; font-size:9.7px;
+                            line-height:1.30; padding:0; margin:0; border:none !important; } .sti-page table {
+                            border-spacing:0; border-collapse:collapse; } .sti-top { width:100%; table-layout:fixed; }
+                            .sti-top td { vertical-align:top; } .sti-brand-col { width:34%; } .sti-company-col {
+                            width:40%; text-align:center; } .sti-copy-col { width:26%; padding-top:11mm; } .sti-logo {
+                            width:55px; height:auto; display:block; margin:0 0 4px 2px; } .sti-reg { font-size:8.2px;
+                            font-weight:700; margin:0 0 3px 2px; white-space:nowrap; } .sti-sap-img { width:132px;
+                            height:auto; display:block; margin-top:7px; } .sti-company-name { font-size:15.5px;
+                            font-weight:700; padding-top:5px; white-space:nowrap; } .sti-title { font-size:13px;
+                            font-weight:700; margin-top:34px; } .sti-original { width:100%; height:24px; border:1.4px
+                            solid #111 !important; border-bottom:3px double #111 !important; text-align:center;
+                            font-size:11.5px; font-weight:700; line-height:20px; } .sti-print { font-size:8px;
+                            margin-top:5px; white-space:nowrap; } .sti-print b { font-weight:700; } .sti-info {
+                            width:100%; table-layout:fixed; margin-top:32px; font-size:8.9px; } .sti-info td {
+                            padding:4px 3px; vertical-align:top; } .sti-info .label { font-weight:700;
+                            white-space:nowrap; } .sti-info .value { white-space:normal; } .sti-info .nowrap {
+                            white-space:nowrap; } .sti-info .remarks { font-size:8.3px; white-space:nowrap; } .sti-items
+                            { width:100%; table-layout:fixed; margin-top:17px; font-size:8.5px; } .sti-items th {
+                            padding:6px 2px 7px; text-align:center; font-weight:700; vertical-align:top;
+                            border-top:1.3px solid #111 !important; border-bottom:1.3px solid #111 !important; }
+                            .sti-items th:first-child { border-left:1.3px solid #111 !important; } .sti-items
+                            th:last-child { border-right:1.3px solid #111 !important; } .sti-items td { padding:6px 2px
+                            5px; vertical-align:top; border-bottom:1px dashed #777 !important; } .sti-items .num {
+                            text-align:right; white-space:nowrap; } .sti-items .center { text-align:center; } .sti-items
+                            .product { text-align:left; } .sti-summary { width:100%; table-layout:fixed; border:1.3px
+                            solid #111 !important; border-top:0 !important; min-height:108px; } .sti-summary > tbody >
+                            tr > td { vertical-align:top; } .sti-summary-left { width:60%; padding:7px 0 0 20.5%;
+                            font-size:9.2px; font-weight:700; } .sti-summary-left .qty { display:inline-block;
+                            margin-left:60px; } .sti-summary-right { width:40%; padding:7px 8px 8px 0; }
+                            .sti-summary-right table { width:100%; font-size:8.9px; } .sti-summary-right td {
+                            padding:4px 0; } .sti-summary-right .label { width:62%; font-weight:700; }
+                            .sti-summary-right .amount { width:38%; text-align:right; white-space:nowrap; }
+                            .sti-summary-right .grand td { padding-top:16px; font-size:9.7px; font-weight:700; }
+                            .sti-legal { margin-top:8px; font-size:7.95px; line-height:1.43; } .sti-legal-head {
+                            text-align:center; font-weight:700; line-height:1.35; } .sti-legal-text { margin-top:3px;
+                            text-align:left; } .sti-legal-note { margin-top:2px; } .sti-exempt { width:94%; margin:8px
+                            auto 0; border:1.3px solid #111 !important; padding:6px 12px; text-align:center;
+                            font-size:9.4px; line-height:1.55; font-weight:700; } .sti-signatures { position:absolute;
+                            left:0; right:0; bottom:13mm; width:100%; table-layout:fixed; font-size:8.5px;
+                            text-align:center; } .sti-signatures td { width:33.33%; padding:0 8px;
+                            vertical-align:bottom; } .sti-sign-body { height:48px; vertical-align:bottom; }
+                            .sti-sign-name { min-height:15px; } .sti-sign-date { min-height:13px; } .sti-signature-img {
+                            max-width:142px; max-height:42px; margin:0 auto 1px; display:block; } .sti-sign-line {
+                            border-bottom:1.2px solid #111 !important; height:1px; width:78%; margin:0 auto; }
+                            .sti-sign-label { font-weight:700; margin-top:5px; } .sti-footer { position:absolute;
+                            left:0; right:0; bottom:2mm; border-top:1.2px solid #111 !important; text-align:center;
+                            padding-top:4px; font-size:8px; }
+                        </style>
+                        <!--  EXACT REFERENCE HEADER  -->
+                        <table class="sti-top">
+                            <tr>
+                                <td class="sti-brand-col">
+                                    <img t-if="o.company_id.logo" class="sti-logo"
+                                         t-att-src="image_data_uri(o.company_id.logo)"/>
+                                    <div class="sti-reg">
+                                        NTN :
+                                        <span t-esc="r['company_ntn']"/>
+                                    </div>
+                                    <div class="sti-reg">
+                                        STRN :
+                                        <span t-esc="r['company_strn']"/>
+                                    </div>
+                                </td>
+                                <td class="sti-company-col">
+                                    <div class="sti-company-name" t-esc="o.company_id.name"/>
+                                    <div class="sti-title">
+                                        Sales Tax Invoice
+                                        <span t-esc="r['invoice_number']"/>
+                                    </div>
+                                </td>
+                                <td class="sti-copy-col">
+                                    <div class="sti-original">ORIGINAL</div>
+                                    <div class="sti-print">
+                                        <b>Print Date:</b>
+                                        <span t-esc="r['print_datetime_str']"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <!--  CUSTOMER / DELIVERY DETAILS: NO BOX GRID  -->
+                        <table class="sti-info">
+                            <colgroup>
+                                <col style="width:12.5%"/>
+                                <col style="width:19.5%"/>
+                                <col style="width:11%"/>
+                                <col style="width:18%"/>
+                                <col style="width:12%"/>
+                                <col style="width:27%"/>
+                            </colgroup>
+                            <tr>
+                                <td class="label">Customer Code :</td>
+                                <td class="value nowrap" t-esc="r['customer_code']"/>
+                                <td class="label">Phone #</td>
+                                <td class="value nowrap">:</td>
+                                <td class="label">Delivery Date:</td>
+                                <td class="value nowrap"
+                                    t-esc="r['delivery_date'].strftime('%d-%b-%Y') if r['delivery_date'] else ''"/>
+                            </tr>
+                            <tr>
+                                <td class="label">Customer Name :</td>
+                                <td class="value" colspan="3" t-esc="o.partner_id.name or ''"/>
+                                <td class="label">Due Date :</td>
+                                <td class="value nowrap"
+                                    t-esc="o.invoice_date_due.strftime('%d-%b-%Y') if o.invoice_date_due else ''"/>
+                            </tr>
+                            <tr>
+                                <td class="label">Address:</td>
+                                <td class="value" colspan="5" t-esc="r['customer_address']"/>
+                            </tr>
+                            <tr>
+                                <td class="label">Region /City Name</td>
+                                <td class="value nowrap" t-esc="r['region_city']"/>
+                                <td class="label">NTN # :</td>
+                                <td class="value nowrap" t-esc="r['customer_ntn']"/>
+                                <td class="label">Customer Ref # :</td>
+                                <td class="value nowrap" t-esc="r['customer_ref']"/>
+                            </tr>
+                            <tr>
+                                <td class="label">Dispatch Date:</td>
+                                <td class="value nowrap"
+                                    t-esc="r['dispatch_date'].strftime('%d-%b-%Y') if r['dispatch_date'] else ''"/>
+                                <td class="label">No of Carton:</td>
+                                <td class="value nowrap" t-esc="r['carton_count']"/>
+                                <td class="label">Name of Courier:</td>
+                                <td class="value nowrap" t-esc="r['courier_name']"/>
+                            </tr>
+                            <tr>
+                                <td class="label">Remarks:</td>
+                                <td class="remarks" colspan="3" t-esc="r['remarks']"/>
+                                <td class="label">Courier Number :</td>
+                                <td class="value nowrap" t-esc="r['courier_number']"/>
+                            </tr>
+                        </table>
+                        <!--  ITEM HEADER + DOTTED DATA ROWS  -->
+                        <table class="sti-items">
+                            <colgroup>
+                                <col style="width:3.7%"/>
+                                <col style="width:5.2%"/>
+                                <col style="width:11.0%"/>
+                                <col style="width:13.0%"/>
+                                <col style="width:7.8%"/>
+                                <col style="width:6.5%"/>
+                                <col style="width:6.1%"/>
+                                <col style="width:6.4%"/>
+                                <col style="width:7.5%"/>
+                                <col style="width:6.5%"/>
+                                <col style="width:5.2%"/>
+                                <col style="width:8.2%"/>
+                                <col style="width:5.0%"/>
+                                <col style="width:7.9%"/>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Sr.
+                                        <br/>
+                                        #
+                                    </th>
+                                    <th>
+                                        Item
+                                        <br/>
+                                        Code
+                                    </th>
+                                    <th style="text-align:left;">Product Name</th>
+                                    <th>Barcode</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>
+                                        Batch
+                                        <br/>
+                                        Number
+                                    </th>
+                                    <th>
+                                        Mnf.
+                                        <br/>
+                                        Date
+                                    </th>
+                                    <th>Expiry Date</th>
+                                    <th>Price</th>
+                                    <th>
+                                        Disc
+                                        <br/>
+                                        %
+                                    </th>
+                                    <th>
+                                        Gross
+                                        <br/>
+                                        Amount
+                                    </th>
+                                    <th>
+                                        Tax
+                                        <br/>
+                                        %
+                                    </th>
+                                    <th>
+                                        Aft Disc. Tax
+                                        <br/>
+                                        Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="r['lines']" t-as="line">
+                                    <tr>
+                                        <td class="center" t-esc="line_index + 1"/>
+                                        <td class="center" t-esc="line['product_code']"/>
+                                        <td class="product" t-esc="line['product_name']"/>
+                                        <td class="center">
+                                            <img t-if="line.get('product_code')"
+                                                 t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;quiet=1' % ('Code128', line['product_code'], 450, 120)"
+                                                 style="width:100%;max-width:110px;max-height:26px;object-fit:contain;"/>
+                                        </td>
+                                        <td class="num" t-esc="'{:,.2f}'.format(line['quantity'])"/>
+                                        <td class="center" t-esc="line['uom']"/>
+                                        <td class="center" t-esc="line['batch_number']"/>
+                                        <td class="center"
+                                            t-esc="line['mfg_date'].strftime('%d-%b-%y') if line['mfg_date'] else ''"/>
+                                        <td class="center"
+                                            t-esc="line['expiry_date'].strftime('%d-%b-%y') if line['expiry_date'] else ''"/>
+                                        <td class="num" t-esc="'{:,.2f}'.format(line['price'])"/>
+                                        <td class="num" t-esc="'{:.2f}'.format(line['discount'])"/>
+                                        <td class="num" t-esc="'{:,.2f}'.format(line['gross_amount'])"/>
+                                        <td class="num" t-esc="'{:.2f}'.format(line['tax_percent'])"/>
+                                        <td class="num" t-esc="'{:,.2f}'.format(line['tax_amount'])"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <table class="sti-summary">
+                            <tr>
+                                <td class="sti-summary-left">
+                                    Total
+                                    <span class="qty" t-esc="'{:,.2f}'.format(r['qty_total'])"/>
+                                </td>
+                                <td class="sti-summary-right">
+                                    <table>
+                                        <tr>
+                                            <td class="label">Gross Total:</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['gross_total'])"/>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">
+                                                Discount :
+                                                <span t-esc="'{:.2f}'.format(r['discount_percent'])"/>
+                                                %
+                                            </td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['discount_amount'])"/>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">Advance Tax:</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['advance_tax'])"/>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">Sales Tax 1 % :</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['sales_tax_1'])"/>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">Sales Tax 4 % :</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['sales_tax_4'])"/>
+                                        </tr>
+                                        <tr t-if="abs(round(r['other_tax'], 2)) != 0">
+                                            <td class="label">Other Tax :</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(r['other_tax'])"/>
+                                        </tr>
+                                        <tr class="grand">
+                                            <td>Grand Total:</td>
+                                            <td class="amount" t-esc="'{:,.0f}'.format(o.amount_total)"/>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <!--  REFERENCE LEGAL CONTENT  -->
+                        <div class="sti-legal">
+                            <div class="sti-legal-head">Form 2A (See rules 19 &amp; 30)</div>
+                            <div class="sti-legal-head">Warranty under section 23 (1) (I) of the Drugs Act 1976</div>
+                            <div class="sti-legal-text">
+                                I,
+                                <span t-esc="r['warranty_person']"/>
+                                , being a person resident in Pakistan carrying on business at
+                                <span t-esc="r['company_address']"/>
+                                , under the name of
+                                <span t-esc="o.company_id.name.upper()"/>
+                                , do hereby give this warranty that the drugs described as sold and contained in this
+                                invoice do not contravene in any way to the provision of Section 23 of the Drugs Act
+                                1976.
+                            </div>
+                            <div class="sti-legal-note">Warranty under alternative medicine &amp; health products
+                                (enlistment) Rules 2014 ,See rule 10(1) &amp; (5) We as the authorized distribution agents
+                                and on the behalf of the Principal/ Manufacturers/ Importers hereby give warranty that
+                                the supplied alternative medicine and health products mentioned herein do not
+                                contrivance any provision of the prevailing DRAP Act and rules farmed thereunder.
+                            </div>
+                            <div class="sti-legal-note">
+                                <b>Note:</b>
+                                a - For dated items we must be informed four months prior to expiry
+                                <br/>
+                                b- This warranty does not apply to general items including syringes, medical disposables
+                                if any mentioned in this invoice.
+                            </div>
+                            <div class="sti-legal-note">Please ensure that you have received the stock according to the
+                                quantities printed. Moreover, please check the values and calculations and inform
+                                immediately if any deviation is observed. We donot accept any responsibility afterwards.
+                            </div>
+                        </div>
+                        <div class="sti-exempt">
+                            “Please DON’T deduct withholding income tax from our payment, as we are exempt under clause
+                            (a) of sub section (1) of
+                            <br/>
+                            Section 153 of the Income Tax Ordinance, 2001. Exemption certificate is enclosed”
+                        </div>
+                        <table class="sti-signatures">
+                            <tr>
+                                <td>
+                                    <div class="sti-sign-body">
+                                        <div class="sti-sign-name" t-esc="r['prepared_by']"/>
+                                        <div class="sti-sign-date" t-esc="r['prepared_date_str']"/>
+                                    </div>
+                                    <div class="sti-sign-line"/>
+                                    <div class="sti-sign-label">Prepared By</div>
+                                </td>
+                                <td>
+                                    <div class="sti-sign-body">
+                                        <img class="sti-signature-img"
+                                             src="/sales_tax_invoice/static/src/img/warranty_signature.png"/>
+                                    </div>
+                                    <div class="sti-sign-line"/>
+                                    <div class="sti-sign-label">Warranty By</div>
+                                </td>
+                                <td>
+                                    <div class="sti-sign-body">
+                                        <div class="sti-sign-name" t-esc="r['audited_by']"/>
+                                        <div class="sti-sign-date" t-esc="r['audited_date_str']"/>
+                                    </div>
+                                    <div class="sti-sign-line"/>
+                                    <div class="sti-sign-label">Audited By</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="sti-footer">
+                            Page
+                            <span class="page"/>
+                            of
+                            <span class="topage"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

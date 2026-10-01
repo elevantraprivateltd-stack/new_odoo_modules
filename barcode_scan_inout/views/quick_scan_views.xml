@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scan history -->
+    <record id="view_quick_scan_log_list" model="ir.ui.view">
+        <field name="name">quick.scan.log.list</field>
+        <field name="model">quick.scan.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false"
+                  decoration-success="mode == 'in' and state == 'done'"
+                  decoration-danger="mode == 'out' and state == 'done'"
+                  decoration-muted="state == 'reverted'">
+                <field name="create_date" string="Date"/>
+                <field name="product_id"/>
+                <field name="barcode"/>
+                <field name="mode"/>
+                <field name="qty"/>
+                <field name="user_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_quick_scan_log_search" model="ir.ui.view">
+        <field name="name">quick.scan.log.search</field>
+        <field name="model">quick.scan.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="barcode"/>
+                <field name="user_id"/>
+                <filter name="f_in" string="Stock IN" domain="[('mode', '=', 'in')]"/>
+                <filter name="f_out" string="Stock OUT" domain="[('mode', '=', 'out')]"/>
+                <separator/>
+                <filter name="f_date" string="Date" date="create_date"/>
+                <separator/>
+                <filter name="g_product" string="Product" context="{'group_by': 'product_id'}"/>
+                <filter name="g_mode" string="IN / OUT" context="{'group_by': 'mode'}"/>
+                <filter name="g_user" string="User" context="{'group_by': 'user_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_quick_scan_log" model="ir.actions.act_window">
+        <field name="name">Scan History</field>
+        <field name="res_model">quick.scan.log</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Opens the scanner page (works on desktop + mobile) -->
+    <record id="action_quick_scan_open" model="ir.actions.act_url">
+        <field name="name">Scan Now</field>
+        <field name="url">/quick_scan</field>
+        <field name="target">self</field>
+    </record>
+
+    <!-- Bulk barcode generation: select products > Action > Generate Barcodes -->
+    <record id="action_generate_barcodes" model="ir.actions.server">
+        <field name="name">Generate Barcodes</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.action_generate_barcode()</field>
+    </record>
+
+    <menuitem id="menu_quick_scan_root" name="Quick Barcode Scan"
+              parent="stock.menu_stock_root" sequence="25"/>
+    <menuitem id="menu_quick_scan_open" name="Scan Now (IN / OUT)"
+              parent="menu_quick_scan_root" action="action_quick_scan_open" sequence="10"/>
+    <menuitem id="menu_quick_scan_log" name="Scan History"
+              parent="menu_quick_scan_root" action="action_quick_scan_log" sequence="20"/>
+</odoo>

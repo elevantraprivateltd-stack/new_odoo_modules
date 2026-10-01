@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_quick_scan_barcode" model="ir.sequence">
+        <field name="name">Quick Scan Barcode</field>
+        <field name="code">quick.scan.barcode</field>
+        <field name="padding">10</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_three_way" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.three.way.match</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='purchase']" position="inside">
+                <block title="3-Way Matching" name="po_three_way_match_block">
+                    <setting id="po_three_way_match_setting" string="3-Way Matching"
+                             help="Make sure you only pay bills for which you received the goods you ordered. Bills without a Purchase Order are not affected.">
+                        <field name="po_three_way_match"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

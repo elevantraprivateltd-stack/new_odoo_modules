@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================= Scan history ================= -->
+    <record id="view_scan_doc_log_list" model="ir.ui.view">
+        <field name="name">scan.doc.log.list</field>
+        <field name="model">scan.doc.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false"
+                  decoration-success="mode == 'in' and state == 'done'"
+                  decoration-danger="mode == 'out' and state == 'done'"
+                  decoration-muted="state == 'reverted'">
+                <field name="create_date" string="Date"/>
+                <field name="batch_id"/>
+                <field name="product_id"/>
+                <field name="barcode"/>
+                <field name="mode"/>
+                <field name="qty"/>
+                <field name="user_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_scan_doc_log_search" model="ir.ui.view">
+        <field name="name">scan.doc.log.search</field>
+        <field name="model">scan.doc.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="barcode"/>
+                <field name="user_id"/>
+                <filter name="f_in" string="Stock IN" domain="[('mode', '=', 'in')]"/>
+                <filter name="f_out" string="Stock OUT" domain="[('mode', '=', 'out')]"/>
+                <separator/>
+                <filter name="f_date" string="Date" date="create_date"/>
+                <separator/>
+                <filter name="g_product" string="Product" context="{'group_by': 'product_id'}"/>
+                <filter name="g_mode" string="IN / OUT" context="{'group_by': 'mode'}"/>
+                <filter name="g_user" string="User" context="{'group_by': 'user_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_scan_doc_log" model="ir.actions.act_window">
+        <field name="name">Scan History</field>
+        <field name="res_model">scan.doc.log</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ================= Batches (Receipt / Sales Order links) ================= -->
+    <record id="view_scan_doc_batch_list" model="ir.ui.view">
+        <field name="name">scan.doc.batch.list</field>
+        <field name="model">scan.doc.batch</field>
+        <field name="arch" type="xml">
+            <list create="false" decoration-info="state == 'open'">
+                <field name="name"/>
+                <field name="mode"/>
+                <field name="reference" string="Receipt / Sales Order"/>
+                <field name="total_qty"/>
+                <field name="invoice_id"/>
+                <field name="user_id"/>
+                <field name="last_scan"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_scan_doc_batch_form" model="ir.ui.view">
+        <field name="name">scan.doc.batch.form</field>
+        <field name="model">scan.doc.batch</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <header>
+                    <button name="action_finish" type="object" string="Finish &amp; Update Stock"
+                            class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_open_document" type="object" string="Open Receipt / Sales Order"
+                            invisible="not picking_id and not sale_order_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,done"/>
+                </header>
+                <sheet>
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <group>
+                            <field name="mode"/>
+                            <field name="user_id"/>
+                            <field name="last_scan"/>
+                            <field name="total_qty"/>
+                        </group>
+                        <group>
+                            <field name="picking_id" invisible="mode != 'in'"/>
+                            <field name="sale_order_id" invisible="mode != 'out'"/>
+                            <field name="invoice_id" invisible="mode != 'out'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scans">
+                            <field name="log_ids">
+                                <list>
+                                    <field name="create_date" string="Time"/>
+                                    <field name="product_id"/>
+                                    <field name="barcode"/>
+                                    <field name="qty"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_scan_doc_batch" model="ir.actions.act_window">
+        <field name="name">Scan Batches</field>
+        <field name="res_model">scan.doc.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================= Settings ================= -->
+    <record id="view_scan_doc_config_form" model="ir.ui.view">
+        <field name="name">scan.doc.config.form</field>
+        <field name="model">scan.doc.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h1>Doc Scan Settings</h1>
+                    <group string="Sales (Stock OUT)">
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="customer_id"/>
+                        <field name="auto_invoice"/>
+                        <field name="sale_account_id"/>
+                    </group>
+                    <group string="Accounting (Stock IN / Purchase)">
+                        <field name="receipt_account_id"/>
+                        <button name="action_setup_accounting" type="object"
+                                string="Set up automatic accounting" class="btn-primary"/>
+                    </group>
+                    <group string="Automation">
+                        <field name="idle_minutes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_scan_doc_config" model="ir.actions.server">
+        <field name="name">Scan Settings</field>
+        <field name="model_id" ref="model_scan_doc_config"/>
+        <field name="state">code</field>
+        <field name="code">action = model.get_config().get_formview_action()</field>
+    </record>
+
+    <!-- ================= Scanner page + bulk barcode action ================= -->
+    <record id="action_scan_doc_open" model="ir.actions.act_url">
+        <field name="name">Scan Now</field>
+        <field name="url">/scan_doc</field>
+        <field name="target">self</field>
+    </record>
+
+    <record id="action_generate_barcodes" model="ir.actions.server">
+        <field name="name">Generate Barcodes</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.action_generate_barcode()</field>
+    </record>
+
+    <menuitem id="menu_scan_doc_root" name="Barcode Inventory (Accounting)"
+              parent="stock.menu_stock_root" sequence="25"/>
+    <menuitem id="menu_scan_doc_open" name="Scan Now (IN / OUT)"
+              parent="menu_scan_doc_root" action="action_scan_doc_open" sequence="10"/>
+    <menuitem id="menu_scan_doc_batch" name="Scan Batches"
+              parent="menu_scan_doc_root" action="action_scan_doc_batch" sequence="20"/>
+    <menuitem id="menu_scan_doc_log" name="Scan History"
+              parent="menu_scan_doc_root" action="action_scan_doc_log" sequence="30"/>
+    <menuitem id="menu_scan_doc_config" name="Settings"
+              parent="menu_scan_doc_root" action="action_scan_doc_config" sequence="40"
+              groups="stock.group_stock_manager"/>
+</odoo>

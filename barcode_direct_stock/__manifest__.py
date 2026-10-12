@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Direct Barcode Inventory In/Out',
+    'name': 'Barcode Direct Stock In/Out',
     'version': '2.0',
     'summary': 'Scan a barcode (USB scanner or mobile camera) to add or remove stock directly. '
                'No receipts, no delivery orders.',

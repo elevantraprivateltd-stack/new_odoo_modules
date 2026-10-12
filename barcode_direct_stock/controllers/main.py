@@ -11,7 +11,7 @@ class QuickScanController(http.Controller):
     def scan_page(self, **kw):
         if not request.env.user.has_group('stock.group_stock_user'):
             return request.make_response('Not allowed.', status=403)
-        with file_open('barcode_scan_inout/static/src/scan_page.html', 'r') as f:
+        with file_open('barcode_direct_stock/static/src/scan_page.html', 'r') as f:
             html = f.read()
         return request.make_response(html, headers=[('Content-Type', 'text/html; charset=utf-8')])
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Automatically finishes scan batches nobody has touched for a while,
+         so Receipt / Sales Order / accounting are always updated even if the
+         person forgets to press "Finish". -->
+    <record id="cron_scan_doc_finish_idle" model="ir.cron">
+        <field name="name">Doc Scan: finish idle batches</field>
+        <field name="model_id" ref="model_scan_doc_batch"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_finish_idle()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

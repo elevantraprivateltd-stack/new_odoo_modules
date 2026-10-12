@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_scan_doc_log_user,scan.doc.log user,model_scan_doc_log,stock.group_stock_user,1,1,1,0
+access_scan_doc_log_manager,scan.doc.log manager,model_scan_doc_log,stock.group_stock_manager,1,1,1,1
+access_scan_doc_batch_user,scan.doc.batch user,model_scan_doc_batch,stock.group_stock_user,1,1,1,0
+access_scan_doc_batch_manager,scan.doc.batch manager,model_scan_doc_batch,stock.group_stock_manager,1,1,1,1
+access_scan_doc_config_user,scan.doc.config user,model_scan_doc_config,stock.group_stock_user,1,0,0,0
+access_scan_doc_config_manager,scan.doc.config manager,model_scan_doc_config,stock.group_stock_manager,1,1,1,1

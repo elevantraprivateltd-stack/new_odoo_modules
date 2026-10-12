@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_scan_doc_barcode" model="ir.sequence">
+        <field name="name">Doc Scan Barcode</field>
+        <field name="code">scan.doc.barcode</field>
+        <field name="padding">10</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+    <record id="seq_scan_doc_batch" model="ir.sequence">
+        <field name="name">Doc Scan Batch</field>
+        <field name="code">scan.doc.batch</field>
+        <field name="prefix">SCAN/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

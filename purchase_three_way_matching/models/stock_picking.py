@@ -86,17 +86,13 @@ class StockPicking(models.Model):
 
     @api.onchange('partner_id')
     def _onchange_partner_vendor_pos(self):
-        """Vendor selected: load ALL its open POs and their pending products automatically."""
+        """After choosing a vendor, let the user select the relevant open PO(s)."""
         if self.picking_type_code != 'incoming' or self.state not in ('draft', False):
             return
-        orders = self.env['purchase.order']
-        if self.partner_id:
-            orders = orders.search([
-                ('partner_id', '=', self.partner_id.id),
-                ('state', 'in', ('purchase', 'done')),
-                ('receipt_status', '!=', 'full'),
-            ], order='date_order, id')
-        self.purchase_order_ids = orders
+        # Do not silently combine every open PO from the vendor into one receipt.
+        # The PO selector is filtered by vendor; selecting PO(s) loads their
+        # remaining quantities through _onchange_purchase_order_ids.
+        self.purchase_order_ids = [(5, 0, 0)]
         self._sync_vendor_po_moves()
 
     @api.onchange('purchase_order_ids')

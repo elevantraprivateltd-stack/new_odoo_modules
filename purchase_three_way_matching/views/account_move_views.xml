@@ -9,35 +9,14 @@
                 <div class="alert alert-warning mb-0" role="alert"
                      invisible="three_way_status not in ('waiting', 'exception')">
                     <strong>3-Way Matching: do not pay this bill yet.</strong>
+                    <field name="three_way_status" invisible="1"/>
                     <field name="three_way_message" readonly="1" nolabel="1"/>
                 </div>
-            </xpath>
-            <xpath expr="//notebook" position="inside">
-                <page string="Vendor POs &amp; Products" name="vendor_po_summary"
-                      invisible="move_type not in ('in_invoice', 'in_refund') or not partner_id">
-                    <group>
-                        <group>
-                            <field name="vendor_po_total_count"/>
-                            <field name="three_way_status" widget="badge"
-                                   invisible="not three_way_status"
-                                   decoration-success="three_way_status == 'ready'"
-                                   decoration-warning="three_way_status == 'waiting'"
-                                   decoration-danger="three_way_status == 'exception'"
-                                   decoration-info="three_way_status == 'non_po'"/>
-                        </group>
-                    </group>
-                    <field name="vendor_po_line_ids" readonly="1">
-                        <list create="false" edit="false" delete="false">
-                            <field name="order_id" string="PO"/>
-                            <field name="product_id"/>
-                            <field name="product_qty" string="Ordered"/>
-                            <field name="qty_received" string="Received"/>
-                            <field name="qty_invoiced" string="Billed"/>
-                            <field name="price_unit"/>
-                            <field name="price_subtotal"/>
-                        </list>
-                    </field>
-                </page>
+                <div class="alert alert-success mb-0" role="alert"
+                     invisible="three_way_status != 'ready'">
+                    <strong>3-Way Matching: ready to pay.</strong>
+                    Ordered, received and billed quantities match.
+                </div>
             </xpath>
         </field>
     </record>

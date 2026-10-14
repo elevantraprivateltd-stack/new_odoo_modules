@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_vendor_pos" model="ir.ui.view">
+        <field name="name">stock.picking.form.vendor.purchase.orders</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="before">
+                <field name="vendor_total_po_count"
+                       invisible="picking_type_code != 'incoming' or not partner_id"/>
+                <field name="vendor_open_po_count"
+                       invisible="picking_type_code != 'incoming' or not partner_id"/>
+                <field name="purchase_order_ids" widget="many2many_tags"
+                       options="{'no_create': True, 'no_open': True}"
+                       domain="[('partner_id', '=', partner_id), ('state', 'in', ('purchase', 'done')), ('receipt_status', '!=', 'full')]"
+                       placeholder="Select vendor Purchase Orders..."
+                       invisible="picking_type_code != 'incoming' or not partner_id"
+                       readonly="state != 'draft'"/>
+            </xpath>
+
+            <!-- ROOT-CAUSE FIX: the web client only sends the fields that exist in the
+                 list view to the onchange. Without purchase_line_id the existing lines
+                 looked "unlinked", so removing a PO never removed its lines and the
+                 same PO lines were added again (duplicates). -->
+            <xpath expr="//field[@name='move_ids']/list/field[@name='company_id']" position="after">
+                <field name="purchase_line_id" column_invisible="True"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

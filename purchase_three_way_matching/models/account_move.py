@@ -1,16 +1,10 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare
 
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    vendor_po_line_ids = fields.Many2many(
-        'purchase.order.line', string='Vendor PO Lines',
-        compute='_compute_vendor_po_line_ids')
-    vendor_po_total_count = fields.Integer(
-        string='Vendor Total POs', compute='_compute_vendor_po_line_ids')
     three_way_status = fields.Selection([
         ('non_po', 'Non-PO Bill (No Matching)'),
         ('ready', 'Ready to Pay'),
@@ -18,25 +12,6 @@ class AccountMove(models.Model):
         ('exception', 'Exception: Billed More Than Ordered'),
     ], string='3-Way Matching', compute='_compute_three_way_status')
     three_way_message = fields.Text(compute='_compute_three_way_status')
-
-    # ------------------------------------------------------------------
-    # Vendor PO summary
-    # ------------------------------------------------------------------
-    @api.depends('partner_id', 'move_type')
-    def _compute_vendor_po_line_ids(self):
-        PoLine = self.env['purchase.order.line']
-        for move in self:
-            lines = PoLine
-            count = 0
-            if move.partner_id and move.move_type in ('in_invoice', 'in_refund'):
-                lines = PoLine.search([
-                    ('partner_id', '=', move.partner_id.id),
-                    ('order_id.state', 'in', ('purchase', 'done')),
-                    ('display_type', '=', False),
-                ])
-                count = len(lines.order_id)
-            move.vendor_po_line_ids = lines
-            move.vendor_po_total_count = count
 
     # ------------------------------------------------------------------
     # 3-way matching
@@ -69,7 +44,6 @@ class AccountMove(models.Model):
         if not po_lines:
             return 'non_po', False
 
-        digits = self.env['decimal.precision'].precision_get('Product Unit')
         this_bill = {}
         for line in po_lines:
             pol = line.purchase_line_id
@@ -85,10 +59,10 @@ class AccountMove(models.Model):
                      "Billed (with this bill) %(billed)s.",
                      po=pol.order_id.name, product=pol.product_id.display_name,
                      ordered=pol.product_qty, received=pol.qty_received, billed=total_billed)
-            if float_compare(total_billed, pol.product_qty, precision_digits=digits) > 0:
+            if pol.product_uom_id.compare(total_billed, pol.product_qty) > 0:
                 status = 'exception'
                 messages.append(info + ' ' + _("Billed more than ordered."))
-            elif float_compare(total_billed, pol.qty_received, precision_digits=digits) > 0:
+            elif pol.product_uom_id.compare(total_billed, pol.qty_received) > 0:
                 if status != 'exception':
                     status = 'waiting'
                 messages.append(info + ' ' + _("Goods not fully received yet."))

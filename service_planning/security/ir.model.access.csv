@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_planning_schedule,planning.schedule,model_planning_schedule,base.group_user,1,1,1,1
-access_planning_employee_report_wizard,planning.employee.report.wizard,model_planning_employee_report_wizard,base.group_user,1,1,1,1
-access_planning_so_execution_report_wizard,planning.so.execution.report.wizard,model_planning_so_execution_report_wizard,base.group_user,1,1,1,1

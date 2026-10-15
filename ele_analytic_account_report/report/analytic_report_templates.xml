@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         WIZARD PDF
+    ================================================================= -->
+    <template id="report_analytic_account_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 style="color:#1F4E78;">Analytic Account Report</h2>
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:18px;">
+                            <tr>
+                                <td style="padding:6px;">
+                                    <strong>Period:</strong>
+                                </td>
+                                <td style="padding:6px;">
+                                    <span t-esc="o.date_from"/>
+                                    to
+                                    <span t-esc="o.date_to"/>
+                                </td>
+                                <td style="padding:6px;">
+                                    <strong>Company:</strong>
+                                </td>
+                                <td style="padding:6px;">
+                                    <span t-esc="o.company_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px;">
+                                    <strong>Target Moves:</strong>
+                                </td>
+                                <td style="padding:6px;" colspan="3">
+                                    <span t-esc="dict(o._fields['target_move'].selection).get(o.target_move)"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ====================================================
+                             SEGMENT-WISE MATRIX: Segment 1 | Segment 2 | ...
+                        ===================================================== -->
+                        <t t-set="matrix" t-value="o._get_segment_pl_matrix()"/>
+                        <div style="font-size:15px; font-weight:700; color:#1F4E78; margin-bottom:6px;">
+                            Segment-wise Profit &amp; Loss
+                        </div>
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:22px;">
+                            <thead>
+                                <tr style="background-color:#1F4E78; color:#FFFFFF;">
+                                    <th style="padding:7px 8px; text-align:left;">Particulars</th>
+                                    <th t-foreach="matrix['segments']" t-as="segment"
+                                        style="padding:7px 8px; text-align:right;">
+                                        <span t-esc="segment['name']"/>
+                                        <div t-if="segment.get('plan')" style="margin-top:2px;">
+                                            <span t-esc="segment['plan']"
+                                                  style="font-size:16px !important; opacity:.9; font-weight:500;"/>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="matrix['rows']" t-as="pl_row"
+                                    t-attf-style="background-color:#{'#EDF2F7' if pl_row['bold'] else ('#FFFFFF' if pl_row_index % 2 == 0 else '#F5F8FB')}; border-bottom:1px solid #E3E9EF;">
+                                    <td t-attf-style="padding:7px 8px; #{'font-weight:700; color:#1F4E78;' if pl_row['bold'] else ''}">
+                                        <span t-esc="pl_row['label']"/>
+                                    </td>
+                                    <td t-foreach="pl_row['values']" t-as="value"
+                                        t-attf-style="padding:7px 8px; text-align:right; #{'font-weight:700; color:#1F4E78;' if pl_row['bold'] else ''}">
+                                        <span t-esc="value"
+                                              t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <t t-if="not matrix['segments']">
+                            <p class="text-muted">No analytic segments were found for the selected filters.</p>
+                        </t>
+
+                        <!-- ====================================================
+                             ACCOUNT DETAIL
+                        ===================================================== -->
+                        <t t-set="report_data" t-value="o._get_report_data()"/>
+                        <t t-if="not report_data">
+                            <p class="text-muted">No analytic data found for the selected filters.</p>
+                        </t>
+                        <t t-foreach="report_data" t-as="group">
+                            <div style="font-size:14px; font-weight:700; color:#1F4E78; margin:18px 0 6px;">
+                                <span t-esc="group['account'].display_name"/>
+                                <span style="font-size:11px; color:#7A8B99;">—
+                                    <span t-esc="group['plan']"/>
+                                </span>
+                            </div>
+                            <table style="width:100%; border-collapse:collapse; font-size:10px;">
+                                <thead>
+                                    <tr style="background-color:#D9E1F2;">
+                                        <th style="padding:6px;">Date</th>
+                                        <th style="padding:6px;">Reference</th>
+                                        <th style="padding:6px;">Partner</th>
+                                        <th style="padding:6px;">General Account</th>
+                                        <th style="padding:6px; text-align:right;">Debit</th>
+                                        <th style="padding:6px; text-align:right;">Credit</th>
+                                        <th style="padding:6px; text-align:right;">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="group['lines']" t-as="line" style="border-bottom:1px solid #E3E9EF;">
+                                        <td style="padding:5px;">
+                                            <span t-esc="line['date']"/>
+                                        </td>
+                                        <td style="padding:5px;">
+                                            <span t-esc="line['name']"/>
+                                        </td>
+                                        <td style="padding:5px;">
+                                            <span t-esc="line['partner']"/>
+                                        </td>
+                                        <td style="padding:5px;">
+                                            <span t-esc="line['general_account']"/>
+                                        </td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="line['debit']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="line['credit']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="line['debit'] - line['credit']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background-color:#EDF2F7; font-weight:700;">
+                                        <td colspan="4" style="padding:6px;">TOTAL</td>
+                                        <td style="padding:6px; text-align:right;">
+                                            <span t-esc="group['total_debit']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                        <td style="padding:6px; text-align:right;">
+                                            <span t-esc="group['total_credit']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                        <td style="padding:6px; text-align:right;">
+                                            <span t-esc="group['total_amount']"
+                                                  t-options="{'widget':'monetary','display_currency':o.company_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_analytic_account_pdf" model="ir.actions.report">
+        <field name="name">Analytic Account Report</field>
+        <field name="model">analytic.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ele_analytic_account_report.report_analytic_account_document</field>
+        <field name="report_file">ele_analytic_account_report.report_analytic_account_document</field>
+        <field name="print_report_name">'Analytic Account Report - %s' % (object.company_id.name)</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+    <!-- ================================================================
+         DIRECT ACCOUNT PDF
+         The matrix is calculated from ALL selected records, so selecting
+         Segment 1 + Segment 2 + Segment 3 produces side-by-side columns.
+    ================================================================= -->
+    <template id="report_analytic_account_direct_document">
+        <t t-call="web.html_container">
+            <t t-set="matrix" t-value="docs._get_segment_pl_matrix(target_move='posted', company=docs[:1].company_id)"/>
+            <t t-set="currency" t-value="docs[:1].company_id.currency_id"/>
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family:'Lato',sans-serif;">
+                        <div style="background-color:#1F4E78; padding:16px 20px; margin-bottom:16px;">
+                            <div style="color:#FFFFFF; font-size:20px; font-weight:700;">Analytic Account Report</div>
+                            <div style="color:#D9E1F2; font-size:10px; margin-top:2px;">Segment-wise Profit &amp; Loss
+                            </div>
+                        </div>
+
+                        <!-- REQUESTED LAYOUT -->
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                            <thead>
+                                <tr style="background-color:#1F4E78; color:#FFFFFF;">
+                                    <th style="padding:8px; text-align:left;">Particulars</th>
+                                    <th t-foreach="matrix['segments']" t-as="segment"
+                                        style="padding:8px; text-align:right;">
+                                        <span t-esc="segment['name']"/>
+                                        <div t-if="segment.get('plan')"
+                                             style="font-size:8px; opacity:.8; margin-top:2px;">
+                                            <span t-esc="segment['plan']"/>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="matrix['rows']" t-as="pl_row"
+                                    t-attf-style="background-color:#{'#EDF2F7' if pl_row['bold'] else ('#FFFFFF' if pl_row_index % 2 == 0 else '#F5F8FB')}; border-bottom:1px solid #E3E9EF;">
+                                    <td t-attf-style="padding:8px; #{'font-weight:700; color:#1F4E78;' if pl_row['bold'] else ''}">
+                                        <span t-esc="pl_row['label']"/>
+                                    </td>
+                                    <td t-foreach="pl_row['values']" t-as="value"
+                                        t-attf-style="padding:8px; text-align:right; #{'font-weight:700; color:#1F4E78;' if pl_row['bold'] else ''}">
+                                        <span t-esc="value"
+                                              t-options="{'widget':'monetary','display_currency':currency}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- ACCOUNT INFORMATION -->
+                        <div style="font-size:14px; font-weight:700; color:#1F4E78; margin:12px 0 6px;">
+                            <span t-esc="o.display_name"/>
+                        </div>
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:14px; font-size:10px;">
+                            <tr>
+                                <td style="padding:6px; background:#EDF2F7;">
+                                    <strong>Segment</strong>
+                                </td>
+                                <td style="padding:6px;">
+                                    <span t-esc="o.plan_id.display_name or '-'"/>
+                                </td>
+                                <td style="padding:6px; background:#EDF2F7;">
+                                    <strong>Company</strong>
+                                </td>
+                                <td style="padding:6px;">
+                                    <span t-esc="o.company_id.name"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <t t-set="data" t-value="o._get_analytic_report_data()"/>
+                        <div style="font-size:13px; font-weight:700; color:#1F4E78; margin:14px 0 6px;">Analytic
+                            Transactions
+                        </div>
+                        <t t-if="not data['lines']">
+                            <p class="text-muted">No analytic transactions found for this account.</p>
+                        </t>
+                        <t t-if="data['lines']">
+                            <table style="width:100%; border-collapse:collapse; font-size:9px;">
+                                <thead>
+                                    <tr style="background-color:#D9E1F2;">
+                                        <th style="padding:5px;">Date</th>
+                                        <th style="padding:5px;">Reference</th>
+                                        <th style="padding:5px;">Partner</th>
+                                        <th style="padding:5px;">General Account</th>
+                                        <th style="padding:5px; text-align:right;">Debit</th>
+                                        <th style="padding:5px; text-align:right;">Credit</th>
+                                        <th style="padding:5px; text-align:right;">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="data['lines']" t-as="line" style="border-bottom:1px solid #E3E9EF;">
+                                        <td style="padding:4px;">
+                                            <span t-esc="line['date']"/>
+                                        </td>
+                                        <td style="padding:4px;">
+                                            <span t-esc="line['name']"/>
+                                        </td>
+                                        <td style="padding:4px;">
+                                            <span t-esc="line['partner']"/>
+                                        </td>
+                                        <td style="padding:4px;">
+                                            <span t-esc="line['general_account']"/>
+                                        </td>
+                                        <td style="padding:4px; text-align:right;">
+                                            <span t-esc="line['debit']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                        <td style="padding:4px; text-align:right;">
+                                            <span t-esc="line['credit']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                        <td style="padding:4px; text-align:right;">
+                                            <span t-esc="line['balance']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background:#EDF2F7; font-weight:700;">
+                                        <td colspan="4" style="padding:5px;">TOTAL</td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="data['total_debit']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="data['total_credit']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                        <td style="padding:5px; text-align:right;">
+                                            <span t-esc="data['total_amount']"
+                                                  t-options="{'widget':'monetary','display_currency':currency}"/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_analytic_account_direct_pdf" model="ir.actions.report">
+        <field name="name">Analytic Account PDF Report</field>
+        <field name="model">account.analytic.account</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ele_analytic_account_report.report_analytic_account_direct_document</field>
+        <field name="report_file">ele_analytic_account_report.report_analytic_account_direct_document</field>
+        <field name="print_report_name">'Analytic Account Report - %s' % (object.display_name)</field>
+        <field name="binding_model_id" ref="analytic.model_account_analytic_account"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_server_analytic_account_excel" model="ir.actions.server">
+        <field name="name">Analytic Account Excel Report</field>
+        <field name="model_id" ref="analytic.model_account_analytic_account"/>
+        <field name="binding_model_id" ref="analytic.model_account_analytic_account"/>
+        <field name="binding_type">report</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_export_analytic_excel_report()</field>
+    </record>
+
+</odoo>

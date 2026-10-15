@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_cash_pnl_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Profit and Loss (Cash Basis)</h2>
+                        <p class="text-center text-muted">
+                            <span t-esc="doc.company_id.name"/> &#8212;
+                            Period: <span t-esc="doc.date_from" t-options="{'widget': 'date'}"/>
+                            to <span t-esc="doc.date_to" t-options="{'widget': 'date'}"/>
+                        </p>
+                        <p class="text-center text-muted" style="font-size: 10px;">
+                            This statement reflects only amounts actually received or paid
+                            in the period above. Unpaid invoices/bills and depreciation are
+                            not included.
+                        </p>
+
+                        <t t-set="income_lines" t-value="doc._get_income_lines()"/>
+                        <t t-set="expense_lines" t-value="doc._get_expense_lines()"/>
+                        <t t-set="total_income" t-value="doc._get_total_income()"/>
+                        <t t-set="total_expense" t-value="doc._get_total_expense()"/>
+                        <t t-set="net_result" t-value="doc._get_net_result()"/>
+
+                        <h4 style="background-color:#2E7D32; color:white; padding:6px;">
+                            INCOME (money actually received)
+                        </h4>
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr t-foreach="income_lines" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td class="text-end">
+                                        <span t-esc="'{:,.2f}'.format(line['amount'])"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="not income_lines">
+                                    <td colspan="2" class="text-muted">No receipts in this period.</td>
+                                </tr>
+                                <tr style="border-top: 1px solid black;">
+                                    <td><strong>TOTAL INCOME (A)</strong></td>
+                                    <td class="text-end">
+                                        <strong t-esc="'{:,.2f}'.format(total_income)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 style="background-color:#B03A2E; color:white; padding:6px;">
+                            EXPENSES (money actually paid)
+                        </h4>
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr t-foreach="expense_lines" t-as="line">
+                                    <td><span t-esc="line['name']"/></td>
+                                    <td class="text-end">
+                                        <span t-esc="'{:,.2f}'.format(line['amount'])"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="not expense_lines">
+                                    <td colspan="2" class="text-muted">No payments in this period.</td>
+                                </tr>
+                                <tr style="border-top: 1px solid black;">
+                                    <td><strong>TOTAL EXPENSES (B)</strong></td>
+                                    <td class="text-end">
+                                        <strong t-esc="'{:,.2f}'.format(total_expense)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-sm" style="margin-top: 10px;">
+                            <tbody>
+                                <tr style="border-top: 2px double black; font-size: 13px;">
+                                    <td><strong>NET SURPLUS / (DEFICIT) FOR THE PERIOD (A - B)</strong></td>
+                                    <td class="text-end">
+                                        <strong t-esc="'{:,.2f}'.format(net_result)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <t t-if="doc.opening_balance">
+                            <h4 style="background-color:#1F3864; color:white; padding:6px; margin-top:15px;">
+                                CASH &amp; BANK POSITION
+                            </h4>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Opening Cash &amp; Bank Balance</td>
+                                        <td class="text-end">
+                                            <span t-esc="'{:,.2f}'.format(doc.opening_balance)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Add: Total Receipts (A)</td>
+                                        <td class="text-end">
+                                            <span t-esc="'{:,.2f}'.format(total_income)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Less: Total Payments (B)</td>
+                                        <td class="text-end">
+                                            <span t-esc="'({:,.2f})'.format(total_expense)"/>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid black;">
+                                        <td><strong>Closing Cash &amp; Bank Balance</strong></td>
+                                        <td class="text-end">
+                                            <strong t-esc="'{:,.2f}'.format(doc._get_closing_balance())"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_cash_pnl" model="ir.actions.report">
+        <field name="name">Profit and Loss (Cash Basis)</field>
+        <field name="model">cash.pnl.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ele_cashbased_pl.report_cash_pnl_document</field>
+        <field name="report_file">ele_cashbased_pl.report_cash_pnl_document</field>
+        <field name="print_report_name">'Profit and Loss (Cash Basis)'</field>
+        <field name="binding_model_id" ref="model_cash_pnl_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

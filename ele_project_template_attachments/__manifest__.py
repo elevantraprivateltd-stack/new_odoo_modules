@@ -1,7 +1,7 @@
 {
     "name": "Ele Project Template Attachments",
     "version": "19.0.1.0.3",
-    'author':'Elevantra Private Limited',
+    'author': 'Elevantra Private Limited',
     "category": "Services/Project",
     "summary": "Files attached to a project template are copied into every new project created from it",
     "description": """
